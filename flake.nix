@@ -23,6 +23,12 @@
           rmarkdown # Often a dependency for knitr/Quarto R features
           # Add other R packages if the book's R code uses more:
           # e.g., readr, stringr, dplyr, fs, jsonlite, hms
+          readr
+          stringr
+          dplyr
+          fs
+          jsonlite
+          hms
         ];
 
         # R environment with the specified packages
