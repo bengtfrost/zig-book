@@ -1,0 +1,55 @@
+{
+  description = "Dev shell for zig-book with Quarto, R, and Zig";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { self, nixpkgs, flake-utils, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+
+        # R packages to install in the wrapper
+        rPkgs = with pkgs.rPackages; [
+          readr knitr rmarkdown stringr dplyr fs jsonlite
+          xml2 curl gt hms
+        ];
+
+        # Native libraries needed by some R packages
+        nativeDeps = with pkgs; [
+          libxml2.dev
+          pkgs.curl.dev
+          pkg-config
+        ];
+
+        # Locale fix for sv_SE.UTF-8
+        localeSupport = pkgs.glibcLocales;
+
+        R = pkgs.rWrapper.override {
+          packages = rPkgs;
+        };
+      in {
+        devShells.default = pkgs.mkShell {
+          buildInputs = [
+            R
+            pkgs.quarto
+          ] ++ nativeDeps;
+
+          shellHook = ''
+            export R_LIBS_USER=$PWD/.Rlibs
+            mkdir -p "$R_LIBS_USER"
+
+            export LANG=sv_SE.UTF-8
+            export LC_ALL=sv_SE.UTF-8
+            export LOCALE_ARCHIVE="${localeSupport}/lib/locale/locale-archive"
+
+            echo "Zig is assumed to be available via \$PATH: $(which zig)"
+            echo "R_LIBS_USER set to: $R_LIBS_USER"
+            echo "To build the book, run: quarto render"
+          '';
+        };
+      });
+}
+

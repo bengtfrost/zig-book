@@ -91,12 +91,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -191,9 +189,6 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Introduction to Zig</a> 
-        <div class="sidebar-tools-main">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -356,7 +351,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Data Structures</span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Data Structures</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -400,10 +395,13 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <p>A dynamic array works by expanding the underlying array, whenever the <em>length</em> becomes equal to the <em>capacity</em> of the array. It basically allocates a new contiguous block of memory that is bigger than the previous one, then, it copies all values that are currently being stored to this new location (i.e., this new block of memory), then, it frees the previous block of memory. At the end of this process, the new underlying array have a bigger <em>capacity</em>, and, therefore, the <em>length</em> becomes, once again, smaller than the <em>capacity</em> of the array.</p>
 <p>This is the cycle of a dynamic array. Notice that, throughout this cycle, the <em>capacity</em> is always either equal to or higher than the <em>length</em> of the array. If you have an <code>ArrayList</code> object (let’s suppose you named it <code>buffer</code>), you can check the current capacity of your array by accessing the <code>capacity</code> attribute of your <code>ArrayList</code> object, while the current <em>length</em> of it is available at the <code>items.len</code> attribute.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Check capacity</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>buffer.capacity;</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Check length</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>buffer.items.len;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="creating-an-arraylist-object" class="level3" data-number="11.1.2">
@@ -413,11 +411,14 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <p>After you provide the data type of the elements of the array, you can initialize an <code>ArrayList</code> object by either using the <code>init()</code> or the <code>initCapacity()</code> methods. The former method receives only the allocator object as input, while the latter method receives both the allocator object and a capacity number as inputs. With the latter method, you not only initialize the struct, but you also set the starting capacity of the allocated array.</p>
 <p>Using the <code>initCapacity()</code> method is the preferred way to initialize your dynamic array. Because reallocations, or, in other words, the process of expanding the capacity of the array, is always a high cost operation. You should take any possible opportunity to avoid reallocations in your array. If you know how much space your array needs to occupy at the beginning, you should always use <code>initCapacity()</code> to create your dynamic array.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.GeneralPurposeAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> std.ArrayList(<span class="dt">u8</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .initCapacity(allocator, <span class="dv">100</span>);</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> buffer.deinit();</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>In the example above, the <code>buffer</code> object starts as an array of 100 elements. If this <code>buffer</code> object needs to create more space to accomodate more elements during the runtime of your program, the <code>ArrayList</code> internals will perform the necessary actions for you automatically. Also notice the <code>deinit()</code> method being used to destroy the <code>buffer</code> object at the end of the current scope, by freeing all the memory that was allocated for the dynamic array stored in this <code>buffer</code> object.</p>
 </section>
@@ -426,12 +427,15 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <p>Now that we have created our dynamic array, we can start to use it. You can append (a.k.a “add”) new values to this array by using the <code>append()</code> method. This method works the same way as the <code>append()</code> method from a Python list, or, the <code>emplace_back()</code> method from <code>std::vector</code> of C++. You provide a single value to this method, and the method appends this value to the array.</p>
 <p>You can also use the <code>appendSlice()</code> method to append multiple values at once. You provide a slice (slices were described in <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a>) to this method, and the method adds all values present in this slice to your dynamic array.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(<span class="ch">'H'</span>);</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(<span class="ch">'e'</span>);</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(<span class="ch">'l'</span>);</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(<span class="ch">'l'</span>);</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(<span class="ch">'o'</span>);</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.appendSlice(<span class="st">" World!"</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-dynamic-array-remove" class="level3" data-number="11.1.4">
@@ -439,12 +443,17 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <p>You can use the <code>pop()</code> method to “pop” or remove the last element in the array. It’s worth noting that this method do not change the capacity of the array. It just deletes or erases the last value stored in the array.</p>
 <p>Also, this method returns as result the value that got deleted. That is, you can use this method to both get the last value in the array, and also, remove it from the array. It’s a “get and remove value” type of method.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exclamation_mark = buffer.pop();</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now, if you want to remove specific elements from specific positions of your array, you can use the <code>orderedRemove()</code> method from your <code>ArrayList</code> object. With this method, you can provide an index as input, then, the method will delete the value that is at this index in the array. You are effectively reducing the <em>length</em> of the array everytime you execute an <code>orderedRemove()</code> operation.</p>
 <p>In the example below, we first create an <code>ArrayList</code> object, and we fill it with numbers. Then, we use <code>orderedRemove()</code> to remove the value at index 3 in the array, two consecutive times.</p>
 <p>Also, notice that we are assigning the result of <code>orderedRemove()</code> to the underscore character. So we are discarding the result value of this method. The <code>orderedRemove()</code> method returns the value that got deleted, in a similar style to the <code>pop()</code> method.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.GeneralPurposeAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> std.ArrayList(<span class="dt">u8</span>)</span>
@@ -464,6 +473,7 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>buffer.items<span class="op">}</span>);</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>buffer.items.len<span class="op">}</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
 { 0, 1, 2, 5, 6, 7, 8, 9 }
@@ -476,6 +486,8 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <p>When you need to insert values in the middle of your array, instead of just appending them to the end of the array, you need to use the <code>insert()</code> and <code>insertSlice()</code> methods, instead of the <code>append()</code> and <code>appendSlice()</code> methods.</p>
 <p>These two methods work very similarly to <code>insert()</code> and <code>insert_range()</code> from the C++ <code>std::vector</code> class. You provide an index to these methods, and they insert the values that you provide at that index in the array.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.GeneralPurposeAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> std.ArrayList(<span class="dt">u8</span>)</span>
@@ -488,6 +500,7 @@ Figure&nbsp;11.1: Difference between capacity and length in a dynamic array
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (buffer.items) |char| <span class="op">{</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{c}"</span>, .<span class="op">{</span>char<span class="op">}</span>);</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>My name P3edro</code></pre>
 </section>
@@ -529,6 +542,8 @@ Figure&nbsp;11.2: A diagram of a Hashtable. Source: Wikipedia, the free encyclop
 <p>This <code>AutoHashMap()</code> function is essentially a “create a hashtable object that uses the default settings” type of function. It automatically chooses a context object, and, therefore, a hash function implementation, for you. This function receives two data types as input, the first input is the data type of the keys that will be used in this hashtable, while the second input is the data type of the data that will be stored inside the hashtable, that is, the data type of the values to be stored.</p>
 <p>In the example below, we are providing the data type <code>u32</code> in the first argument, and <code>u16</code> in the second argument of this function. This means that we are going to use <code>u32</code> values as keys in this hashtable, while <code>u16</code> values are the actual values that are going to be stored into this hashtable. At the end of this process, the <code>hash_table</code> object contains a <code>HashMap</code> object that uses the default settings and context.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> AutoHashMap = std.hash_map.AutoHashMap;</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -561,6 +576,7 @@ Figure&nbsp;11.2: A diagram of a Hashtable. Source: Wikipedia, the free encyclop
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        .<span class="op">{</span>hash_table.count()<span class="op">}</span></span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>N of values stored: 3
 Value at key 50050: 55
@@ -578,6 +594,8 @@ N of values stored: 2</code></pre>
 <p>You can create such iterator object by using the <code>iterator()</code> method of the hashtable object. This method returns an iterator object, from which you can use the <code>next()</code> method in conjunction with a while loop to iterate through the elements of your hashtable. The <code>next()</code> method returns an optional <code>Entry</code> value, and therefore, you must unwrap this optional value to get the actual <code>Entry</code> value from which you can access the key and also the value identified by this key.</p>
 <p>With this <code>Entry</code> value at hand, you can access the key of this current entry by using the <code>key_ptr</code> attribute and dereferencing the pointer that lives inside of it, while the value identified by this key is accessed through the <code>value_ptr</code> attribute instead, which is also a pointer to be dereferenced. The code example below demonstrates the use of these elements:</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> AutoHashMap = std.hash_map.AutoHashMap;</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -599,6 +617,7 @@ N of values stored: 2</code></pre>
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        std.debug.print(<span class="st">"Value: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>kv.value_ptr.*<span class="op">}</span>);</span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Key: 54321 | Value: 89
 Key: 50050 | Value: 55
@@ -606,10 +625,13 @@ Key: 57709 | Value: 41</code></pre>
 <p>If you want to iterate specifically through the values or the keys of your hashtable, you can create a key iterator or a value iterator object. These are also iterator objects, which have the same <code>next()</code> method that you can use to iterate through the hashtable.</p>
 <p>Key iterators are created from the <code>keyIterator()</code> method of your hashtable object, while value iterators are created from the <code>valueIterator()</code> method. All you have to do is to unwrap the value from the <code>next()</code> method and deference it directly to access the key or the value that you are iterating over. The code example below demonstrates the use of a key iterator, but you can replicate the same logic to a value iterator.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> kit = hash_table.keyIterator();</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> (kit.next()) |key| <span class="op">{</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Key: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>key.*<span class="op">}</span>);</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Key: 54321
 Key: 50050
@@ -630,9 +652,12 @@ Key: 57709</code></pre>
 <p>This means that, with <code>swapRemove()</code> you remove the value from the hashtable, but you do not preserve the order in which the values were inserted into the structure. While <code>orderedRemove()</code> is able to retain the order in which these values were inserted.</p>
 <p>But instead of providing an index as input to <code>swapRemove()</code> or <code>orderedRemove()</code>, like I described in <a href="#sec-dynamic-array-remove" class="quarto-xref"><span>Section 11.1.4</span></a>, these methods here in an <code>ArrayHashMap</code> take a key as input, like the <code>remove()</code> method from a <code>HashMap</code> object. If you want to provide an index as input, instead of a key, you should use the <code>swapRemoveAt()</code> and <code>orderedRemoveAt()</code> methods.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> hash_table = AutoArrayHashMap(<span class="dt">u32</span>, <span class="dt">u16</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    .init(allocator);</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> hash_table.deinit();</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-string-hash-map" class="level3" data-number="11.2.5">
@@ -650,6 +675,8 @@ Key: 57709</code></pre>
 <p>In the example below, I’m creating a hashtable to store the ages of different people. Each key in this hashtable is represented by the name of each person, while the value stored in the hashtable is the age of this person identified by the key.</p>
 <p>That is why I provide the <code>u8</code> data type (which is the data type used by the age values) as input to this <code>StringHashMap()</code> function. As the result, it creates a hashtable that uses string values as keys, and, that stores <code>u8</code> values in it. Notice that an allocator object is provided at the <code>init()</code> method of the resulting object from the <code>StringHashMap()</code> function.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> gpa = std.heap.GeneralPurposeAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
@@ -667,6 +694,7 @@ Key: 57709</code></pre>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        std.debug.print(<span class="st">"Age: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>kv.value_ptr.*<span class="op">}</span>);</span>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Key: Pedro | Age: 25
 Key: Abgail | Age: 42
@@ -679,7 +707,10 @@ Key: Matheus | Age: 21</code></pre>
 <p>You can insert new values into this hashtable by using the same <code>put()</code> method that we have discussed in <a href="#sec-string-hash-map" class="quarto-xref"><span>Section 11.2.5</span></a>. And you can also get values from the hashtable by using the same <code>get()</code> method. Like its <code>ArrayHashMap</code> brother, to delete values from this specific type of hashtable, we also use the <code>orderedRemove()</code> and <code>swapRemove()</code> methods, with the same effects that I have described in <a href="#sec-array-map" class="quarto-xref"><span>Section 11.2.4</span></a>.</p>
 <p>If we take the code example that was exposed in <a href="#sec-string-hash-map" class="quarto-xref"><span>Section 11.2.5</span></a>, we can achieve the exact same result with <code>StringArrayHashMap()</code>:</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ages = std.StringArrayHashMap(<span class="dt">u8</span>).init(allocator);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -722,6 +753,8 @@ Figure&nbsp;11.4: A diagram of a doubly linked list.
 <p>Thus, if we have used a doubly linked list, we can use the <code>insertBefore()</code> method to store the pointer to the input node in the <code>prev</code> attribute. This would put the input node as the “previous node”, or, the node before the current node. In contrast, the <code>insertAfter()</code> method puts the pointer created to the input node in the <code>next</code> attribute of the current node, and as result, the input node becomes the “next node” of the current node.</p>
 <p>Since we are using a singly linked list in this example, we have only the <code>insertAfter()</code> method available in the node objects that we create from our <code>Lu32</code> type.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> SinglyLinkedList = std.SinglyLinkedList;</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Lu32 = SinglyLinkedList(<span class="dt">u32</span>);</span>
@@ -740,6 +773,7 @@ Figure&nbsp;11.4: A diagram of a doubly linked list.
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    two.insertAfter(&amp;three); <span class="co">// {1, 2, 3, 5}</span></span>
 <span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    three.insertAfter(&amp;four); <span class="co">// {1, 2, 3, 4, 5}</span></span>
 <span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>There are other methods available from the linked list object, depending if this object is a singly linked list or a doubly linked list, that might be very useful for you. You can find a summary of them in the bullet points below:</p>
 <ul>
@@ -756,6 +790,8 @@ Figure&nbsp;11.4: A diagram of a doubly linked list.
 <p>Zig introduces a new data structure called <code>MultiArrayList()</code>. It’s a different version of the dynamic array that we have introduced in <a href="#sec-dynamic-array" class="quarto-xref"><span>Section 11.1</span></a>. The difference between this structure and the <code>ArrayList()</code> that we know from <a href="#sec-dynamic-array" class="quarto-xref"><span>Section 11.1</span></a>, is that <code>MultiArrayList()</code> creates a separate dynamic array for each field of the struct that you provide as input.</p>
 <p>Consider the following code example. We create a new custom struct called <code>Person</code>. This struct contains three different data members, or, three different fields. As consequence, when we provide this <code>Person</code> data type as input to <code>MultiArrayList()</code>, this creates a “struct of three different arrays” called <code>PersonArray</code>. In other words, this <code>PersonArray</code> is a struct that contains three internal dynamic arrays in it. One array for each field found in the <code>Person</code> struct definition.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Person = <span class="kw">struct</span> <span class="op">{</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    name: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
@@ -780,6 +816,7 @@ Figure&nbsp;11.4: A diagram of a doubly linked list.
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        .name = <span class="st">"Michael"</span>, .age = <span class="dv">64</span>, .height = <span class="fl">1.87</span></span>
 <span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>);</span>
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>In other words, instead of creating an array of “persons”, the <code>MultiArrayList()</code> function creates a “struct of arrays”. Each data member of this struct is a different array that stores the values of a specific field from the <code>Person</code> values that were added (or, appended) to this “struct of arrays”. One important detail is that each of these separate internal arrays stored inside <code>PersonArray</code> are dynamic arrays. This means that these arrays can grow in capacity automatically as needed, to accomodate more values.</p>
 <p>The <a href="#fig-multi-array" class="quarto-xref">Figure&nbsp;<span>11.5</span></a> exposed below presents a diagram that describes the <code>PersonArray</code> struct that we have created in the previous code example. Notice that the values of the data members present in each of the three <code>Person</code> values that we have appended into the <code>PersonArray</code> object , are scattered across three different internal arrays of the <code>PersonArray</code> object.</p>
@@ -795,9 +832,12 @@ Figure&nbsp;11.5: A diagram of the <code>PersonArray</code> struct.
 </div>
 <p>You can easily access each of these arrays separately, and iterate over the values of each array. For that, you will need to call the <code>items()</code> method from the <code>PersonArray</code> object, and provide as input to this method, the name of the field that you want to iterate over. If you want to iterate through the <code>.age</code> array for example, then, you need to call <code>items(.age)</code> from the <code>PersonArray</code> object, like in the example below:</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (people.items(.age)) |*age| <span class="op">{</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"Age: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>age.*<span class="op">}</span>);</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Age: 15
 Age: 26
@@ -806,6 +846,8 @@ Age: 64</code></pre>
 <p>In this example we are calling the <code>items()</code> method directly from the <code>PersonArray</code> object. However, in most situations it’s recommened to call this <code>items()</code> method from a “slice object”, which you can create from the <code>slice()</code> method. The reason for this is that calling <code>items()</code> multiple times have better performance if you use a slice object.</p>
 <p>Therefore, if you are planning to access only one of the internal arrays from your “multi array struct”, it’s fine to call <code>items()</code> directly from the multi array object. But if you need to access many of the internal arrays from your “multi array struct”, then, you will likely need to call <code>items()</code> more than once, and, in such circumstance, is better to call <code>items()</code> through a slice object. The example below demonstrates the use of such object:</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> slice = people.slice();</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (slice.items(.age)) |*age| <span class="op">{</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    age.* += <span class="dv">10</span>;</span>
@@ -815,6 +857,7 @@ Age: 64</code></pre>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Name: {s}, Age: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>n.*, a.*<span class="op">}</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Name: Auguste, Age: 25
 Name: Elena, Age: 36
@@ -824,6 +867,8 @@ Name: Michael, Age: 74</code></pre>
 <h2 data-number="11.5" class="anchored" data-anchor-id="conclusion-1"><span class="header-section-number">11.5</span> Conclusion</h2>
 <p>There are many other data structures that I haven’t presented here. But you can check them out at the official Zig Standard Library documentation page. Actually, when you get into the <a href="https://ziglang.org/documentation/master/std/#">homepage of the documentation</a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, the first thing that appears to you in this page, is a list of types and data structures that are available in the Zig Standard Library. There are some very specific data structures in this list, like a <a href="https://ziglang.org/documentation/master/std/#std.bounded_array.BoundedArray"><code>BoundedArray</code> struct</a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> , but there is also some more general structures, such as a <a href="https://ziglang.org/documentation/master/std/#std.priority_queue.PriorityQueue"><code>PriorityQueue</code> struct</a><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
 
+
+<!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-wikipedia_hashtables" class="csl-entry" role="listitem">
@@ -862,150 +907,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1065,6 +966,57 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1406,7 +1358,965 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Project 3 - Building a stack data structure</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb26" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="an">engine:</span><span class="co"> knitr</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="an">knitr:</span><span class="co"> true</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="an">syntax-definition:</span><span class="co"> "../Assets/zig.xml"</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../zig_engine.R"</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_main =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">build_type =</span> <span class="st">"lib"</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="fu"># Data Structures</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>In this chapter, I want to present the most common Data Structures that are available from</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>the Zig Standard Library, especially <span class="in">`ArrayList`</span> and also <span class="in">`HashMap`</span>. These are generic Data Structures</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>that you can use to store and control any type of data that is produced by your application.</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dynamic Arrays {#sec-dynamic-array}</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>In high level languages, arrays are usually dynamic. They can easily grow</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>in size when they have to, and you don't need to worry about it.</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>In contrast, arrays in low level languages are usually static by default.</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>This is the reality of C, C++, Rust and also Zig. Static arrays were presented at</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>@sec-arrays, but in this section, we are going to talk about dynamic arrays in Zig.</span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>Dynamic arrays are simply arrays that can grow in size during the runtime</span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>of your program. Most low level languages have some implementation of</span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>a dynamic array in their standard library. C++ have <span class="in">`std::vector`</span>, Rust have <span class="in">`Vec`</span>,</span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>and Zig have <span class="in">`std.ArrayList`</span>.</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>The <span class="in">`std.ArrayList`</span> struct provides a contiguous and growable array for you.</span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>It works like any other dynamic array, it allocates a contiguous block of memory, and when this block have no space left,</span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a><span class="in">`ArrayList`</span> allocates another contiguous and bigger block of memory, copies the</span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a>elements to this new location, and erases (or frees) the previous block of memory.</span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Capacity vs Length</span></span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>When we talk about dynamic arrays, we usually have two similar concepts that</span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a>are very essential to how a dynamic array works behind the hood.</span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>These concepts are *capacity* and *length*. In some contexts, especially</span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>in C++, *length* is also called of *size*.</span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a>Although they look similar, these concepts represent different things</span>
+<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a>in the context of a dynamic array. *Capacity* is the number of items (or elements)</span>
+<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a>that your dynamic array can currently hold without the need to allocate more memory.</span>
+<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a>In contrast, the *length* refers to how many elements in the array</span>
+<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a>are currently being used, or, in other words, how many elements in this array</span>
+<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a>that you have assigned a value to. Every dynamic array works around</span>
+<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a>a block of allocated memory, which represents an array with total capacity for $n$ elements.</span>
+<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a>However, only a portion of these $n$ elements are being used most of the time. This portion</span>
+<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a>of $n$ is the *length* of the array. So every time you append a new value</span>
+<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a>to the array, you are incrementing its *length* by one.</span>
+<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a>This means that a dynamic array usually works with an extra margin, or an extra space</span>
+<span id="cb26-66"><a href="#cb26-66" aria-hidden="true" tabindex="-1"></a>that is currently empty, but waiting and ready to be used. This "extra space"</span>
+<span id="cb26-67"><a href="#cb26-67" aria-hidden="true" tabindex="-1"></a>is essentially the difference between *capacity* and *length*. *Capacity* represents</span>
+<span id="cb26-68"><a href="#cb26-68" aria-hidden="true" tabindex="-1"></a>the total number of elements that the array can hold without the need to re-allocate</span>
+<span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a>or re-expand the array, while the *length* represents how much of this capacity</span>
+<span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a>is currently being used to hold/store values.</span>
+<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a>@fig-capacity-length presents this idea visually. Notice that, at first,</span>
+<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a>the capacity of the array is greater than the length of the array.</span>
+<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a>So, the dynamic array have extra space that is currently empty, but it</span>
+<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a>is ready to receive a value to be stored.</span>
+<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a><span class="al">![Difference between capacity and length in a dynamic array](./../Figures/dynamic-array.png)</span>{#fig-capacity-length}</span>
+<span id="cb26-78"><a href="#cb26-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-79"><a href="#cb26-79" aria-hidden="true" tabindex="-1"></a>We can also see in @fig-capacity-length that, when *length* and *capacity* are equal, it means that the array have no space left.</span>
+<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a>We have reached the ceiling of our capacity, and because of that, if we want to store more values</span>
+<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a>in this array, we need to expand it. We need to get a bigger space that can hold more values</span>
+<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a>than what we currently have.</span>
+<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a>A dynamic array works by expanding the underlying array, whenever the *length* becomes equal</span>
+<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a>to the *capacity* of the array. It basically allocates a new contiguous block of memory that is bigger</span>
+<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a>than the previous one, then, it copies all values that are currently being stored to this new</span>
+<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a>location (i.e., this new block of memory), then, it frees the previous block of</span>
+<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a>memory. At the end of this process, the new underlying array have a bigger *capacity*, and, therefore,</span>
+<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a>the *length* becomes, once again, smaller than the *capacity* of the array.</span>
+<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a>This is the cycle of a dynamic array. Notice that, throughout this cycle, the *capacity* is always</span>
+<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a>either equal to or higher than the *length* of the array. If you have an <span class="in">`ArrayList`</span> object (let's suppose</span>
+<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a>you named it <span class="in">`buffer`</span>), you can check the current capacity of your array by accessing the <span class="in">`capacity`</span></span>
+<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>attribute of your <span class="in">`ArrayList`</span> object, while the current *length* of it is available at the <span class="in">`items.len`</span></span>
+<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a>attribute.</span>
+<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-97"><a href="#cb26-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-100"><a href="#cb26-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-101"><a href="#cb26-101" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-102"><a href="#cb26-102" aria-hidden="true" tabindex="-1"></a><span class="in">// Check capacity</span></span>
+<span id="cb26-103"><a href="#cb26-103" aria-hidden="true" tabindex="-1"></a><span class="in">buffer.capacity;</span></span>
+<span id="cb26-104"><a href="#cb26-104" aria-hidden="true" tabindex="-1"></a><span class="in">// Check length</span></span>
+<span id="cb26-105"><a href="#cb26-105" aria-hidden="true" tabindex="-1"></a><span class="in">buffer.items.len;</span></span>
+<span id="cb26-106"><a href="#cb26-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-107"><a href="#cb26-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-108"><a href="#cb26-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-109"><a href="#cb26-109" aria-hidden="true" tabindex="-1"></a><span class="fu">### Creating an `ArrayList` object</span></span>
+<span id="cb26-110"><a href="#cb26-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-111"><a href="#cb26-111" aria-hidden="true" tabindex="-1"></a>In order to use <span class="in">`ArrayList`</span>, you must provide an allocator object to it.</span>
+<span id="cb26-112"><a href="#cb26-112" aria-hidden="true" tabindex="-1"></a>Remember, Zig does not have a default memory allocator. And as I described in @sec-allocators, all memory</span>
+<span id="cb26-113"><a href="#cb26-113" aria-hidden="true" tabindex="-1"></a>allocations must be done by an allocator object that you define, that</span>
+<span id="cb26-114"><a href="#cb26-114" aria-hidden="true" tabindex="-1"></a>you have control over. In our example here, I'm going to use</span>
+<span id="cb26-115"><a href="#cb26-115" aria-hidden="true" tabindex="-1"></a>a general purpose allocator, but you can use any other allocator</span>
+<span id="cb26-116"><a href="#cb26-116" aria-hidden="true" tabindex="-1"></a>of your preference.</span>
+<span id="cb26-117"><a href="#cb26-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-118"><a href="#cb26-118" aria-hidden="true" tabindex="-1"></a>When you initialize an <span class="in">`ArrayList`</span> object, you must provide the data type of the elements of</span>
+<span id="cb26-119"><a href="#cb26-119" aria-hidden="true" tabindex="-1"></a>the array. In other words, this defines the type of data that this array (or container) will</span>
+<span id="cb26-120"><a href="#cb26-120" aria-hidden="true" tabindex="-1"></a>store. Therefore, if I provide the <span class="in">`u8`</span> type to it, then, I will create a dynamic</span>
+<span id="cb26-121"><a href="#cb26-121" aria-hidden="true" tabindex="-1"></a>array of <span class="in">`u8`</span> values. However, if I provide a struct that I have defined instead, like the struct <span class="in">`User`</span></span>
+<span id="cb26-122"><a href="#cb26-122" aria-hidden="true" tabindex="-1"></a>from @sec-structs-and-oop, then, a dynamic array of <span class="in">`User`</span> values</span>
+<span id="cb26-123"><a href="#cb26-123" aria-hidden="true" tabindex="-1"></a>will be created. In the example below, with the expression <span class="in">`ArrayList(u8)`</span> we</span>
+<span id="cb26-124"><a href="#cb26-124" aria-hidden="true" tabindex="-1"></a>are creating a dynamic array of <span class="in">`u8`</span> values.</span>
+<span id="cb26-125"><a href="#cb26-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-126"><a href="#cb26-126" aria-hidden="true" tabindex="-1"></a>After you provide the data type of the elements of the array, you can initialize</span>
+<span id="cb26-127"><a href="#cb26-127" aria-hidden="true" tabindex="-1"></a>an <span class="in">`ArrayList`</span> object by either using the <span class="in">`init()`</span> or the <span class="in">`initCapacity()`</span> methods.</span>
+<span id="cb26-128"><a href="#cb26-128" aria-hidden="true" tabindex="-1"></a>The former method receives only the allocator object</span>
+<span id="cb26-129"><a href="#cb26-129" aria-hidden="true" tabindex="-1"></a>as input, while the latter method receives both the allocator object and a capacity number as inputs.</span>
+<span id="cb26-130"><a href="#cb26-130" aria-hidden="true" tabindex="-1"></a>With the latter method, you not only initialize the struct, but you</span>
+<span id="cb26-131"><a href="#cb26-131" aria-hidden="true" tabindex="-1"></a>also set the starting capacity of the allocated array.</span>
+<span id="cb26-132"><a href="#cb26-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-133"><a href="#cb26-133" aria-hidden="true" tabindex="-1"></a>Using the <span class="in">`initCapacity()`</span> method is the preferred way to initialize your dynamic array.</span>
+<span id="cb26-134"><a href="#cb26-134" aria-hidden="true" tabindex="-1"></a>Because reallocations, or, in other words, the process of expanding the capacity of the array,</span>
+<span id="cb26-135"><a href="#cb26-135" aria-hidden="true" tabindex="-1"></a>is always a high cost operation. You should take any possible opportunity to avoid reallocations in</span>
+<span id="cb26-136"><a href="#cb26-136" aria-hidden="true" tabindex="-1"></a>your array. If you know how much space your array needs to occupy at the beginning,</span>
+<span id="cb26-137"><a href="#cb26-137" aria-hidden="true" tabindex="-1"></a>you should always use <span class="in">`initCapacity()`</span> to create your dynamic array.</span>
+<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-139"><a href="#cb26-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-142"><a href="#cb26-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-143"><a href="#cb26-143" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: true</span></span>
+<span id="cb26-144"><a href="#cb26-144" aria-hidden="true" tabindex="-1"></a><span class="in">var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-145"><a href="#cb26-145" aria-hidden="true" tabindex="-1"></a><span class="in">const allocator = gpa.allocator();</span></span>
+<span id="cb26-146"><a href="#cb26-146" aria-hidden="true" tabindex="-1"></a><span class="in">var buffer = try std.ArrayList(u8)</span></span>
+<span id="cb26-147"><a href="#cb26-147" aria-hidden="true" tabindex="-1"></a><span class="in">    .initCapacity(allocator, 100);</span></span>
+<span id="cb26-148"><a href="#cb26-148" aria-hidden="true" tabindex="-1"></a><span class="in">defer buffer.deinit();</span></span>
+<span id="cb26-149"><a href="#cb26-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-150"><a href="#cb26-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-151"><a href="#cb26-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-152"><a href="#cb26-152" aria-hidden="true" tabindex="-1"></a>In the example above, the <span class="in">`buffer`</span> object starts as an array of 100 elements. If this</span>
+<span id="cb26-153"><a href="#cb26-153" aria-hidden="true" tabindex="-1"></a><span class="in">`buffer`</span> object needs to create more space to accomodate more elements during the runtime of your program, the <span class="in">`ArrayList`</span></span>
+<span id="cb26-154"><a href="#cb26-154" aria-hidden="true" tabindex="-1"></a>internals will perform the necessary actions for you automatically.</span>
+<span id="cb26-155"><a href="#cb26-155" aria-hidden="true" tabindex="-1"></a>Also notice the <span class="in">`deinit()`</span> method being used to destroy the <span class="in">`buffer`</span> object at the</span>
+<span id="cb26-156"><a href="#cb26-156" aria-hidden="true" tabindex="-1"></a>end of the current scope, by freeing all the memory that was allocated for the dynamic</span>
+<span id="cb26-157"><a href="#cb26-157" aria-hidden="true" tabindex="-1"></a>array stored in this <span class="in">`buffer`</span> object.</span>
+<span id="cb26-158"><a href="#cb26-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-159"><a href="#cb26-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-160"><a href="#cb26-160" aria-hidden="true" tabindex="-1"></a><span class="fu">### Adding new elements to the array</span></span>
+<span id="cb26-161"><a href="#cb26-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a>Now that we have created our dynamic array, we can start to use it. You can append (a.k.a "add")</span>
+<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a>new values to this array by using the <span class="in">`append()`</span> method. This method works the same way</span>
+<span id="cb26-164"><a href="#cb26-164" aria-hidden="true" tabindex="-1"></a>as the <span class="in">`append()`</span> method from a Python list, or, the <span class="in">`emplace_back()`</span> method from <span class="in">`std::vector`</span> of C++.</span>
+<span id="cb26-165"><a href="#cb26-165" aria-hidden="true" tabindex="-1"></a>You provide a single value to this method, and the method appends this value to the array.</span>
+<span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a>You can also use the <span class="in">`appendSlice()`</span> method to append multiple values at once. You provide</span>
+<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a>a slice (slices were described in @sec-arrays) to this method, and the method adds all values present</span>
+<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a>in this slice to your dynamic array.</span>
+<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.append('H');</span></span>
+<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.append('e');</span></span>
+<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.append('l');</span></span>
+<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.append('l');</span></span>
+<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.append('o');</span></span>
+<span id="cb26-180"><a href="#cb26-180" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.appendSlice(" World!");</span></span>
+<span id="cb26-181"><a href="#cb26-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-183"><a href="#cb26-183" aria-hidden="true" tabindex="-1"></a><span class="fu">### Removing elements from the array {#sec-dynamic-array-remove}</span></span>
+<span id="cb26-184"><a href="#cb26-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>You can use the <span class="in">`pop()`</span> method to "pop" or remove</span>
+<span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a>the last element in the array. It's worth noting that this method</span>
+<span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a>do not change the capacity of the array. It just deletes or erases</span>
+<span id="cb26-188"><a href="#cb26-188" aria-hidden="true" tabindex="-1"></a>the last value stored in the array.</span>
+<span id="cb26-189"><a href="#cb26-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a>Also, this method returns as result the value that got deleted. That is, you can</span>
+<span id="cb26-191"><a href="#cb26-191" aria-hidden="true" tabindex="-1"></a>use this method to both get the last value in the array, and also, remove</span>
+<span id="cb26-192"><a href="#cb26-192" aria-hidden="true" tabindex="-1"></a>it from the array. It's a "get and remove value" type of method.</span>
+<span id="cb26-193"><a href="#cb26-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-198"><a href="#cb26-198" aria-hidden="true" tabindex="-1"></a><span class="in">const exclamation_mark = buffer.pop();</span></span>
+<span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a>Now, if you want to remove specific elements from specific positions</span>
+<span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a>of your array, you can use the <span class="in">`orderedRemove()`</span> method from your</span>
+<span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a><span class="in">`ArrayList`</span> object. With this method, you can provide an index as input,</span>
+<span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a>then, the method will delete the value that is at this index in the array.</span>
+<span id="cb26-205"><a href="#cb26-205" aria-hidden="true" tabindex="-1"></a>You are effectively reducing the *length* of the array everytime you execute</span>
+<span id="cb26-206"><a href="#cb26-206" aria-hidden="true" tabindex="-1"></a>an <span class="in">`orderedRemove()`</span> operation.</span>
+<span id="cb26-207"><a href="#cb26-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-208"><a href="#cb26-208" aria-hidden="true" tabindex="-1"></a>In the example below, we first create an <span class="in">`ArrayList`</span> object, and we fill it</span>
+<span id="cb26-209"><a href="#cb26-209" aria-hidden="true" tabindex="-1"></a>with numbers. Then, we use <span class="in">`orderedRemove()`</span> to remove the value at</span>
+<span id="cb26-210"><a href="#cb26-210" aria-hidden="true" tabindex="-1"></a>index 3 in the array, two consecutive times.</span>
+<span id="cb26-211"><a href="#cb26-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a>Also, notice that we are assigning the result of <span class="in">`orderedRemove()`</span> to the</span>
+<span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a>underscore character. So we are discarding the result value of this method.</span>
+<span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a>The <span class="in">`orderedRemove()`</span> method returns the value that got deleted, in a similar</span>
+<span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a>style to the <span class="in">`pop()`</span> method.</span>
+<span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-220"><a href="#cb26-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-221"><a href="#cb26-221" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: true</span></span>
+<span id="cb26-222"><a href="#cb26-222" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb26-223"><a href="#cb26-223" aria-hidden="true" tabindex="-1"></a><span class="in">var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a><span class="in">const allocator = gpa.allocator();</span></span>
+<span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a><span class="in">var buffer = try std.ArrayList(u8)</span></span>
+<span id="cb26-226"><a href="#cb26-226" aria-hidden="true" tabindex="-1"></a><span class="in">    .initCapacity(allocator, 100);</span></span>
+<span id="cb26-227"><a href="#cb26-227" aria-hidden="true" tabindex="-1"></a><span class="in">defer buffer.deinit();</span></span>
+<span id="cb26-228"><a href="#cb26-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-229"><a href="#cb26-229" aria-hidden="true" tabindex="-1"></a><span class="in">for (0..10) |i| {</span></span>
+<span id="cb26-230"><a href="#cb26-230" aria-hidden="true" tabindex="-1"></a><span class="in">    const index: u8 = @intCast(i);</span></span>
+<span id="cb26-231"><a href="#cb26-231" aria-hidden="true" tabindex="-1"></a><span class="in">    try buffer.append(index);</span></span>
+<span id="cb26-232"><a href="#cb26-232" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-233"><a href="#cb26-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-234"><a href="#cb26-234" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print(</span></span>
+<span id="cb26-235"><a href="#cb26-235" aria-hidden="true" tabindex="-1"></a><span class="in">    "{any}\n", .{buffer.items}</span></span>
+<span id="cb26-236"><a href="#cb26-236" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb26-237"><a href="#cb26-237" aria-hidden="true" tabindex="-1"></a><span class="in">_ = buffer.orderedRemove(3);</span></span>
+<span id="cb26-238"><a href="#cb26-238" aria-hidden="true" tabindex="-1"></a><span class="in">_ = buffer.orderedRemove(3);</span></span>
+<span id="cb26-239"><a href="#cb26-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-240"><a href="#cb26-240" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print("{any}\n", .{buffer.items});</span></span>
+<span id="cb26-241"><a href="#cb26-241" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print("{any}\n", .{buffer.items.len});</span></span>
+<span id="cb26-242"><a href="#cb26-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-243"><a href="#cb26-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-244"><a href="#cb26-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-245"><a href="#cb26-245" aria-hidden="true" tabindex="-1"></a><span class="in">{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</span></span>
+<span id="cb26-246"><a href="#cb26-246" aria-hidden="true" tabindex="-1"></a><span class="in">{ 0, 1, 2, 5, 6, 7, 8, 9 }</span></span>
+<span id="cb26-247"><a href="#cb26-247" aria-hidden="true" tabindex="-1"></a><span class="in">8</span></span>
+<span id="cb26-248"><a href="#cb26-248" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-249"><a href="#cb26-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-250"><a href="#cb26-250" aria-hidden="true" tabindex="-1"></a>One key characteristic about <span class="in">`orderedRemove()`</span> is that it preserves the order</span>
+<span id="cb26-251"><a href="#cb26-251" aria-hidden="true" tabindex="-1"></a>of the values in the array. So, it deletes the value that you asked it to</span>
+<span id="cb26-252"><a href="#cb26-252" aria-hidden="true" tabindex="-1"></a>remove, but it also makes sure that the order of the values that remain in the array</span>
+<span id="cb26-253"><a href="#cb26-253" aria-hidden="true" tabindex="-1"></a>stay the same as before.</span>
+<span id="cb26-254"><a href="#cb26-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-255"><a href="#cb26-255" aria-hidden="true" tabindex="-1"></a>Now, if you don't care about the order of the values, for example, maybe you want to treat</span>
+<span id="cb26-256"><a href="#cb26-256" aria-hidden="true" tabindex="-1"></a>your dynamic array as a set of values, like the <span class="in">`std::unordered_set`</span></span>
+<span id="cb26-257"><a href="#cb26-257" aria-hidden="true" tabindex="-1"></a>structure from C++, you can use the <span class="in">`swapRemove()`</span> method instead. This method</span>
+<span id="cb26-258"><a href="#cb26-258" aria-hidden="true" tabindex="-1"></a>works similarly to the <span class="in">`orderedRemove()`</span> method. You give an index to this</span>
+<span id="cb26-259"><a href="#cb26-259" aria-hidden="true" tabindex="-1"></a>method, then, it deletes the value that is at this index in the array.</span>
+<span id="cb26-260"><a href="#cb26-260" aria-hidden="true" tabindex="-1"></a>But this method does not preserve the original order of the values that remain</span>
+<span id="cb26-261"><a href="#cb26-261" aria-hidden="true" tabindex="-1"></a>in the array. As a result, <span class="in">`swapRemove()`</span> is, in general, faster than <span class="in">`orderedRemove()`</span>.</span>
+<span id="cb26-262"><a href="#cb26-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-263"><a href="#cb26-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-264"><a href="#cb26-264" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inserting elements at specific indexes</span></span>
+<span id="cb26-265"><a href="#cb26-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-266"><a href="#cb26-266" aria-hidden="true" tabindex="-1"></a>When you need to insert values in the middle of your array,</span>
+<span id="cb26-267"><a href="#cb26-267" aria-hidden="true" tabindex="-1"></a>instead of just appending them to the end of the array, you need to use</span>
+<span id="cb26-268"><a href="#cb26-268" aria-hidden="true" tabindex="-1"></a>the <span class="in">`insert()`</span> and <span class="in">`insertSlice()`</span> methods, instead of</span>
+<span id="cb26-269"><a href="#cb26-269" aria-hidden="true" tabindex="-1"></a>the <span class="in">`append()`</span> and <span class="in">`appendSlice()`</span> methods.</span>
+<span id="cb26-270"><a href="#cb26-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-271"><a href="#cb26-271" aria-hidden="true" tabindex="-1"></a>These two methods work very similarly to <span class="in">`insert()`</span> and <span class="in">`insert_range()`</span></span>
+<span id="cb26-272"><a href="#cb26-272" aria-hidden="true" tabindex="-1"></a>from the C++ <span class="in">`std::vector`</span> class. You provide an index to these methods,</span>
+<span id="cb26-273"><a href="#cb26-273" aria-hidden="true" tabindex="-1"></a>and they insert the values that you provide at that index in the array.</span>
+<span id="cb26-274"><a href="#cb26-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-277"><a href="#cb26-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-278"><a href="#cb26-278" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: true</span></span>
+<span id="cb26-279"><a href="#cb26-279" aria-hidden="true" tabindex="-1"></a><span class="in">var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-280"><a href="#cb26-280" aria-hidden="true" tabindex="-1"></a><span class="in">const allocator = gpa.allocator();</span></span>
+<span id="cb26-281"><a href="#cb26-281" aria-hidden="true" tabindex="-1"></a><span class="in">var buffer = try std.ArrayList(u8)</span></span>
+<span id="cb26-282"><a href="#cb26-282" aria-hidden="true" tabindex="-1"></a><span class="in">    .initCapacity(allocator, 10);</span></span>
+<span id="cb26-283"><a href="#cb26-283" aria-hidden="true" tabindex="-1"></a><span class="in">defer buffer.deinit();</span></span>
+<span id="cb26-284"><a href="#cb26-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-285"><a href="#cb26-285" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.appendSlice("My Pedro");</span></span>
+<span id="cb26-286"><a href="#cb26-286" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.insert(4, '3');</span></span>
+<span id="cb26-287"><a href="#cb26-287" aria-hidden="true" tabindex="-1"></a><span class="in">try buffer.insertSlice(2, " name");</span></span>
+<span id="cb26-288"><a href="#cb26-288" aria-hidden="true" tabindex="-1"></a><span class="in">for (buffer.items) |char| {</span></span>
+<span id="cb26-289"><a href="#cb26-289" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("{c}", .{char});</span></span>
+<span id="cb26-290"><a href="#cb26-290" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-291"><a href="#cb26-291" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-292"><a href="#cb26-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-293"><a href="#cb26-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-294"><a href="#cb26-294" aria-hidden="true" tabindex="-1"></a><span class="in">My name P3edro</span></span>
+<span id="cb26-295"><a href="#cb26-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-296"><a href="#cb26-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-297"><a href="#cb26-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-298"><a href="#cb26-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conclusion</span></span>
+<span id="cb26-299"><a href="#cb26-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-300"><a href="#cb26-300" aria-hidden="true" tabindex="-1"></a>If you feel the lack of some other method, I recommend</span>
+<span id="cb26-301"><a href="#cb26-301" aria-hidden="true" tabindex="-1"></a>you to read the <span class="co">[</span><span class="ot">official documentation for the `ArrayListAligned`</span><span class="co">](https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned)</span><span class="ot">[^zig-array2]</span></span>
+<span id="cb26-302"><a href="#cb26-302" aria-hidden="true" tabindex="-1"></a>struct, which describes most of the methods available</span>
+<span id="cb26-303"><a href="#cb26-303" aria-hidden="true" tabindex="-1"></a>through the <span class="in">`ArrayList`</span> object.</span>
+<span id="cb26-304"><a href="#cb26-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-305"><a href="#cb26-305" aria-hidden="true" tabindex="-1"></a>You will notice that there is a lot of other methods in this page that</span>
+<span id="cb26-306"><a href="#cb26-306" aria-hidden="true" tabindex="-1"></a>I did not described here, and I recommend you to explore these methods,</span>
+<span id="cb26-307"><a href="#cb26-307" aria-hidden="true" tabindex="-1"></a>and understand how they work.</span>
+<span id="cb26-308"><a href="#cb26-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-309"><a href="#cb26-309" aria-hidden="true" tabindex="-1"></a><span class="ot">[^zig-array2]: &lt;https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned&gt;</span></span>
+<span id="cb26-310"><a href="#cb26-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-311"><a href="#cb26-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-312"><a href="#cb26-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-313"><a href="#cb26-313" aria-hidden="true" tabindex="-1"></a><span class="fu">## Maps or HashTables {#sec-maps-hashtables}</span></span>
+<span id="cb26-314"><a href="#cb26-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-315"><a href="#cb26-315" aria-hidden="true" tabindex="-1"></a>Some professionals know this type of data structure by different terms, like "map",</span>
+<span id="cb26-316"><a href="#cb26-316" aria-hidden="true" tabindex="-1"></a>"hashmap" or "associative arrays". But the most common term used is *hashtable*.</span>
+<span id="cb26-317"><a href="#cb26-317" aria-hidden="true" tabindex="-1"></a>Every programming language normally have some implementation of a hashtable in their</span>
+<span id="cb26-318"><a href="#cb26-318" aria-hidden="true" tabindex="-1"></a>standard libraries. Python have <span class="in">`dict()`</span>, C++ have <span class="in">`std::map`</span> and <span class="in">`std::unordered_map`</span>, Rust</span>
+<span id="cb26-319"><a href="#cb26-319" aria-hidden="true" tabindex="-1"></a>have <span class="in">`HashMap`</span>, Javascript have <span class="in">`Object()`</span> and <span class="in">`Map()`</span>, etc.</span>
+<span id="cb26-320"><a href="#cb26-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-321"><a href="#cb26-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-322"><a href="#cb26-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-323"><a href="#cb26-323" aria-hidden="true" tabindex="-1"></a><span class="fu">### What is a hashtable?</span></span>
+<span id="cb26-324"><a href="#cb26-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-325"><a href="#cb26-325" aria-hidden="true" tabindex="-1"></a>A hashtable is a data structure based on key-value pairs.</span>
+<span id="cb26-326"><a href="#cb26-326" aria-hidden="true" tabindex="-1"></a>You provide a key and a value to this structure, then, the hashtable will store</span>
+<span id="cb26-327"><a href="#cb26-327" aria-hidden="true" tabindex="-1"></a>the input value at a location that can be identified by the input</span>
+<span id="cb26-328"><a href="#cb26-328" aria-hidden="true" tabindex="-1"></a>key that you provided.</span>
+<span id="cb26-329"><a href="#cb26-329" aria-hidden="true" tabindex="-1"></a>It does that by using an underlying array and a hash function.</span>
+<span id="cb26-330"><a href="#cb26-330" aria-hidden="true" tabindex="-1"></a>These two components are essential to how a hashtable works.</span>
+<span id="cb26-331"><a href="#cb26-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-332"><a href="#cb26-332" aria-hidden="true" tabindex="-1"></a>Under the hood, the hashtable contains an array. This array is where the values</span>
+<span id="cb26-333"><a href="#cb26-333" aria-hidden="true" tabindex="-1"></a>are stored, and the elements of this array are usually called of *buckets*.</span>
+<span id="cb26-334"><a href="#cb26-334" aria-hidden="true" tabindex="-1"></a>So the values that you provide to the hashtable are stored inside buckets,</span>
+<span id="cb26-335"><a href="#cb26-335" aria-hidden="true" tabindex="-1"></a>and you access each bucket by using an index.</span>
+<span id="cb26-336"><a href="#cb26-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-337"><a href="#cb26-337" aria-hidden="true" tabindex="-1"></a>When you provide a key to a hashtable, it passes this key to the</span>
+<span id="cb26-338"><a href="#cb26-338" aria-hidden="true" tabindex="-1"></a>hash function. This hash function uses some sort of hashing algorithm to transform</span>
+<span id="cb26-339"><a href="#cb26-339" aria-hidden="true" tabindex="-1"></a>this key into an index. This index is actually an array index. It's a position</span>
+<span id="cb26-340"><a href="#cb26-340" aria-hidden="true" tabindex="-1"></a>in the underlying array of the hashtable.</span>
+<span id="cb26-341"><a href="#cb26-341" aria-hidden="true" tabindex="-1"></a>This is how a key identifies a specific position (or location) inside the hashtable</span>
+<span id="cb26-342"><a href="#cb26-342" aria-hidden="true" tabindex="-1"></a>structure.</span>
+<span id="cb26-343"><a href="#cb26-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-344"><a href="#cb26-344" aria-hidden="true" tabindex="-1"></a>Therefore, you provide a key to the hashtable, and this key identifies a specific location</span>
+<span id="cb26-345"><a href="#cb26-345" aria-hidden="true" tabindex="-1"></a>inside the hashtable, then, the hashtable takes the input value that you provided,</span>
+<span id="cb26-346"><a href="#cb26-346" aria-hidden="true" tabindex="-1"></a>and stores this value in the location identified by this input key.</span>
+<span id="cb26-347"><a href="#cb26-347" aria-hidden="true" tabindex="-1"></a>You could say that the key maps to the value stored in the hashtable. You find</span>
+<span id="cb26-348"><a href="#cb26-348" aria-hidden="true" tabindex="-1"></a>the value, by using the key that identifies the location where the value is stored.</span>
+<span id="cb26-349"><a href="#cb26-349" aria-hidden="true" tabindex="-1"></a>The @fig-hashtable presents this process visually.</span>
+<span id="cb26-350"><a href="#cb26-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-351"><a href="#cb26-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-352"><a href="#cb26-352" aria-hidden="true" tabindex="-1"></a><span class="al">![A diagram of a Hashtable. Source: Wikipedia, the free encyclopedia.](./../Figures/hashtable.svg)</span>{#fig-hashtable}</span>
+<span id="cb26-353"><a href="#cb26-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-354"><a href="#cb26-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-355"><a href="#cb26-355" aria-hidden="true" tabindex="-1"></a>The operation described in the previous paragraph is normally called an *insertion* operation.</span>
+<span id="cb26-356"><a href="#cb26-356" aria-hidden="true" tabindex="-1"></a>Because you are inserting new values into the hashtable.</span>
+<span id="cb26-357"><a href="#cb26-357" aria-hidden="true" tabindex="-1"></a>But there are other types of operations in hashtables such as *delete* and *lookup*.</span>
+<span id="cb26-358"><a href="#cb26-358" aria-hidden="true" tabindex="-1"></a>Delete is self describing, it's when you delete (or remove) a value from the hashtable.</span>
+<span id="cb26-359"><a href="#cb26-359" aria-hidden="true" tabindex="-1"></a>While lookup corresponds to when you look at a value that is stored in</span>
+<span id="cb26-360"><a href="#cb26-360" aria-hidden="true" tabindex="-1"></a>the hashtable, by using the key that identifies the location where this value is stored.</span>
+<span id="cb26-361"><a href="#cb26-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-362"><a href="#cb26-362" aria-hidden="true" tabindex="-1"></a>Sometimes, instead of storing the values directly, the underlying array of the hashtable might be an array of pointers,</span>
+<span id="cb26-363"><a href="#cb26-363" aria-hidden="true" tabindex="-1"></a>i.e., the buckets of the array stores pointers that points to the value,</span>
+<span id="cb26-364"><a href="#cb26-364" aria-hidden="true" tabindex="-1"></a>or also, may be an array of linked lists.</span>
+<span id="cb26-365"><a href="#cb26-365" aria-hidden="true" tabindex="-1"></a>These cases are common on hashtables that allows duplicate keys, or, in other words,</span>
+<span id="cb26-366"><a href="#cb26-366" aria-hidden="true" tabindex="-1"></a>on hashtables that effectively handle "collisions" that may arise from the hash function.</span>
+<span id="cb26-367"><a href="#cb26-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-368"><a href="#cb26-368" aria-hidden="true" tabindex="-1"></a>Duplicate keys, or this "collision" thing that I'm talking about, is when you have two different keys</span>
+<span id="cb26-369"><a href="#cb26-369" aria-hidden="true" tabindex="-1"></a>that points to the same location (i.e., to the same index)</span>
+<span id="cb26-370"><a href="#cb26-370" aria-hidden="true" tabindex="-1"></a>in the underlying array of the hashtable. This might happen depending on the characteristics of the hash function</span>
+<span id="cb26-371"><a href="#cb26-371" aria-hidden="true" tabindex="-1"></a>that is being used in the hashtable. Some implementations of the hashtable will actively deal with collisions,</span>
+<span id="cb26-372"><a href="#cb26-372" aria-hidden="true" tabindex="-1"></a>meaning that, they will handle this case in some way. For example, the hashtable</span>
+<span id="cb26-373"><a href="#cb26-373" aria-hidden="true" tabindex="-1"></a>might transform all buckets into linked lists. Because with a linked list you can store</span>
+<span id="cb26-374"><a href="#cb26-374" aria-hidden="true" tabindex="-1"></a>multiple values into a single bucket.</span>
+<span id="cb26-375"><a href="#cb26-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-376"><a href="#cb26-376" aria-hidden="true" tabindex="-1"></a>There are different techniques to handle collisions in hashtables, which I will not describe</span>
+<span id="cb26-377"><a href="#cb26-377" aria-hidden="true" tabindex="-1"></a>in this book, because it's not our main scope here. But you can find a good description of</span>
+<span id="cb26-378"><a href="#cb26-378" aria-hidden="true" tabindex="-1"></a>some of the most common techniques at the Wikipedia page of hashtables <span class="co">[</span><span class="ot">@wikipedia_hashtables</span><span class="co">]</span>.</span>
+<span id="cb26-379"><a href="#cb26-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-380"><a href="#cb26-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-381"><a href="#cb26-381" aria-hidden="true" tabindex="-1"></a><span class="fu">### Hashtables in Zig {#sec-hashmap}</span></span>
+<span id="cb26-382"><a href="#cb26-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-383"><a href="#cb26-383" aria-hidden="true" tabindex="-1"></a>The Zig Standard Library provides different implementations of a hashtable.</span>
+<span id="cb26-384"><a href="#cb26-384" aria-hidden="true" tabindex="-1"></a>Each implementation have its own cons and pros, which we will</span>
+<span id="cb26-385"><a href="#cb26-385" aria-hidden="true" tabindex="-1"></a>discuss later on, and all of them are available through the <span class="in">`std.hash_map`</span> module.</span>
+<span id="cb26-386"><a href="#cb26-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-387"><a href="#cb26-387" aria-hidden="true" tabindex="-1"></a>The <span class="in">`HashMap`</span> struct is a general-purpose hashtable,</span>
+<span id="cb26-388"><a href="#cb26-388" aria-hidden="true" tabindex="-1"></a>which have very fast operations (lookup, insertion, delete), and also,</span>
+<span id="cb26-389"><a href="#cb26-389" aria-hidden="true" tabindex="-1"></a>quite high load factors for low memory usage. You can create and provide a context object</span>
+<span id="cb26-390"><a href="#cb26-390" aria-hidden="true" tabindex="-1"></a>to the <span class="in">`HashMap`</span> constructor. This context object allows you to tailor</span>
+<span id="cb26-391"><a href="#cb26-391" aria-hidden="true" tabindex="-1"></a>the behaviour of the hashtable itself, because you can</span>
+<span id="cb26-392"><a href="#cb26-392" aria-hidden="true" tabindex="-1"></a>provide a hash function implementation to be used by the hashtable</span>
+<span id="cb26-393"><a href="#cb26-393" aria-hidden="true" tabindex="-1"></a>through this context object.</span>
+<span id="cb26-394"><a href="#cb26-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-395"><a href="#cb26-395" aria-hidden="true" tabindex="-1"></a>But let's not worry about this context object now, because it's meant to be used</span>
+<span id="cb26-396"><a href="#cb26-396" aria-hidden="true" tabindex="-1"></a>by "experts in the field of hashtables". Since we are most likely not</span>
+<span id="cb26-397"><a href="#cb26-397" aria-hidden="true" tabindex="-1"></a>experts in this field, we are going to take the easy way to create</span>
+<span id="cb26-398"><a href="#cb26-398" aria-hidden="true" tabindex="-1"></a>a hashtable. Which is by using the <span class="in">`AutoHashMap()`</span> function.</span>
+<span id="cb26-399"><a href="#cb26-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-400"><a href="#cb26-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-401"><a href="#cb26-401" aria-hidden="true" tabindex="-1"></a>This <span class="in">`AutoHashMap()`</span> function is essentially a "create a hashtable object that uses the default settings"</span>
+<span id="cb26-402"><a href="#cb26-402" aria-hidden="true" tabindex="-1"></a>type of function. It automatically chooses a context object, and, therefore, a hash function implementation,</span>
+<span id="cb26-403"><a href="#cb26-403" aria-hidden="true" tabindex="-1"></a>for you. This function receives two data types as input, the first input is the data type of the keys</span>
+<span id="cb26-404"><a href="#cb26-404" aria-hidden="true" tabindex="-1"></a>that will be used in this hashtable, while the second input is the data type of the data that will be</span>
+<span id="cb26-405"><a href="#cb26-405" aria-hidden="true" tabindex="-1"></a>stored inside the hashtable, that is, the data type of the values to be stored.</span>
+<span id="cb26-406"><a href="#cb26-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-407"><a href="#cb26-407" aria-hidden="true" tabindex="-1"></a>In the example below, we are providing the data type <span class="in">`u32`</span> in the first argument, and <span class="in">`u16`</span> in the second argument of this</span>
+<span id="cb26-408"><a href="#cb26-408" aria-hidden="true" tabindex="-1"></a>function. This means that we are going to use <span class="in">`u32`</span> values as keys in this hashtable, while <span class="in">`u16`</span> values are the actual values</span>
+<span id="cb26-409"><a href="#cb26-409" aria-hidden="true" tabindex="-1"></a>that are going to be stored into this hashtable.</span>
+<span id="cb26-410"><a href="#cb26-410" aria-hidden="true" tabindex="-1"></a>At the end of this process, the <span class="in">`hash_table`</span> object contains a <span class="in">`HashMap`</span> object</span>
+<span id="cb26-411"><a href="#cb26-411" aria-hidden="true" tabindex="-1"></a>that uses the default settings and context.</span>
+<span id="cb26-412"><a href="#cb26-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-413"><a href="#cb26-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-416"><a href="#cb26-416" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-417"><a href="#cb26-417" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb26-418"><a href="#cb26-418" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb26-419"><a href="#cb26-419" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb26-420"><a href="#cb26-420" aria-hidden="true" tabindex="-1"></a><span class="in">const AutoHashMap = std.hash_map.AutoHashMap;</span></span>
+<span id="cb26-421"><a href="#cb26-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-422"><a href="#cb26-422" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb26-423"><a href="#cb26-423" aria-hidden="true" tabindex="-1"></a><span class="in">    var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-424"><a href="#cb26-424" aria-hidden="true" tabindex="-1"></a><span class="in">    const allocator = gpa.allocator();</span></span>
+<span id="cb26-425"><a href="#cb26-425" aria-hidden="true" tabindex="-1"></a><span class="in">    var hash_table = AutoHashMap(u32, u16).init(allocator);</span></span>
+<span id="cb26-426"><a href="#cb26-426" aria-hidden="true" tabindex="-1"></a><span class="in">    defer hash_table.deinit();</span></span>
+<span id="cb26-427"><a href="#cb26-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-428"><a href="#cb26-428" aria-hidden="true" tabindex="-1"></a><span class="in">    try hash_table.put(54321, 89);</span></span>
+<span id="cb26-429"><a href="#cb26-429" aria-hidden="true" tabindex="-1"></a><span class="in">    try hash_table.put(50050, 55);</span></span>
+<span id="cb26-430"><a href="#cb26-430" aria-hidden="true" tabindex="-1"></a><span class="in">    try hash_table.put(57709, 41);</span></span>
+<span id="cb26-431"><a href="#cb26-431" aria-hidden="true" tabindex="-1"></a><span class="in">    std.debug.print(</span></span>
+<span id="cb26-432"><a href="#cb26-432" aria-hidden="true" tabindex="-1"></a><span class="in">        "N of values stored: {d}\n",</span></span>
+<span id="cb26-433"><a href="#cb26-433" aria-hidden="true" tabindex="-1"></a><span class="in">        .{hash_table.count()}</span></span>
+<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb26-435"><a href="#cb26-435" aria-hidden="true" tabindex="-1"></a><span class="in">    std.debug.print(</span></span>
+<span id="cb26-436"><a href="#cb26-436" aria-hidden="true" tabindex="-1"></a><span class="in">        "Value at key 50050: {d}\n",</span></span>
+<span id="cb26-437"><a href="#cb26-437" aria-hidden="true" tabindex="-1"></a><span class="in">        .{hash_table.get(50050).?}</span></span>
+<span id="cb26-438"><a href="#cb26-438" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb26-439"><a href="#cb26-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-440"><a href="#cb26-440" aria-hidden="true" tabindex="-1"></a><span class="in">    if (hash_table.remove(57709)) {</span></span>
+<span id="cb26-441"><a href="#cb26-441" aria-hidden="true" tabindex="-1"></a><span class="in">        std.debug.print(</span></span>
+<span id="cb26-442"><a href="#cb26-442" aria-hidden="true" tabindex="-1"></a><span class="in">            "Value at key 57709 successfully removed!\n",</span></span>
+<span id="cb26-443"><a href="#cb26-443" aria-hidden="true" tabindex="-1"></a><span class="in">            .{}</span></span>
+<span id="cb26-444"><a href="#cb26-444" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
+<span id="cb26-445"><a href="#cb26-445" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb26-446"><a href="#cb26-446" aria-hidden="true" tabindex="-1"></a><span class="in">    std.debug.print(</span></span>
+<span id="cb26-447"><a href="#cb26-447" aria-hidden="true" tabindex="-1"></a><span class="in">        "N of values stored: {d}\n",</span></span>
+<span id="cb26-448"><a href="#cb26-448" aria-hidden="true" tabindex="-1"></a><span class="in">        .{hash_table.count()}</span></span>
+<span id="cb26-449"><a href="#cb26-449" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb26-450"><a href="#cb26-450" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-451"><a href="#cb26-451" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-452"><a href="#cb26-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-453"><a href="#cb26-453" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-454"><a href="#cb26-454" aria-hidden="true" tabindex="-1"></a><span class="in">N of values stored: 3</span></span>
+<span id="cb26-455"><a href="#cb26-455" aria-hidden="true" tabindex="-1"></a><span class="in">Value at key 50050: 55</span></span>
+<span id="cb26-456"><a href="#cb26-456" aria-hidden="true" tabindex="-1"></a><span class="in">Value at key 57709 successfully removed!</span></span>
+<span id="cb26-457"><a href="#cb26-457" aria-hidden="true" tabindex="-1"></a><span class="in">N of values stored: 2</span></span>
+<span id="cb26-458"><a href="#cb26-458" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-459"><a href="#cb26-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-460"><a href="#cb26-460" aria-hidden="true" tabindex="-1"></a>You can add/put new values into the hashtable by using the <span class="in">`put()`</span> method. The first argument</span>
+<span id="cb26-461"><a href="#cb26-461" aria-hidden="true" tabindex="-1"></a>is the key to be used, and the second argument is the actual value that you want to store inside</span>
+<span id="cb26-462"><a href="#cb26-462" aria-hidden="true" tabindex="-1"></a>the hashtable. In the example below, we first add the value 89 using the key 54321, next, we add</span>
+<span id="cb26-463"><a href="#cb26-463" aria-hidden="true" tabindex="-1"></a>the value 55 using the key 50050, etc.</span>
+<span id="cb26-464"><a href="#cb26-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-465"><a href="#cb26-465" aria-hidden="true" tabindex="-1"></a>Notice that we have used the method <span class="in">`count()`</span> to see how many values are currently stored in the</span>
+<span id="cb26-466"><a href="#cb26-466" aria-hidden="true" tabindex="-1"></a>hashtable. After that, we also use the <span class="in">`get()`</span> method to access (or look) at the value stored in</span>
+<span id="cb26-467"><a href="#cb26-467" aria-hidden="true" tabindex="-1"></a>the position identified by the key 500050. The output of this <span class="in">`get()`</span> method is an optional value.</span>
+<span id="cb26-468"><a href="#cb26-468" aria-hidden="true" tabindex="-1"></a>This is why we use the <span class="in">`?`</span> method at the end to get the actual value.</span>
+<span id="cb26-469"><a href="#cb26-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-470"><a href="#cb26-470" aria-hidden="true" tabindex="-1"></a>Also notice that we can remove (or delete) values from the hashtable by using the <span class="in">`remove()`</span> method.</span>
+<span id="cb26-471"><a href="#cb26-471" aria-hidden="true" tabindex="-1"></a>You provide the key that identifies the value that you want to delete, then, the method will</span>
+<span id="cb26-472"><a href="#cb26-472" aria-hidden="true" tabindex="-1"></a>delete this value and return a <span class="in">`true`</span> value as output. This <span class="in">`true`</span> value essentially tells us</span>
+<span id="cb26-473"><a href="#cb26-473" aria-hidden="true" tabindex="-1"></a>that the method successfully deleted the value.</span>
+<span id="cb26-474"><a href="#cb26-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-475"><a href="#cb26-475" aria-hidden="true" tabindex="-1"></a>But this delete operation might not be always successful. For example, you might provide the wrong</span>
+<span id="cb26-476"><a href="#cb26-476" aria-hidden="true" tabindex="-1"></a>key to this method. I mean, maybe you provide</span>
+<span id="cb26-477"><a href="#cb26-477" aria-hidden="true" tabindex="-1"></a>(either intentionally or unintentionally) a key that points to an empty bucket,</span>
+<span id="cb26-478"><a href="#cb26-478" aria-hidden="true" tabindex="-1"></a>i.e., a bucket that still doesn't have a value in it.</span>
+<span id="cb26-479"><a href="#cb26-479" aria-hidden="true" tabindex="-1"></a>In this case, the <span class="in">`remove()`</span> method would return a <span class="in">`false`</span> value.</span>
+<span id="cb26-480"><a href="#cb26-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-481"><a href="#cb26-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-482"><a href="#cb26-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-483"><a href="#cb26-483" aria-hidden="true" tabindex="-1"></a><span class="fu">### Iterating through the hashtable</span></span>
+<span id="cb26-484"><a href="#cb26-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-485"><a href="#cb26-485" aria-hidden="true" tabindex="-1"></a>Iterating through the keys and values that are currently being stored in</span>
+<span id="cb26-486"><a href="#cb26-486" aria-hidden="true" tabindex="-1"></a>the hashtable is a very common necessity.</span>
+<span id="cb26-487"><a href="#cb26-487" aria-hidden="true" tabindex="-1"></a>You can do that in Zig by using an iterator object that can iterate</span>
+<span id="cb26-488"><a href="#cb26-488" aria-hidden="true" tabindex="-1"></a>through the elements of your hashtable object.</span>
+<span id="cb26-489"><a href="#cb26-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-490"><a href="#cb26-490" aria-hidden="true" tabindex="-1"></a>This iterator object works like any other iterator object that you would</span>
+<span id="cb26-491"><a href="#cb26-491" aria-hidden="true" tabindex="-1"></a>find in languages such as C++ and Rust. It's basically a pointer object</span>
+<span id="cb26-492"><a href="#cb26-492" aria-hidden="true" tabindex="-1"></a>that points to some value in the container, and has a <span class="in">`next()`</span> method</span>
+<span id="cb26-493"><a href="#cb26-493" aria-hidden="true" tabindex="-1"></a>that you can use to navigate (or iterate) through the values in the</span>
+<span id="cb26-494"><a href="#cb26-494" aria-hidden="true" tabindex="-1"></a>container.</span>
+<span id="cb26-495"><a href="#cb26-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-496"><a href="#cb26-496" aria-hidden="true" tabindex="-1"></a>You can create such iterator object by using the <span class="in">`iterator()`</span> method of the hashtable object.</span>
+<span id="cb26-497"><a href="#cb26-497" aria-hidden="true" tabindex="-1"></a>This method returns an iterator object, from which you can use the <span class="in">`next()`</span> method in conjunction</span>
+<span id="cb26-498"><a href="#cb26-498" aria-hidden="true" tabindex="-1"></a>with a while loop to iterate through the elements of your hashtable. The <span class="in">`next()`</span> method returns an optional</span>
+<span id="cb26-499"><a href="#cb26-499" aria-hidden="true" tabindex="-1"></a><span class="in">`Entry`</span> value, and therefore, you must unwrap this optional value to get the actual <span class="in">`Entry`</span> value</span>
+<span id="cb26-500"><a href="#cb26-500" aria-hidden="true" tabindex="-1"></a>from which you can access the key and also the value identified by this key.</span>
+<span id="cb26-501"><a href="#cb26-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-502"><a href="#cb26-502" aria-hidden="true" tabindex="-1"></a>With this <span class="in">`Entry`</span> value at hand, you can access the key of this current entry by using the <span class="in">`key_ptr`</span></span>
+<span id="cb26-503"><a href="#cb26-503" aria-hidden="true" tabindex="-1"></a>attribute and dereferencing the pointer that lives inside of it, while the value identified by this</span>
+<span id="cb26-504"><a href="#cb26-504" aria-hidden="true" tabindex="-1"></a>key is accessed through the <span class="in">`value_ptr`</span> attribute instead, which is also a pointer to be dereferenced.</span>
+<span id="cb26-505"><a href="#cb26-505" aria-hidden="true" tabindex="-1"></a>The code example below demonstrates the use of these elements:</span>
+<span id="cb26-506"><a href="#cb26-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-507"><a href="#cb26-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-510"><a href="#cb26-510" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-511"><a href="#cb26-511" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb26-512"><a href="#cb26-512" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb26-513"><a href="#cb26-513" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb26-514"><a href="#cb26-514" aria-hidden="true" tabindex="-1"></a><span class="in">const AutoHashMap = std.hash_map.AutoHashMap;</span></span>
+<span id="cb26-515"><a href="#cb26-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-516"><a href="#cb26-516" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb26-517"><a href="#cb26-517" aria-hidden="true" tabindex="-1"></a><span class="in">    var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-518"><a href="#cb26-518" aria-hidden="true" tabindex="-1"></a><span class="in">    const allocator = gpa.allocator();</span></span>
+<span id="cb26-519"><a href="#cb26-519" aria-hidden="true" tabindex="-1"></a><span class="in">    var hash_table = AutoHashMap(u32, u16).init(allocator);</span></span>
+<span id="cb26-520"><a href="#cb26-520" aria-hidden="true" tabindex="-1"></a><span class="in">    defer hash_table.deinit();</span></span>
+<span id="cb26-521"><a href="#cb26-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-522"><a href="#cb26-522" aria-hidden="true" tabindex="-1"></a><span class="in">    try hash_table.put(54321, 89);</span></span>
+<span id="cb26-523"><a href="#cb26-523" aria-hidden="true" tabindex="-1"></a><span class="in">    try hash_table.put(50050, 55);</span></span>
+<span id="cb26-524"><a href="#cb26-524" aria-hidden="true" tabindex="-1"></a><span class="in">    try hash_table.put(57709, 41);</span></span>
+<span id="cb26-525"><a href="#cb26-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-526"><a href="#cb26-526" aria-hidden="true" tabindex="-1"></a><span class="in">    var it = hash_table.iterator();</span></span>
+<span id="cb26-527"><a href="#cb26-527" aria-hidden="true" tabindex="-1"></a><span class="in">    while (it.next()) |kv| {</span></span>
+<span id="cb26-528"><a href="#cb26-528" aria-hidden="true" tabindex="-1"></a><span class="in">        // Access the current key</span></span>
+<span id="cb26-529"><a href="#cb26-529" aria-hidden="true" tabindex="-1"></a><span class="in">        std.debug.print("Key: {d} | ", .{kv.key_ptr.*});</span></span>
+<span id="cb26-530"><a href="#cb26-530" aria-hidden="true" tabindex="-1"></a><span class="in">        // Access the current value</span></span>
+<span id="cb26-531"><a href="#cb26-531" aria-hidden="true" tabindex="-1"></a><span class="in">        std.debug.print("Value: {d}\n", .{kv.value_ptr.*});</span></span>
+<span id="cb26-532"><a href="#cb26-532" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb26-533"><a href="#cb26-533" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-534"><a href="#cb26-534" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-535"><a href="#cb26-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-536"><a href="#cb26-536" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-537"><a href="#cb26-537" aria-hidden="true" tabindex="-1"></a><span class="in">Key: 54321 | Value: 89</span></span>
+<span id="cb26-538"><a href="#cb26-538" aria-hidden="true" tabindex="-1"></a><span class="in">Key: 50050 | Value: 55</span></span>
+<span id="cb26-539"><a href="#cb26-539" aria-hidden="true" tabindex="-1"></a><span class="in">Key: 57709 | Value: 41</span></span>
+<span id="cb26-540"><a href="#cb26-540" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-541"><a href="#cb26-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-542"><a href="#cb26-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-543"><a href="#cb26-543" aria-hidden="true" tabindex="-1"></a>If you want to iterate specifically through the values or the keys of your hashtable,</span>
+<span id="cb26-544"><a href="#cb26-544" aria-hidden="true" tabindex="-1"></a>you can create a key iterator or a value iterator object. These are also iterator</span>
+<span id="cb26-545"><a href="#cb26-545" aria-hidden="true" tabindex="-1"></a>objects, which have the same <span class="in">`next()`</span> method that you can use to iterate through the</span>
+<span id="cb26-546"><a href="#cb26-546" aria-hidden="true" tabindex="-1"></a>hashtable.</span>
+<span id="cb26-547"><a href="#cb26-547" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-548"><a href="#cb26-548" aria-hidden="true" tabindex="-1"></a>Key iterators are created from the <span class="in">`keyIterator()`</span> method of your</span>
+<span id="cb26-549"><a href="#cb26-549" aria-hidden="true" tabindex="-1"></a>hashtable object, while value iterators are created from the <span class="in">`valueIterator()`</span> method.</span>
+<span id="cb26-550"><a href="#cb26-550" aria-hidden="true" tabindex="-1"></a>All you have to do is to unwrap the value from the <span class="in">`next()`</span> method and deference it</span>
+<span id="cb26-551"><a href="#cb26-551" aria-hidden="true" tabindex="-1"></a>directly to access the key or the value that you are iterating over.</span>
+<span id="cb26-552"><a href="#cb26-552" aria-hidden="true" tabindex="-1"></a>The code example below demonstrates the use of a key iterator,</span>
+<span id="cb26-553"><a href="#cb26-553" aria-hidden="true" tabindex="-1"></a>but you can replicate the same logic to a value iterator.</span>
+<span id="cb26-554"><a href="#cb26-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-557"><a href="#cb26-557" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-558"><a href="#cb26-558" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-559"><a href="#cb26-559" aria-hidden="true" tabindex="-1"></a><span class="in">var kit = hash_table.keyIterator();</span></span>
+<span id="cb26-560"><a href="#cb26-560" aria-hidden="true" tabindex="-1"></a><span class="in">while (kit.next()) |key| {</span></span>
+<span id="cb26-561"><a href="#cb26-561" aria-hidden="true" tabindex="-1"></a><span class="in">    std.debug.print("Key: {d}\n", .{key.*});</span></span>
+<span id="cb26-562"><a href="#cb26-562" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-563"><a href="#cb26-563" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-564"><a href="#cb26-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-565"><a href="#cb26-565" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-566"><a href="#cb26-566" aria-hidden="true" tabindex="-1"></a><span class="in">Key: 54321</span></span>
+<span id="cb26-567"><a href="#cb26-567" aria-hidden="true" tabindex="-1"></a><span class="in">Key: 50050</span></span>
+<span id="cb26-568"><a href="#cb26-568" aria-hidden="true" tabindex="-1"></a><span class="in">Key: 57709</span></span>
+<span id="cb26-569"><a href="#cb26-569" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-570"><a href="#cb26-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-571"><a href="#cb26-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-572"><a href="#cb26-572" aria-hidden="true" tabindex="-1"></a><span class="fu">### The `ArrayHashMap` hashtable {#sec-array-map}</span></span>
+<span id="cb26-573"><a href="#cb26-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-574"><a href="#cb26-574" aria-hidden="true" tabindex="-1"></a>If you need to iterate through the elements of your hashtable constantly,</span>
+<span id="cb26-575"><a href="#cb26-575" aria-hidden="true" tabindex="-1"></a>you might want to use the <span class="in">`ArrayHashMap`</span> struct for your specific case,</span>
+<span id="cb26-576"><a href="#cb26-576" aria-hidden="true" tabindex="-1"></a>instead of going with the usual and general-purpose <span class="in">`HashMap`</span> struct.</span>
+<span id="cb26-577"><a href="#cb26-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-578"><a href="#cb26-578" aria-hidden="true" tabindex="-1"></a>The <span class="in">`ArrayHashMap`</span> struct creates a hashtable that is faster to iterate over.</span>
+<span id="cb26-579"><a href="#cb26-579" aria-hidden="true" tabindex="-1"></a>That is why this specific type of hashtable might be valuable to you.</span>
+<span id="cb26-580"><a href="#cb26-580" aria-hidden="true" tabindex="-1"></a>Some other properties of a <span class="in">`ArrayHashMap`</span> hashtable are:</span>
+<span id="cb26-581"><a href="#cb26-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-582"><a href="#cb26-582" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the order of insertion is preserved, i.e., the order of the values that you find while iterating through this hashtable is actually the order in which these values were inserted in the hashtable.</span>
+<span id="cb26-583"><a href="#cb26-583" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the key-value pairs are stored sequentially, one after another.</span>
+<span id="cb26-584"><a href="#cb26-584" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-585"><a href="#cb26-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-586"><a href="#cb26-586" aria-hidden="true" tabindex="-1"></a>You can create an <span class="in">`ArrayHashMap`</span> object by using, once again, a helper function that</span>
+<span id="cb26-587"><a href="#cb26-587" aria-hidden="true" tabindex="-1"></a>chooses automatically for you a hash function implementation. This is the</span>
+<span id="cb26-588"><a href="#cb26-588" aria-hidden="true" tabindex="-1"></a><span class="in">`AutoArrayHashMap()`</span> function, which works very similarly to the <span class="in">`AutoHashMap()`</span></span>
+<span id="cb26-589"><a href="#cb26-589" aria-hidden="true" tabindex="-1"></a>function that we presented in @sec-hashmap.</span>
+<span id="cb26-590"><a href="#cb26-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-591"><a href="#cb26-591" aria-hidden="true" tabindex="-1"></a>You provide two data types to this function. The data type of the keys that will be</span>
+<span id="cb26-592"><a href="#cb26-592" aria-hidden="true" tabindex="-1"></a>used in this hashtable, and the data type of the values that will be stored in</span>
+<span id="cb26-593"><a href="#cb26-593" aria-hidden="true" tabindex="-1"></a>this hashtable.</span>
+<span id="cb26-594"><a href="#cb26-594" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-595"><a href="#cb26-595" aria-hidden="true" tabindex="-1"></a>An <span class="in">`ArrayHashMap`</span> object have essentially the exact same methods from the <span class="in">`HashMap`</span> struct.</span>
+<span id="cb26-596"><a href="#cb26-596" aria-hidden="true" tabindex="-1"></a>So you can insert new values into the hashtable by using the <span class="in">`put()`</span> method, and you can look (or get)</span>
+<span id="cb26-597"><a href="#cb26-597" aria-hidden="true" tabindex="-1"></a>a value from the hashtable by using the <span class="in">`get()`</span> method. But the <span class="in">`remove()`</span> method is not available</span>
+<span id="cb26-598"><a href="#cb26-598" aria-hidden="true" tabindex="-1"></a>in this specific type of hashtable.</span>
+<span id="cb26-599"><a href="#cb26-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-600"><a href="#cb26-600" aria-hidden="true" tabindex="-1"></a>In order to delete values from the hashtable, you would use the same methods that you find in</span>
+<span id="cb26-601"><a href="#cb26-601" aria-hidden="true" tabindex="-1"></a>an <span class="in">`ArrayList`</span> object, i.e., a dynamic array. I presented these methods in @sec-dynamic-array-remove,</span>
+<span id="cb26-602"><a href="#cb26-602" aria-hidden="true" tabindex="-1"></a>which are the <span class="in">`swapRemove()`</span> and <span class="in">`orderedRemove()`</span> methods. These methods have the same meaning here, or,</span>
+<span id="cb26-603"><a href="#cb26-603" aria-hidden="true" tabindex="-1"></a>the same effect that they have in an <span class="in">`ArrayList`</span> object.</span>
+<span id="cb26-604"><a href="#cb26-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-605"><a href="#cb26-605" aria-hidden="true" tabindex="-1"></a>This means that, with <span class="in">`swapRemove()`</span> you remove the value from the hashtable, but you do not preserve</span>
+<span id="cb26-606"><a href="#cb26-606" aria-hidden="true" tabindex="-1"></a>the order in which the values were inserted into the structure. While <span class="in">`orderedRemove()`</span> is able</span>
+<span id="cb26-607"><a href="#cb26-607" aria-hidden="true" tabindex="-1"></a>to retain the order in which these values were inserted.</span>
+<span id="cb26-608"><a href="#cb26-608" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-609"><a href="#cb26-609" aria-hidden="true" tabindex="-1"></a>But instead of providing an index as input to <span class="in">`swapRemove()`</span> or <span class="in">`orderedRemove()`</span>, like I described</span>
+<span id="cb26-610"><a href="#cb26-610" aria-hidden="true" tabindex="-1"></a>in @sec-dynamic-array-remove, these methods here in an <span class="in">`ArrayHashMap`</span> take a key as input, like</span>
+<span id="cb26-611"><a href="#cb26-611" aria-hidden="true" tabindex="-1"></a>the <span class="in">`remove()`</span> method from a <span class="in">`HashMap`</span> object. If you want to provide an index as input, instead</span>
+<span id="cb26-612"><a href="#cb26-612" aria-hidden="true" tabindex="-1"></a>of a key, you should use the <span class="in">`swapRemoveAt()`</span> and <span class="in">`orderedRemoveAt()`</span> methods.</span>
+<span id="cb26-613"><a href="#cb26-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-614"><a href="#cb26-614" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-617"><a href="#cb26-617" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-618"><a href="#cb26-618" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-619"><a href="#cb26-619" aria-hidden="true" tabindex="-1"></a><span class="in">var hash_table = AutoArrayHashMap(u32, u16)</span></span>
+<span id="cb26-620"><a href="#cb26-620" aria-hidden="true" tabindex="-1"></a><span class="in">    .init(allocator);</span></span>
+<span id="cb26-621"><a href="#cb26-621" aria-hidden="true" tabindex="-1"></a><span class="in">defer hash_table.deinit();</span></span>
+<span id="cb26-622"><a href="#cb26-622" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-623"><a href="#cb26-623" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-624"><a href="#cb26-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-625"><a href="#cb26-625" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-626"><a href="#cb26-626" aria-hidden="true" tabindex="-1"></a><span class="fu">### The `StringHashMap` hashtable {#sec-string-hash-map}</span></span>
+<span id="cb26-627"><a href="#cb26-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-628"><a href="#cb26-628" aria-hidden="true" tabindex="-1"></a>One thing that you will notice in the other two types of hashtables that I have</span>
+<span id="cb26-629"><a href="#cb26-629" aria-hidden="true" tabindex="-1"></a>presented over the last sections, is that neither of them accepts a slice data type</span>
+<span id="cb26-630"><a href="#cb26-630" aria-hidden="true" tabindex="-1"></a>in their keys.</span>
+<span id="cb26-631"><a href="#cb26-631" aria-hidden="true" tabindex="-1"></a>What this means is that you cannot use a slice value to represent a key in</span>
+<span id="cb26-632"><a href="#cb26-632" aria-hidden="true" tabindex="-1"></a>these types of hashtable.</span>
+<span id="cb26-633"><a href="#cb26-633" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-634"><a href="#cb26-634" aria-hidden="true" tabindex="-1"></a>The most obvious consequence of this, is that you cannot use strings as keys</span>
+<span id="cb26-635"><a href="#cb26-635" aria-hidden="true" tabindex="-1"></a>in these hashtables. But it's extremely common to use strings as keys</span>
+<span id="cb26-636"><a href="#cb26-636" aria-hidden="true" tabindex="-1"></a>in hashtables.</span>
+<span id="cb26-637"><a href="#cb26-637" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-638"><a href="#cb26-638" aria-hidden="true" tabindex="-1"></a>Take this very simple Javascript code snippet as an example. We are creating</span>
+<span id="cb26-639"><a href="#cb26-639" aria-hidden="true" tabindex="-1"></a>a simple hashtable object named <span class="in">`people`</span>. Then, we add a new entry to this</span>
+<span id="cb26-640"><a href="#cb26-640" aria-hidden="true" tabindex="-1"></a>hashtable, which is identified by the string <span class="in">`'Pedro'`</span>. This string is the</span>
+<span id="cb26-641"><a href="#cb26-641" aria-hidden="true" tabindex="-1"></a>key in this case, while the object containing different personal information such as</span>
+<span id="cb26-642"><a href="#cb26-642" aria-hidden="true" tabindex="-1"></a>age, height and city, is the value to be stored in the hashtable.</span>
+<span id="cb26-643"><a href="#cb26-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-644"><a href="#cb26-644" aria-hidden="true" tabindex="-1"></a><span class="in">```js</span></span>
+<span id="cb26-645"><a href="#cb26-645" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> people <span class="op">=</span> <span class="kw">new</span> <span class="bu">Object</span>()<span class="op">;</span></span>
+<span id="cb26-646"><a href="#cb26-646" aria-hidden="true" tabindex="-1"></a>people[<span class="st">'Pedro'</span>] <span class="op">=</span> {</span>
+<span id="cb26-647"><a href="#cb26-647" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age'</span><span class="op">:</span> <span class="dv">25</span><span class="op">,</span></span>
+<span id="cb26-648"><a href="#cb26-648" aria-hidden="true" tabindex="-1"></a>    <span class="st">'height'</span><span class="op">:</span> <span class="fl">1.67</span><span class="op">,</span></span>
+<span id="cb26-649"><a href="#cb26-649" aria-hidden="true" tabindex="-1"></a>    <span class="st">'city'</span><span class="op">:</span> <span class="st">'Belo Horizonte'</span></span>
+<span id="cb26-650"><a href="#cb26-650" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb26-651"><a href="#cb26-651" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-652"><a href="#cb26-652" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-653"><a href="#cb26-653" aria-hidden="true" tabindex="-1"></a>This pattern of using strings as keys is very common in</span>
+<span id="cb26-654"><a href="#cb26-654" aria-hidden="true" tabindex="-1"></a>all sorts of situations. That is why the Zig Standard Library offers a</span>
+<span id="cb26-655"><a href="#cb26-655" aria-hidden="true" tabindex="-1"></a>specific type of hashtable for this purpose, which is created through the <span class="in">`StringHashMap()`</span> function.</span>
+<span id="cb26-656"><a href="#cb26-656" aria-hidden="true" tabindex="-1"></a>This function creates a hashtable that uses strings as keys. The only input of this</span>
+<span id="cb26-657"><a href="#cb26-657" aria-hidden="true" tabindex="-1"></a>function is the data type of the values that will be stored into this hashtable.</span>
+<span id="cb26-658"><a href="#cb26-658" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-659"><a href="#cb26-659" aria-hidden="true" tabindex="-1"></a>In the example below, I'm creating a hashtable to store the ages of different people.</span>
+<span id="cb26-660"><a href="#cb26-660" aria-hidden="true" tabindex="-1"></a>Each key in this hashtable is represented by the name of each person, while the value stored in the</span>
+<span id="cb26-661"><a href="#cb26-661" aria-hidden="true" tabindex="-1"></a>hashtable is the age of this person identified by the key.</span>
+<span id="cb26-662"><a href="#cb26-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-663"><a href="#cb26-663" aria-hidden="true" tabindex="-1"></a>That is why I provide the <span class="in">`u8`</span> data type (which is the data type used by the age values) as input to this <span class="in">`StringHashMap()`</span> function.</span>
+<span id="cb26-664"><a href="#cb26-664" aria-hidden="true" tabindex="-1"></a>As the result, it creates a hashtable that uses string values as keys, and, that stores</span>
+<span id="cb26-665"><a href="#cb26-665" aria-hidden="true" tabindex="-1"></a><span class="in">`u8`</span> values in it. Notice that an allocator object is provided at the <span class="in">`init()`</span> method of the</span>
+<span id="cb26-666"><a href="#cb26-666" aria-hidden="true" tabindex="-1"></a>resulting object from the <span class="in">`StringHashMap()`</span> function.</span>
+<span id="cb26-667"><a href="#cb26-667" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-670"><a href="#cb26-670" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-671"><a href="#cb26-671" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb26-672"><a href="#cb26-672" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb26-673"><a href="#cb26-673" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb26-674"><a href="#cb26-674" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb26-675"><a href="#cb26-675" aria-hidden="true" tabindex="-1"></a><span class="in">    var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-676"><a href="#cb26-676" aria-hidden="true" tabindex="-1"></a><span class="in">    const allocator = gpa.allocator();</span></span>
+<span id="cb26-677"><a href="#cb26-677" aria-hidden="true" tabindex="-1"></a><span class="in">    var ages = std.StringHashMap(u8).init(allocator);</span></span>
+<span id="cb26-678"><a href="#cb26-678" aria-hidden="true" tabindex="-1"></a><span class="in">    defer ages.deinit();</span></span>
+<span id="cb26-679"><a href="#cb26-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-680"><a href="#cb26-680" aria-hidden="true" tabindex="-1"></a><span class="in">    try ages.put("Pedro", 25);</span></span>
+<span id="cb26-681"><a href="#cb26-681" aria-hidden="true" tabindex="-1"></a><span class="in">    try ages.put("Matheus", 21);</span></span>
+<span id="cb26-682"><a href="#cb26-682" aria-hidden="true" tabindex="-1"></a><span class="in">    try ages.put("Abgail", 42);</span></span>
+<span id="cb26-683"><a href="#cb26-683" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-684"><a href="#cb26-684" aria-hidden="true" tabindex="-1"></a><span class="in">    var it = ages.iterator();</span></span>
+<span id="cb26-685"><a href="#cb26-685" aria-hidden="true" tabindex="-1"></a><span class="in">    while (it.next()) |kv| {</span></span>
+<span id="cb26-686"><a href="#cb26-686" aria-hidden="true" tabindex="-1"></a><span class="in">        std.debug.print("Key: {s} | ", .{kv.key_ptr.*});</span></span>
+<span id="cb26-687"><a href="#cb26-687" aria-hidden="true" tabindex="-1"></a><span class="in">        std.debug.print("Age: {d}\n", .{kv.value_ptr.*});</span></span>
+<span id="cb26-688"><a href="#cb26-688" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb26-689"><a href="#cb26-689" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-690"><a href="#cb26-690" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-691"><a href="#cb26-691" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-692"><a href="#cb26-692" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-693"><a href="#cb26-693" aria-hidden="true" tabindex="-1"></a><span class="in">Key: Pedro | Age: 25</span></span>
+<span id="cb26-694"><a href="#cb26-694" aria-hidden="true" tabindex="-1"></a><span class="in">Key: Abgail | Age: 42</span></span>
+<span id="cb26-695"><a href="#cb26-695" aria-hidden="true" tabindex="-1"></a><span class="in">Key: Matheus | Age: 21</span></span>
+<span id="cb26-696"><a href="#cb26-696" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-697"><a href="#cb26-697" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-698"><a href="#cb26-698" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-699"><a href="#cb26-699" aria-hidden="true" tabindex="-1"></a><span class="fu">### The `StringArrayHashMap` hashtable</span></span>
+<span id="cb26-700"><a href="#cb26-700" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-701"><a href="#cb26-701" aria-hidden="true" tabindex="-1"></a>The Zig Standard Library also provides a type of hashtable that mix the cons and pros of the</span>
+<span id="cb26-702"><a href="#cb26-702" aria-hidden="true" tabindex="-1"></a><span class="in">`StringHashMap`</span> and <span class="in">`ArrayHashMap`</span> together. That is, a hashtable</span>
+<span id="cb26-703"><a href="#cb26-703" aria-hidden="true" tabindex="-1"></a>that uses strings as keys, but also have the advantages from <span class="in">`ArrayHashMap`</span>.</span>
+<span id="cb26-704"><a href="#cb26-704" aria-hidden="true" tabindex="-1"></a>In other words, you can have a hashtable that is fast to iterate over,</span>
+<span id="cb26-705"><a href="#cb26-705" aria-hidden="true" tabindex="-1"></a>that preserves insertion order, and also, that uses strings as keys.</span>
+<span id="cb26-706"><a href="#cb26-706" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-707"><a href="#cb26-707" aria-hidden="true" tabindex="-1"></a>You can create such type of hashtable by using the <span class="in">`StringArrayHashMap()`</span> function.</span>
+<span id="cb26-708"><a href="#cb26-708" aria-hidden="true" tabindex="-1"></a>This function accepts a data type as input, which is the data type of the values that are</span>
+<span id="cb26-709"><a href="#cb26-709" aria-hidden="true" tabindex="-1"></a>going to be stored inside this hashtable, in the same style as the function presented</span>
+<span id="cb26-710"><a href="#cb26-710" aria-hidden="true" tabindex="-1"></a>in @sec-string-hash-map.</span>
+<span id="cb26-711"><a href="#cb26-711" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-712"><a href="#cb26-712" aria-hidden="true" tabindex="-1"></a>You can insert new values into this hashtable by using the same <span class="in">`put()`</span> method that</span>
+<span id="cb26-713"><a href="#cb26-713" aria-hidden="true" tabindex="-1"></a>we have discussed in @sec-string-hash-map. And you can also get values from the hashtable</span>
+<span id="cb26-714"><a href="#cb26-714" aria-hidden="true" tabindex="-1"></a>by using the same <span class="in">`get()`</span> method.</span>
+<span id="cb26-715"><a href="#cb26-715" aria-hidden="true" tabindex="-1"></a>Like its <span class="in">`ArrayHashMap`</span> brother, to delete values from this specific type of hashtable,</span>
+<span id="cb26-716"><a href="#cb26-716" aria-hidden="true" tabindex="-1"></a>we also use the <span class="in">`orderedRemove()`</span> and <span class="in">`swapRemove()`</span> methods, with the same effects that</span>
+<span id="cb26-717"><a href="#cb26-717" aria-hidden="true" tabindex="-1"></a>I have described in @sec-array-map.</span>
+<span id="cb26-718"><a href="#cb26-718" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-719"><a href="#cb26-719" aria-hidden="true" tabindex="-1"></a>If we take the code example that was exposed in @sec-string-hash-map, we can</span>
+<span id="cb26-720"><a href="#cb26-720" aria-hidden="true" tabindex="-1"></a>achieve the exact same result with <span class="in">`StringArrayHashMap()`</span>:</span>
+<span id="cb26-721"><a href="#cb26-721" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-724"><a href="#cb26-724" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-725"><a href="#cb26-725" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-726"><a href="#cb26-726" aria-hidden="true" tabindex="-1"></a><span class="in">var ages = std.StringArrayHashMap(u8).init(allocator);</span></span>
+<span id="cb26-727"><a href="#cb26-727" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-728"><a href="#cb26-728" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-729"><a href="#cb26-729" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-730"><a href="#cb26-730" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-731"><a href="#cb26-731" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-732"><a href="#cb26-732" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linked lists</span></span>
+<span id="cb26-733"><a href="#cb26-733" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-734"><a href="#cb26-734" aria-hidden="true" tabindex="-1"></a>The Zig Standard Library provides an implementation for both singly and doubly linked lists.</span>
+<span id="cb26-735"><a href="#cb26-735" aria-hidden="true" tabindex="-1"></a>A linked list is a linear data structure that looks like a chain, or, a rope.</span>
+<span id="cb26-736"><a href="#cb26-736" aria-hidden="true" tabindex="-1"></a>The main advantage of this data structure is that you normally have very fast</span>
+<span id="cb26-737"><a href="#cb26-737" aria-hidden="true" tabindex="-1"></a>insertion and deletion operations. But, as a disadvantage, iterating through</span>
+<span id="cb26-738"><a href="#cb26-738" aria-hidden="true" tabindex="-1"></a>this data structure is usually not so fast as iterating through an array.</span>
+<span id="cb26-739"><a href="#cb26-739" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-740"><a href="#cb26-740" aria-hidden="true" tabindex="-1"></a>The idea behind a linked list is to build a structure that consists of a sequence of nodes</span>
+<span id="cb26-741"><a href="#cb26-741" aria-hidden="true" tabindex="-1"></a>connected to each other by pointers. This means that linked lists are usually not contiguous</span>
+<span id="cb26-742"><a href="#cb26-742" aria-hidden="true" tabindex="-1"></a>in memory, because each node might be anywhere in memory. They do not need to be close to</span>
+<span id="cb26-743"><a href="#cb26-743" aria-hidden="true" tabindex="-1"></a>one another.</span>
+<span id="cb26-744"><a href="#cb26-744" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-745"><a href="#cb26-745" aria-hidden="true" tabindex="-1"></a>In @fig-linked-list we can see a diagram of a singly linked list. We begin at the first node</span>
+<span id="cb26-746"><a href="#cb26-746" aria-hidden="true" tabindex="-1"></a>(which is usually called "the head of the linked list"). Then, from this</span>
+<span id="cb26-747"><a href="#cb26-747" aria-hidden="true" tabindex="-1"></a>first node we uncover the remaining nodes in the structure, by following the locations pointed</span>
+<span id="cb26-748"><a href="#cb26-748" aria-hidden="true" tabindex="-1"></a>by the pointers found in each node.</span>
+<span id="cb26-749"><a href="#cb26-749" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-750"><a href="#cb26-750" aria-hidden="true" tabindex="-1"></a>Each node has two things in it. It has the value that is stored in the current node</span>
+<span id="cb26-751"><a href="#cb26-751" aria-hidden="true" tabindex="-1"></a>, and also, a pointer. This pointer points to the next node in the list. If this pointer</span>
+<span id="cb26-752"><a href="#cb26-752" aria-hidden="true" tabindex="-1"></a>is null, then, it means that we have reached the end of our linked list.</span>
+<span id="cb26-753"><a href="#cb26-753" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-754"><a href="#cb26-754" aria-hidden="true" tabindex="-1"></a><span class="al">![A diagram of a singly linked list.](./../Figures/linked-list.png)</span>{#fig-linked-list}</span>
+<span id="cb26-755"><a href="#cb26-755" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-756"><a href="#cb26-756" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-757"><a href="#cb26-757" aria-hidden="true" tabindex="-1"></a>In @fig-linked-list2 we can see a diagram of a doubly linked list. The only thing that really</span>
+<span id="cb26-758"><a href="#cb26-758" aria-hidden="true" tabindex="-1"></a>changes now is that every node in the linked list has both a pointer to the previous node,</span>
+<span id="cb26-759"><a href="#cb26-759" aria-hidden="true" tabindex="-1"></a>and, a pointer to the next node. So every node in a doubly linked list has two pointers in it. These are</span>
+<span id="cb26-760"><a href="#cb26-760" aria-hidden="true" tabindex="-1"></a>usually called the <span class="in">`prev`</span> (for "previous") and the <span class="in">`next`</span> (for "next") pointers of the node.</span>
+<span id="cb26-761"><a href="#cb26-761" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-762"><a href="#cb26-762" aria-hidden="true" tabindex="-1"></a>In the singly linked list example, we had only one single pointer in each node, and this singular</span>
+<span id="cb26-763"><a href="#cb26-763" aria-hidden="true" tabindex="-1"></a>pointer was always pointing to the next node in the sequence. This means that singly linked lists</span>
+<span id="cb26-764"><a href="#cb26-764" aria-hidden="true" tabindex="-1"></a>normally have only the <span class="in">`next`</span> pointer in them.</span>
+<span id="cb26-765"><a href="#cb26-765" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-766"><a href="#cb26-766" aria-hidden="true" tabindex="-1"></a><span class="al">![A diagram of a doubly linked list.](./../Figures/doubly-linked-list.png)</span>{#fig-linked-list2}</span>
+<span id="cb26-767"><a href="#cb26-767" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-768"><a href="#cb26-768" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-769"><a href="#cb26-769" aria-hidden="true" tabindex="-1"></a>Linked lists are available in Zig through the functions <span class="in">`SinglyLinkedList()`</span> and</span>
+<span id="cb26-770"><a href="#cb26-770" aria-hidden="true" tabindex="-1"></a><span class="in">`DoublyLinkedList()`</span>, for "singly linked lists" and "doubly linked lists", respectively. These functions are</span>
+<span id="cb26-771"><a href="#cb26-771" aria-hidden="true" tabindex="-1"></a>actually generic functions, which we are going to talk more about in @sec-generic-fun.</span>
+<span id="cb26-772"><a href="#cb26-772" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-773"><a href="#cb26-773" aria-hidden="true" tabindex="-1"></a>For now, just understand that, in order to create a linked list object,</span>
+<span id="cb26-774"><a href="#cb26-774" aria-hidden="true" tabindex="-1"></a>we begin by providing a data type to these functions. This data type defines</span>
+<span id="cb26-775"><a href="#cb26-775" aria-hidden="true" tabindex="-1"></a>the type of data that each node in this linked list will store. In the example below,</span>
+<span id="cb26-776"><a href="#cb26-776" aria-hidden="true" tabindex="-1"></a>we are creating a singly linked list of <span class="in">`u32`</span> values.</span>
+<span id="cb26-777"><a href="#cb26-777" aria-hidden="true" tabindex="-1"></a>So each node in this linked list will store a <span class="in">`u32`</span> value.</span>
+<span id="cb26-778"><a href="#cb26-778" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-779"><a href="#cb26-779" aria-hidden="true" tabindex="-1"></a>Both the <span class="in">`SinglyLinkedList()`</span> and <span class="in">`DoublyLinkedList()`</span> functions returns a type,</span>
+<span id="cb26-780"><a href="#cb26-780" aria-hidden="true" tabindex="-1"></a>i.e., a struct definition, as output. Therefore, the object <span class="in">`Lu32`</span> is actually</span>
+<span id="cb26-781"><a href="#cb26-781" aria-hidden="true" tabindex="-1"></a>a struct definition. It defines the type "singly linked list of <span class="in">`u32`</span> values".</span>
+<span id="cb26-782"><a href="#cb26-782" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-783"><a href="#cb26-783" aria-hidden="true" tabindex="-1"></a>Now that we have the definition of the struct, we need to instantiate a <span class="in">`Lu32`</span> object.</span>
+<span id="cb26-784"><a href="#cb26-784" aria-hidden="true" tabindex="-1"></a>We normally instantiate struct objects in Zig by using an <span class="in">`init()`</span> method.</span>
+<span id="cb26-785"><a href="#cb26-785" aria-hidden="true" tabindex="-1"></a>But in this case, we are instantiating the struct directly, by using an empty</span>
+<span id="cb26-786"><a href="#cb26-786" aria-hidden="true" tabindex="-1"></a><span class="in">`struct`</span> literal, in the expression <span class="in">`Lu32{}`</span>.</span>
+<span id="cb26-787"><a href="#cb26-787" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-788"><a href="#cb26-788" aria-hidden="true" tabindex="-1"></a>In this example, we first create multiple node objects, and after we create them,</span>
+<span id="cb26-789"><a href="#cb26-789" aria-hidden="true" tabindex="-1"></a>we start to insert and connect these nodes to build the linked list, using the</span>
+<span id="cb26-790"><a href="#cb26-790" aria-hidden="true" tabindex="-1"></a><span class="in">`prepend()`</span> and <span class="in">`insertAfter()`</span> methods. Notice that the <span class="in">`prepend()`</span> method</span>
+<span id="cb26-791"><a href="#cb26-791" aria-hidden="true" tabindex="-1"></a>is a method from the linked list object, while the <span class="in">`insertAfter()`</span> is a method</span>
+<span id="cb26-792"><a href="#cb26-792" aria-hidden="true" tabindex="-1"></a>present in the node objects.</span>
+<span id="cb26-793"><a href="#cb26-793" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-794"><a href="#cb26-794" aria-hidden="true" tabindex="-1"></a>In essence, the <span class="in">`prepend()`</span> method inserts a node at the beginning of the linked</span>
+<span id="cb26-795"><a href="#cb26-795" aria-hidden="true" tabindex="-1"></a>list. In other words, the node that you provide to this method, becomes the new</span>
+<span id="cb26-796"><a href="#cb26-796" aria-hidden="true" tabindex="-1"></a>"head node" of the linked list. It becomes the first node in the list (see @fig-linked-list).</span>
+<span id="cb26-797"><a href="#cb26-797" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-798"><a href="#cb26-798" aria-hidden="true" tabindex="-1"></a>On the other side, the <span class="in">`insertAfter()`</span> method is used to basically connect two nodes together.</span>
+<span id="cb26-799"><a href="#cb26-799" aria-hidden="true" tabindex="-1"></a>When you provide a node to this method, it creates a pointer to this input node,</span>
+<span id="cb26-800"><a href="#cb26-800" aria-hidden="true" tabindex="-1"></a>and stores this pointer in the <span class="in">`next`</span> attribute of the current node, from which the method was called from.</span>
+<span id="cb26-801"><a href="#cb26-801" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-802"><a href="#cb26-802" aria-hidden="true" tabindex="-1"></a>Because doubly linked lists have both a <span class="in">`next`</span> and a <span class="in">`prev`</span> attributes in each node</span>
+<span id="cb26-803"><a href="#cb26-803" aria-hidden="true" tabindex="-1"></a>(as described in @fig-linked-list2), a node object created from</span>
+<span id="cb26-804"><a href="#cb26-804" aria-hidden="true" tabindex="-1"></a>a <span class="in">`DoublyLinkedList`</span> object have both an <span class="in">`insertBefore()`</span> (for <span class="in">`prev`</span>)</span>
+<span id="cb26-805"><a href="#cb26-805" aria-hidden="true" tabindex="-1"></a>and an <span class="in">`insertAfter()`</span> (for <span class="in">`next`</span>) methods available.</span>
+<span id="cb26-806"><a href="#cb26-806" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-807"><a href="#cb26-807" aria-hidden="true" tabindex="-1"></a>Thus, if we have used a doubly linked list, we can use the <span class="in">`insertBefore()`</span> method</span>
+<span id="cb26-808"><a href="#cb26-808" aria-hidden="true" tabindex="-1"></a>to store the pointer to the input node in the <span class="in">`prev`</span> attribute. This would put the input</span>
+<span id="cb26-809"><a href="#cb26-809" aria-hidden="true" tabindex="-1"></a>node as the "previous node", or, the node before the current node. In contrast, the <span class="in">`insertAfter()`</span> method</span>
+<span id="cb26-810"><a href="#cb26-810" aria-hidden="true" tabindex="-1"></a>puts the pointer created to the input node in the <span class="in">`next`</span> attribute of the current node,</span>
+<span id="cb26-811"><a href="#cb26-811" aria-hidden="true" tabindex="-1"></a>and as result, the input node becomes the "next node" of the current node.</span>
+<span id="cb26-812"><a href="#cb26-812" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-813"><a href="#cb26-813" aria-hidden="true" tabindex="-1"></a>Since we are using a singly linked list in this example, we have only the <span class="in">`insertAfter()`</span> method</span>
+<span id="cb26-814"><a href="#cb26-814" aria-hidden="true" tabindex="-1"></a>available in the node objects that we create from our <span class="in">`Lu32`</span> type.</span>
+<span id="cb26-815"><a href="#cb26-815" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-816"><a href="#cb26-816" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-819"><a href="#cb26-819" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-820"><a href="#cb26-820" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb26-821"><a href="#cb26-821" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb26-822"><a href="#cb26-822" aria-hidden="true" tabindex="-1"></a><span class="in">const SinglyLinkedList = std.SinglyLinkedList;</span></span>
+<span id="cb26-823"><a href="#cb26-823" aria-hidden="true" tabindex="-1"></a><span class="in">const Lu32 = SinglyLinkedList(u32);</span></span>
+<span id="cb26-824"><a href="#cb26-824" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-825"><a href="#cb26-825" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb26-826"><a href="#cb26-826" aria-hidden="true" tabindex="-1"></a><span class="in">    var list = Lu32{};</span></span>
+<span id="cb26-827"><a href="#cb26-827" aria-hidden="true" tabindex="-1"></a><span class="in">    var one = Lu32.Node{ .data = 1 };</span></span>
+<span id="cb26-828"><a href="#cb26-828" aria-hidden="true" tabindex="-1"></a><span class="in">    var two = Lu32.Node{ .data = 2 };</span></span>
+<span id="cb26-829"><a href="#cb26-829" aria-hidden="true" tabindex="-1"></a><span class="in">    var three = Lu32.Node{ .data = 3 };</span></span>
+<span id="cb26-830"><a href="#cb26-830" aria-hidden="true" tabindex="-1"></a><span class="in">    var four = Lu32.Node{ .data = 4 };</span></span>
+<span id="cb26-831"><a href="#cb26-831" aria-hidden="true" tabindex="-1"></a><span class="in">    var five = Lu32.Node{ .data = 5 };</span></span>
+<span id="cb26-832"><a href="#cb26-832" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-833"><a href="#cb26-833" aria-hidden="true" tabindex="-1"></a><span class="in">    list.prepend(&amp;two); // {2}</span></span>
+<span id="cb26-834"><a href="#cb26-834" aria-hidden="true" tabindex="-1"></a><span class="in">    two.insertAfter(&amp;five); // {2, 5}</span></span>
+<span id="cb26-835"><a href="#cb26-835" aria-hidden="true" tabindex="-1"></a><span class="in">    list.prepend(&amp;one); // {1, 2, 5}</span></span>
+<span id="cb26-836"><a href="#cb26-836" aria-hidden="true" tabindex="-1"></a><span class="in">    two.insertAfter(&amp;three); // {1, 2, 3, 5}</span></span>
+<span id="cb26-837"><a href="#cb26-837" aria-hidden="true" tabindex="-1"></a><span class="in">    three.insertAfter(&amp;four); // {1, 2, 3, 4, 5}</span></span>
+<span id="cb26-838"><a href="#cb26-838" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-839"><a href="#cb26-839" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-840"><a href="#cb26-840" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-841"><a href="#cb26-841" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-842"><a href="#cb26-842" aria-hidden="true" tabindex="-1"></a>There are other methods available from the linked list object, depending if this object is</span>
+<span id="cb26-843"><a href="#cb26-843" aria-hidden="true" tabindex="-1"></a>a singly linked list or a doubly linked list, that might be very useful for you. You can find a</span>
+<span id="cb26-844"><a href="#cb26-844" aria-hidden="true" tabindex="-1"></a>summary of them in the bullet points below:</span>
+<span id="cb26-845"><a href="#cb26-845" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-846"><a href="#cb26-846" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`remove()`</span> to remove a specific node from the linked list.</span>
+<span id="cb26-847"><a href="#cb26-847" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>if singly linked list, <span class="in">`len()`</span> to count how many nodes there is in the linked list.</span>
+<span id="cb26-848"><a href="#cb26-848" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>if doubly linked list, checkout the <span class="in">`len`</span> attribute to see how many nodes there is in the linked list.</span>
+<span id="cb26-849"><a href="#cb26-849" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>if singly linked list, <span class="in">`popFirst()`</span> to remove the first node (i.e., the "head") from the linked list.</span>
+<span id="cb26-850"><a href="#cb26-850" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>if doubly linked list, <span class="in">`pop()`</span> and <span class="in">`popFirst()`</span> to remove the last and first nodes from the linked list, respectively.</span>
+<span id="cb26-851"><a href="#cb26-851" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>if doubly linked list, <span class="in">`append()`</span> to add a new node to end of the linked list (i.e., inverse of <span class="in">`prepend()`</span>).</span>
+<span id="cb26-852"><a href="#cb26-852" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-853"><a href="#cb26-853" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-854"><a href="#cb26-854" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-855"><a href="#cb26-855" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multi array structure</span></span>
+<span id="cb26-856"><a href="#cb26-856" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-857"><a href="#cb26-857" aria-hidden="true" tabindex="-1"></a>Zig introduces a new data structure called <span class="in">`MultiArrayList()`</span>. It's a different version of the dynamic array</span>
+<span id="cb26-858"><a href="#cb26-858" aria-hidden="true" tabindex="-1"></a>that we have introduced in @sec-dynamic-array. The difference between this structure and the <span class="in">`ArrayList()`</span></span>
+<span id="cb26-859"><a href="#cb26-859" aria-hidden="true" tabindex="-1"></a>that we know from @sec-dynamic-array, is that <span class="in">`MultiArrayList()`</span> creates a separate dynamic array</span>
+<span id="cb26-860"><a href="#cb26-860" aria-hidden="true" tabindex="-1"></a>for each field of the struct that you provide as input.</span>
+<span id="cb26-861"><a href="#cb26-861" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-862"><a href="#cb26-862" aria-hidden="true" tabindex="-1"></a>Consider the following code example. We create a new custom struct called <span class="in">`Person`</span>. This</span>
+<span id="cb26-863"><a href="#cb26-863" aria-hidden="true" tabindex="-1"></a>struct contains three different data members, or, three different fields. As consequence,</span>
+<span id="cb26-864"><a href="#cb26-864" aria-hidden="true" tabindex="-1"></a>when we provide this <span class="in">`Person`</span> data type as input to <span class="in">`MultiArrayList()`</span>, this</span>
+<span id="cb26-865"><a href="#cb26-865" aria-hidden="true" tabindex="-1"></a>creates a "struct of three different arrays" called <span class="in">`PersonArray`</span>. In other words,</span>
+<span id="cb26-866"><a href="#cb26-866" aria-hidden="true" tabindex="-1"></a>this <span class="in">`PersonArray`</span> is a struct that contains three internal dynamic arrays in it.</span>
+<span id="cb26-867"><a href="#cb26-867" aria-hidden="true" tabindex="-1"></a>One array for each field found in the <span class="in">`Person`</span> struct definition.</span>
+<span id="cb26-868"><a href="#cb26-868" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-869"><a href="#cb26-869" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-872"><a href="#cb26-872" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-873"><a href="#cb26-873" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb26-874"><a href="#cb26-874" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb26-875"><a href="#cb26-875" aria-hidden="true" tabindex="-1"></a><span class="in">const Person = struct {</span></span>
+<span id="cb26-876"><a href="#cb26-876" aria-hidden="true" tabindex="-1"></a><span class="in">    name: []const u8,</span></span>
+<span id="cb26-877"><a href="#cb26-877" aria-hidden="true" tabindex="-1"></a><span class="in">    age: u8,</span></span>
+<span id="cb26-878"><a href="#cb26-878" aria-hidden="true" tabindex="-1"></a><span class="in">    height: f32,</span></span>
+<span id="cb26-879"><a href="#cb26-879" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb26-880"><a href="#cb26-880" aria-hidden="true" tabindex="-1"></a><span class="in">const PersonArray = std.MultiArrayList(Person);</span></span>
+<span id="cb26-881"><a href="#cb26-881" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-882"><a href="#cb26-882" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb26-883"><a href="#cb26-883" aria-hidden="true" tabindex="-1"></a><span class="in">    var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
+<span id="cb26-884"><a href="#cb26-884" aria-hidden="true" tabindex="-1"></a><span class="in">    const allocator = gpa.allocator();</span></span>
+<span id="cb26-885"><a href="#cb26-885" aria-hidden="true" tabindex="-1"></a><span class="in">    var people = PersonArray{};</span></span>
+<span id="cb26-886"><a href="#cb26-886" aria-hidden="true" tabindex="-1"></a><span class="in">    defer people.deinit(allocator);</span></span>
+<span id="cb26-887"><a href="#cb26-887" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-888"><a href="#cb26-888" aria-hidden="true" tabindex="-1"></a><span class="in">    try people.append(allocator, .{</span></span>
+<span id="cb26-889"><a href="#cb26-889" aria-hidden="true" tabindex="-1"></a><span class="in">        .name = "Auguste", .age = 15, .height = 1.54</span></span>
+<span id="cb26-890"><a href="#cb26-890" aria-hidden="true" tabindex="-1"></a><span class="in">    });</span></span>
+<span id="cb26-891"><a href="#cb26-891" aria-hidden="true" tabindex="-1"></a><span class="in">    try people.append(allocator, .{</span></span>
+<span id="cb26-892"><a href="#cb26-892" aria-hidden="true" tabindex="-1"></a><span class="in">        .name = "Elena", .age = 26, .height = 1.65</span></span>
+<span id="cb26-893"><a href="#cb26-893" aria-hidden="true" tabindex="-1"></a><span class="in">    });</span></span>
+<span id="cb26-894"><a href="#cb26-894" aria-hidden="true" tabindex="-1"></a><span class="in">    try people.append(allocator, .{</span></span>
+<span id="cb26-895"><a href="#cb26-895" aria-hidden="true" tabindex="-1"></a><span class="in">        .name = "Michael", .age = 64, .height = 1.87</span></span>
+<span id="cb26-896"><a href="#cb26-896" aria-hidden="true" tabindex="-1"></a><span class="in">    });</span></span>
+<span id="cb26-897"><a href="#cb26-897" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-898"><a href="#cb26-898" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-899"><a href="#cb26-899" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-900"><a href="#cb26-900" aria-hidden="true" tabindex="-1"></a>In other words, instead of creating an array of "persons", the <span class="in">`MultiArrayList()`</span> function</span>
+<span id="cb26-901"><a href="#cb26-901" aria-hidden="true" tabindex="-1"></a>creates a "struct of arrays". Each data member of this struct is a different array that stores</span>
+<span id="cb26-902"><a href="#cb26-902" aria-hidden="true" tabindex="-1"></a>the values of a specific field from the <span class="in">`Person`</span> values that were added (or, appended) to this "struct of arrays".</span>
+<span id="cb26-903"><a href="#cb26-903" aria-hidden="true" tabindex="-1"></a>One important detail is that each of these separate internal arrays stored inside <span class="in">`PersonArray`</span></span>
+<span id="cb26-904"><a href="#cb26-904" aria-hidden="true" tabindex="-1"></a>are dynamic arrays. This means that these arrays can grow in capacity automatically as needed, to accomodate</span>
+<span id="cb26-905"><a href="#cb26-905" aria-hidden="true" tabindex="-1"></a>more values.</span>
+<span id="cb26-906"><a href="#cb26-906" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-907"><a href="#cb26-907" aria-hidden="true" tabindex="-1"></a>The @fig-multi-array exposed below presents a diagram that describes the <span class="in">`PersonArray`</span> struct</span>
+<span id="cb26-908"><a href="#cb26-908" aria-hidden="true" tabindex="-1"></a>that we have created in the previous code example. Notice that the values of the data members</span>
+<span id="cb26-909"><a href="#cb26-909" aria-hidden="true" tabindex="-1"></a>present in each of the three <span class="in">`Person`</span> values that we have appended into the <span class="in">`PersonArray`</span> object</span>
+<span id="cb26-910"><a href="#cb26-910" aria-hidden="true" tabindex="-1"></a>, are scattered across three different internal arrays of the <span class="in">`PersonArray`</span> object.</span>
+<span id="cb26-911"><a href="#cb26-911" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-912"><a href="#cb26-912" aria-hidden="true" tabindex="-1"></a><span class="al">![A diagram of the `PersonArray` struct.](./../Figures/multi-array.png)</span>{#fig-multi-array}</span>
+<span id="cb26-913"><a href="#cb26-913" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-914"><a href="#cb26-914" aria-hidden="true" tabindex="-1"></a>You can easily access each of these arrays separately, and iterate over the values of each array.</span>
+<span id="cb26-915"><a href="#cb26-915" aria-hidden="true" tabindex="-1"></a>For that, you will need to call the <span class="in">`items()`</span> method from the <span class="in">`PersonArray`</span> object, and provide as input</span>
+<span id="cb26-916"><a href="#cb26-916" aria-hidden="true" tabindex="-1"></a>to this method, the name of the field that you want to iterate over.</span>
+<span id="cb26-917"><a href="#cb26-917" aria-hidden="true" tabindex="-1"></a>If you want to iterate through the <span class="in">`.age`</span> array for example, then, you need to call <span class="in">`items(.age)`</span> from</span>
+<span id="cb26-918"><a href="#cb26-918" aria-hidden="true" tabindex="-1"></a>the <span class="in">`PersonArray`</span> object, like in the example below:</span>
+<span id="cb26-919"><a href="#cb26-919" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-922"><a href="#cb26-922" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-923"><a href="#cb26-923" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-924"><a href="#cb26-924" aria-hidden="true" tabindex="-1"></a><span class="in">for (people.items(.age)) |*age| {</span></span>
+<span id="cb26-925"><a href="#cb26-925" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("Age: {d}\n", .{age.*});</span></span>
+<span id="cb26-926"><a href="#cb26-926" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-927"><a href="#cb26-927" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-928"><a href="#cb26-928" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-929"><a href="#cb26-929" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-930"><a href="#cb26-930" aria-hidden="true" tabindex="-1"></a><span class="in">Age: 15</span></span>
+<span id="cb26-931"><a href="#cb26-931" aria-hidden="true" tabindex="-1"></a><span class="in">Age: 26</span></span>
+<span id="cb26-932"><a href="#cb26-932" aria-hidden="true" tabindex="-1"></a><span class="in">Age: 64</span></span>
+<span id="cb26-933"><a href="#cb26-933" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-934"><a href="#cb26-934" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-935"><a href="#cb26-935" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-936"><a href="#cb26-936" aria-hidden="true" tabindex="-1"></a>In the above example, we are iterating over the values of the <span class="in">`.age`</span> array, or,</span>
+<span id="cb26-937"><a href="#cb26-937" aria-hidden="true" tabindex="-1"></a>the internal array of the <span class="in">`PersonArray`</span> object that contains the values of the <span class="in">`age`</span></span>
+<span id="cb26-938"><a href="#cb26-938" aria-hidden="true" tabindex="-1"></a>data member from the <span class="in">`Person`</span> values that were added to the multi array struct.</span>
+<span id="cb26-939"><a href="#cb26-939" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-940"><a href="#cb26-940" aria-hidden="true" tabindex="-1"></a>In this example we are calling the <span class="in">`items()`</span> method directly from the <span class="in">`PersonArray`</span></span>
+<span id="cb26-941"><a href="#cb26-941" aria-hidden="true" tabindex="-1"></a>object. However, in most situations it's recommened to call this <span class="in">`items()`</span> method</span>
+<span id="cb26-942"><a href="#cb26-942" aria-hidden="true" tabindex="-1"></a>from a "slice object", which you can create from the <span class="in">`slice()`</span> method.</span>
+<span id="cb26-943"><a href="#cb26-943" aria-hidden="true" tabindex="-1"></a>The reason for this is that calling <span class="in">`items()`</span> multiple times have better performance</span>
+<span id="cb26-944"><a href="#cb26-944" aria-hidden="true" tabindex="-1"></a>if you use a slice object.</span>
+<span id="cb26-945"><a href="#cb26-945" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-946"><a href="#cb26-946" aria-hidden="true" tabindex="-1"></a>Therefore, if you are planning to access only one of the</span>
+<span id="cb26-947"><a href="#cb26-947" aria-hidden="true" tabindex="-1"></a>internal arrays from your "multi array struct", it's fine to call <span class="in">`items()`</span> directly</span>
+<span id="cb26-948"><a href="#cb26-948" aria-hidden="true" tabindex="-1"></a>from the multi array object. But if you need to access many of the internal arrays</span>
+<span id="cb26-949"><a href="#cb26-949" aria-hidden="true" tabindex="-1"></a>from your "multi array struct", then, you will likely need to call <span class="in">`items()`</span> more</span>
+<span id="cb26-950"><a href="#cb26-950" aria-hidden="true" tabindex="-1"></a>than once, and, in such circumstance, is better to call <span class="in">`items()`</span> through a slice object.</span>
+<span id="cb26-951"><a href="#cb26-951" aria-hidden="true" tabindex="-1"></a>The example below demonstrates the use of such object:</span>
+<span id="cb26-952"><a href="#cb26-952" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-955"><a href="#cb26-955" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb26-956"><a href="#cb26-956" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb26-957"><a href="#cb26-957" aria-hidden="true" tabindex="-1"></a><span class="in">var slice = people.slice();</span></span>
+<span id="cb26-958"><a href="#cb26-958" aria-hidden="true" tabindex="-1"></a><span class="in">for (slice.items(.age)) |*age| {</span></span>
+<span id="cb26-959"><a href="#cb26-959" aria-hidden="true" tabindex="-1"></a><span class="in">    age.* += 10;</span></span>
+<span id="cb26-960"><a href="#cb26-960" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-961"><a href="#cb26-961" aria-hidden="true" tabindex="-1"></a><span class="in">for (slice.items(.name), slice.items(.age)) |*n,*a| {</span></span>
+<span id="cb26-962"><a href="#cb26-962" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print(</span></span>
+<span id="cb26-963"><a href="#cb26-963" aria-hidden="true" tabindex="-1"></a><span class="in">        "Name: {s}, Age: {d}\n", .{n.*, a.*}</span></span>
+<span id="cb26-964"><a href="#cb26-964" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb26-965"><a href="#cb26-965" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb26-966"><a href="#cb26-966" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-967"><a href="#cb26-967" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-968"><a href="#cb26-968" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-969"><a href="#cb26-969" aria-hidden="true" tabindex="-1"></a><span class="in">Name: Auguste, Age: 25</span></span>
+<span id="cb26-970"><a href="#cb26-970" aria-hidden="true" tabindex="-1"></a><span class="in">Name: Elena, Age: 36</span></span>
+<span id="cb26-971"><a href="#cb26-971" aria-hidden="true" tabindex="-1"></a><span class="in">Name: Michael, Age: 74</span></span>
+<span id="cb26-972"><a href="#cb26-972" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-973"><a href="#cb26-973" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-974"><a href="#cb26-974" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-975"><a href="#cb26-975" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb26-976"><a href="#cb26-976" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-977"><a href="#cb26-977" aria-hidden="true" tabindex="-1"></a>There are many other data structures that I haven't presented here.</span>
+<span id="cb26-978"><a href="#cb26-978" aria-hidden="true" tabindex="-1"></a>But you can check them out at the official Zig Standard Library documentation page.</span>
+<span id="cb26-979"><a href="#cb26-979" aria-hidden="true" tabindex="-1"></a>Actually, when you get into the <span class="co">[</span><span class="ot">homepage of the documentation</span><span class="co">](https://ziglang.org/documentation/master/std/#)</span><span class="ot">[^home]</span>, the first thing</span>
+<span id="cb26-980"><a href="#cb26-980" aria-hidden="true" tabindex="-1"></a>that appears to you in this page, is a list of types and data structures that</span>
+<span id="cb26-981"><a href="#cb26-981" aria-hidden="true" tabindex="-1"></a>are available in the Zig Standard Library.</span>
+<span id="cb26-982"><a href="#cb26-982" aria-hidden="true" tabindex="-1"></a>There are some very specific data structures in this list, like a</span>
+<span id="cb26-983"><a href="#cb26-983" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`BoundedArray` struct</span><span class="co">](https://ziglang.org/documentation/master/std/#std.bounded_array.BoundedArray)</span><span class="ot">[^bounded]</span></span>
+<span id="cb26-984"><a href="#cb26-984" aria-hidden="true" tabindex="-1"></a>, but there is also some more general structures, such as a</span>
+<span id="cb26-985"><a href="#cb26-985" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`PriorityQueue` struct</span><span class="co">](https://ziglang.org/documentation/master/std/#std.priority_queue.PriorityQueue)</span><span class="ot">[^priority]</span>.</span>
+<span id="cb26-986"><a href="#cb26-986" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-987"><a href="#cb26-987" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-988"><a href="#cb26-988" aria-hidden="true" tabindex="-1"></a><span class="ot">[^home]: &lt;https://ziglang.org/documentation/master/std/#&gt;</span></span>
+<span id="cb26-989"><a href="#cb26-989" aria-hidden="true" tabindex="-1"></a><span class="ot">[^priority]: &lt;https://ziglang.org/documentation/master/std/#std.priority_queue.PriorityQueue&gt;</span>.</span>
+<span id="cb26-990"><a href="#cb26-990" aria-hidden="true" tabindex="-1"></a><span class="ot">[^bounded]: &lt;https://ziglang.org/documentation/master/std/#std.bounded_array.BoundedArray&gt;</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 
