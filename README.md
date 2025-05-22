@@ -1,3 +1,4 @@
+```markdown
 # Introduction to Zig
 
 <a href=""><img src="Cover/cover-artv3.png" width="250" height="366" class="cover" align="right"/></a>
@@ -6,7 +7,23 @@ Hey! This is the official repository for the book "Introduction to Zig: a projec
 To know more about the book, checkout the [About this book](#about-this-book) section below.
 You can read the current version of the book in your web browser: <https://pedropark99.github.io/zig-book/>.
 
-The book is built using the publishing system [Quarto](https://quarto.org)
+This book is crafted using a modern, reproducible publishing stack, leveraging the power of:
+
+<p align="center">
+  <a href="https://ziglang.org/" target="_blank"><img src="https://img.shields.io/badge/Zig-%23F7A41D.svg?&style=for-the-badge&logo=zig&logoColor=black" alt="Zig"></a>
+  &nbsp;
+  <a href="https://quarto.org/" target="_blank"><img src="https://img.shields.io/badge/Quarto-%234D5891.svg?&style=for-the-badge&logo=quarto&logoColor=white" alt="Quarto"></a>
+  &nbsp;
+  <a href="https://www.r-project.org/" target="_blank"><img src="https://img.shields.io/badge/R-%23276DC3.svg?&style=for-the-badge&logo=r&logoColor=white" alt="R"></a>
+  &nbsp;
+  <a href="https://knitr.rstudio.com/" target="_blank"><img src="https://img.shields.io/badge/Knitr-%23007ACC.svg?&style=for-the-badge&logoColor=white&labelColor=555555&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMTIgMi41Yy01LjI1IDAtOS41IDQuMjUtOS41IDkuNVM2Ljc1IDIxLjUgMTIgMjEuNXM5LjUtNC4yNSA5LjUtOS41UzE3LjI1IDIuNSAxMiAyLjVtMCAxN2MtNC4xNCAwLTcuNS0zLjM2LTcuNS03LjVTNy44NiA1IDEyIDVzNy41IDMuMzYgNy41IDcuNVMxNi4xNCAxOS41IDEyIDE5LjVtMS45LThsLTMuMTYtMy42NGMuMS0uMDIuMjEtLjA0LjMyLS4wNGMuNDkgMCAuODkuNC44OS44OXYyLjgwNWwtMS45NS0yLjE5NkwxMi45MyAxMmwzLjIgMy43MmMtLjExLjAzLS4yMy4wNS0uMzUuMDVjLS41IDAtLjktLjQtLjktLjg5di0yLjgxNWwxLjk1IDIuMTk1bDQuMDUtNC41NTVaTTEyIDljLS4xMSAwLS4yMi4wMS0uMzIuMDNMMTAuMDcgMTNsMy4xNiAzLjY0Yy0uMS4wMi0uMjEuMDQtLjMyLjA0Yy0uNDkgMC0uODktLjQtLjg5LS44OXYtMi44MDVsMS45NSAyLjE5NWwxLjAxLTEuMTM4TDEyLjA3IDlsLTMuMi0zLjcyYy4xMS0uMDMuMjMtLjA1LjM1LS4wNWMuNSAwIC45LjQuOS44OXYyLjgxNUwxMC4wNSA2LjgxTDYgMTEuMzY1eiIvPjwvc3ZnPg==" alt="Knitr"></a>
+  &nbsp;
+  <a href="https://pandoc.org/" target="_blank"><img src="https://img.shields.io/badge/Pandoc-%2323B5AF.svg?&style=for-the-badge&logoColor=white&labelColor=555555&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDI1NmgxMjQuMzdMNDMuNSA0MjAuODIuMyAyNTZabTEzOC4yMyAwaDE0Mi41OEwzMjQuMzUgNzEuNjkgMTI0LjM3IDI1NmwxNC4xNC0uMDEuMDEuMDFabTE1Ni43MiAwSDQ0MC41bC03OS4xOCAxNjQuNzNMMjgyLjc5IDI1NmwuMTYtLjAyLjAyLjAyWm0xNjguNjkgMGg4My44MkwzODcuNjMgNzguNjUgMzc1LjY2IDI1NmwxNTQuOTguMDFaTTQ0LjUgMzkuMTlsNzkuNzMgMTY0Ljc0TDI0Ny4xIDE4MS4zMiAxNjcuNTEgNDQuNDUgNDQuNDkgMzkuMTlsLjAxLS4wMVptMzEyLjM2IDE0Ny4zTDQ4OC4xMyAzOS4xOUwzNjQuMzQgMTg2LjkxbC05LjU0LTE5LjQyWm0tMjQ5LjQzIDEwMS44bDEwMS40My0yMTEuMDVsNzYuMyAxNTguNDdMMTMyLjIzIDI4OC40MmMwLS4xMS0uMDEtLjIyLS4wMi0uMzNabTIxMy40My0xLjQ5bC03NS4yLTE1NkwzNzIuMjMgNjkuNTNsMTAxLjQyIDIxMS4wNlptLTg4LjMxIDE3Mi4zMmwtNzktMTY1LjExbDEyNC4xMS0xMi40MWwzOC4wNiA3OC45NVptLTExOC4zNi03MS4xNWwtMzQuMy03MS4xOGwtMTI0LjIzIDEyLjMzbDc2LjIgMTU4LjE3WiIvPjwvc3ZnPg==" alt="Pandoc"></a>
+  &nbsp;
+  <a href="https://nixos.org/nix/" target="_blank"><img src="https://img.shields.io/badge/Nix-%235277C3.svg?&style=for-the-badge&logo=nixos&logoColor=white" alt="Nix"></a>
+</p>
+
+The core book content is built using the [Quarto](https://quarto.org) publishing system
 in conjunction with a little bit of R code (`zig_engine.R`), that is responsible for calling
 the Zig compiler to compile and run the Zig code examples.
 
@@ -81,13 +98,14 @@ As you work through the book, you will learn:
 
 ## How to build the book
 
-This book depends on the three main pieces of software:
+This book's creation relies on a powerful stack of open-source tools. Understanding these helps in appreciating the build process:
 
-1. The [Zig compiler](https://ziglang.org/download/), which is responsible for compiling most of the code examples exposed in the book.
-2. The [R programming language](https://cran.r-project.org/), which provides some useful tools to collect the code examples exposed across the book, and send them to the zig compiler to be compiled and executed, and also, collect the results back to include them in the book.
-3. The [Quarto publishing system](https://quarto.org/docs/get-started/), which provides the useful tools to compile the book, creating internal links, references, a chapters structure, the HTML content of the book, etc.
+1.  **The <a href="https://ziglang.org/download/" target="_blank"><img src="https://img.shields.io/badge/Zig-%23F7A41D.svg?&style=flat-square&logo=zig&logoColor=black" alt="Zig" valign="middle"> Zig compiler</a>**: The star of the show, responsible for compiling most of the code examples exposed in the book.
+2.  **The <a href="https://cran.r-project.org/" target="_blank"><img src="https://img.shields.io/badge/R-%23276DC3.svg?&style=flat-square&logo=r&logoColor=white" alt="R" valign="middle"> R programming language</a>**: Provides useful tools (via <a href="https://knitr.rstudio.com/" target="_blank"><img src="https://img.shields.io/badge/Knitr-%23007ACC.svg?&style=flat-square&logoColor=white&labelColor=555555&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMTIgMi41Yy01LjI1IDAtOS41IDQuMjUtOS41IDkuNVM2Ljc1IDIxLjUgMTIgMjEuNXM5LjUtNC4yNSA5LjUtOS41UzE3LjI1IDIuNSAxMiAyLjVtMCAxN2MtNC4xNCAwLTcuNS0zLjM2LTcuNS03LjVTNy44NiA1IDEyIDVzNy41IDMuMzYgNy41IDcuNVMxNi4xNCAxOS41IDEyIDE5LjVtMS45LThsLTMuMTYtMy42NGMuMS0uMDIuMjEtLjA0LjMyLS4wNGMuNDkgMCAuODkuNC44OS44OXYyLjgwNWwtMS45NS0yLjE5NkwxMi45MyAxMmwzLjIgMy43MmMtLjExLjAzLS4yMy4wNS0uMzUuMDVjLS41IDAtLjktLjQtLjktLjg5di0yLjgxNWwxLjk1IDIuMTk1bDQuMDUtNC41NTVaTTEyIDljLS4xMSAwLS4yMi4wMS0uMzIuMDNMMTAuMDcgMTNsMy4xNiAzLjY0Yy0uMS4wMi0uMjEuMDQtLjMyLjA0Yy0uNDkgMC0uODktLjQtLjg5LS44OXYtMi4wMDVsMS45NSAyLjE5NWwxLjAxLTEuMTM4TDEyLjA3IDlsLTMuMi0zLjcyYy4xMS0uMDMuMjMtLjA1LjM1LS4wNWMuNSAwIC45LjQuOS44OXYyLjgxNUwxMC4wNSA2LjgxTDYgMTEuMzY1eiIvPjwvc3ZnPg==" alt="Knitr" valign="middle"> Knitr</a>) to collect code examples, send them to the Zig compiler, and retrieve results.
+3.  **The <a href="https://quarto.org/docs/get-started/" target="_blank"><img src="https://img.shields.io/badge/Quarto-%234D5891.svg?&style=flat-square&logo=quarto&logoColor=white" alt="Quarto" valign="middle"> Quarto publishing system</a>**: Orchestrates the book compilation, leveraging <a href="https://pandoc.org/" target="_blank"><img src="https://img.shields.io/badge/Pandoc-%2323B5AF.svg?&style=flat-square&logoColor=white&labelColor=555555&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDI1NmgxMjQuMzdMNDMuNSA0MjAuODIuMyAyNTZabTEzOC4yMyAwaDE0Mi41OEwzMjQuMzUgNzEuNjkgMTI0LjM3IDI1NmwxNC4xNC0uMDEuMDEuMDFabTE1Ni43MiAwSDQ0MC41bC03OS4xOCAxNjQuNzNMMjgyLjc5IDI1NmwuMTYtLjAyLjAyLjAyWm0xNjguNjkgMGg4My44MkwzODcuNjMgNzguNjUgMzc1LjY2IDI1NmwxNTQuOTguMDFaTTQ0LjUgMzkuMTlsNzkuNzMgMTY0Ljc0TDI0Ny4xIDE4MS4zMiAxNjcuNTEgNDQuNDUgNDQuNDkgMzkuMTlsLjAxLS4wMVptMzEyLjM2IDE0Ny4zTDQ4OC4xMyAzOS4xOUwzNjQuMzQgMTg2LjkxbC05LjU0LTE5LjQyWm0tMjQ5LjQzIDEwMS44bDEwMS40My0yMTEuMDVsNzYuMyAxNTguNDdMMTMyLjIzIDI4OC40MmMwLS4xMS0uMDEtLjIyLS4wMi0uMzNabTIxMy40My0xLjQ5bC03NS4yLTE1NkwzNzIuMjMgNjkuNTNsMTAxLjQyIDIxMS4wNlptLTg4LjMxIDE3Mi4zMmwtNzktMTY1LjExbDEyNC4xMS0xMi40MWwzOC4wNiA3OC45NVptLTExOC4zNi03MS4xNWwtMzQuMy03MS4xOGwtMTI0LjIzIDEyLjMzbDc2LjIgMTU4LjE3WiIvPjwvc3ZnPg==" alt="Pandoc" valign="middle"> Pandoc</a> under the hood for creating internal links, references, chapter structure, and the final HTML content.
+4.  Optionally, the development environment can be managed using <a href="https://nixos.org/nix/" target="_blank"><img src="https://img.shields.io/badge/Nix-%235277C3.svg?&style=flat-square&logo=nixos&logoColor=white" alt="Nix" valign="middle"> Nix</a> for reproducible builds (if a `flake.nix` is provided).
 
-So, you first need to install these three pieces of software in your current machine.
+So, you first need to install these three primary pieces of software (Zig, R, Quarto) in your current machine.
 You can find instructions on how to install these pieces of software by clicking in the above hyperlinks.
 
 ### Install R packages
@@ -138,3 +156,4 @@ slower than the first one, but is more garanteed to work.
 Copyright © 2024 Pedro Duarte Faria. This book is licensed by the CC-BY 4.0 Creative Commons Attribution 4.0 International Public License.
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
+```
