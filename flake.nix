@@ -21,8 +21,6 @@
           gistr    # Might need curl
           knitr    # Usually needed for R chunks in Quarto
           rmarkdown # Often a dependency for knitr/Quarto R features
-          # Add other R packages if the book's R code uses more:
-          # e.g., readr, stringr, dplyr, fs, jsonlite, hms
           readr
           stringr
           dplyr
@@ -43,8 +41,7 @@
           curl    # For rPackages.gistr or other http functionality
         ];
 
-        # REMOVED: localeDefinitions = pkgs.glibcLocalesUtf8;
-        # C.UTF-8 is generally available without needing full glibcLocales.
+        # The 'localeDefinitions' variable has been REMOVED.
 
       in {
         devShells.default = pkgs.mkShell {
@@ -52,7 +49,7 @@
           buildInputs = [
             R_env       # Provides R and Rscript
             pkgs.quarto # The Quarto CLI
-            # REMOVED: localeDefinitions
+            # 'localeDefinitions' has been REMOVED from buildInputs.
           ] ++ nativeDeps;
 
           shellHook = ''
@@ -62,24 +59,23 @@
 
             # --- GENERAL LOCALE SETUP ---
             # Set a universally available, UTF-8 compatible locale.
-            # This prevents locale errors and ensures basic Unicode handling
-            # without imposing a specific language or requiring extra locale packages.
             export LANG="C.UTF-8"
             export LC_ALL="C.UTF-8"
-            # REMOVED: export LOCALE_ARCHIVE="${localeDefinitions}/lib/locale/locale-archive"
-            # C.UTF-8 does not need LOCALE_ARCHIVE to be explicitly set from glibcLocalesUtf8.
+            # The 'export LOCALE_ARCHIVE=...' line related to localeDefinitions is GONE.
 
             echo "--- Nix Shell Environment (HTML Only) ---"
-            echo "Locale set to C.UTF-8 for broad compatibility." # Added this line for clarity
+            echo "Locale set to C.UTF-8 for broad compatibility." # Informative message
             echo "Zig is assumed to be available via \$PATH: $(which zig || echo 'Not found in PATH')"
             echo "R environment configured."
             echo "  To check R's library paths: R -e '.libPaths()'"
             echo "  To list R packages: R -e 'installed.packages()[,1]'"
             echo "QUARTO_R set to: $QUARTO_R"
-            # REMOVED: echo "LOCALE_ARCHIVE set to: $LOCALE_ARCHIVE"
+            # The 'echo "LOCALE_ARCHIVE..."' line is GONE.
+            # --- ADDING BACK THE MISSING ECHO LINES ---
             echo ""
             echo "To build HTML: quarto render"
             echo "-----------------------------------------"
+            # --- END OF ADDED BACK LINES ---
           '';
         };
     });
