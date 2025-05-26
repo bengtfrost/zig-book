@@ -4,16 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
-<<<<<<< HEAD
     zig.url = "github:mitchellh/zig-overlay";
   };
 
   outputs = { self, nixpkgs, flake-utils, zig, ... } @ inputs:
-=======
-  };
-
-  outputs = { self, nixpkgs, flake-utils, ... }:
->>>>>>> origin
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -28,11 +22,8 @@
           gistr    # Might need curl
           knitr    # Usually needed for R chunks in Quarto
           rmarkdown # Often a dependency for knitr/Quarto R features
-<<<<<<< HEAD
           # Add other R packages if the book's R code uses more:
           # e.g., readr, stringr, dplyr, fs, jsonlite, hms
-=======
->>>>>>> origin
           readr
           stringr
           dplyr
@@ -53,12 +44,8 @@
           curl    # For rPackages.gistr or other http functionality
         ];
 
-<<<<<<< HEAD
         # REMOVED: localeDefinitions = pkgs.glibcLocalesUtf8;
         # C.UTF-8 is generally available without needing full glibcLocales.
-=======
-        # The 'localeDefinitions' variable has been REMOVED.
->>>>>>> origin
 
       in {
         devShells.default = pkgs.mkShell {
@@ -66,18 +53,13 @@
           buildInputs = [
             R_env       # Provides R and Rscript
             pkgs.quarto # The Quarto CLI
-<<<<<<< HEAD
             zig.packages.${system}.master
             # REMOVED: localeDefinitions
-=======
-            # 'localeDefinitions' has been REMOVED from buildInputs.
->>>>>>> origin
           ] ++ nativeDeps;
 
           shellHook = ''
             # QUARTO_R: Point Quarto to the Rscript from our Nix-provided R environment
             unset QUARTO_R # Clear any pre-existing value
-<<<<<<< HEAD
             export QUARTO_R=$(which Rscript)
 
             # --- GENERAL LOCALE SETUP ---
@@ -105,30 +87,3 @@
         };
     });
 }
-=======
-            export QUARTO_R="${R_env}/bin/Rscript"
-
-            # --- GENERAL LOCALE SETUP ---
-            # Set a universally available, UTF-8 compatible locale.
-            export LANG="C.UTF-8"
-            export LC_ALL="C.UTF-8"
-            # The 'export LOCALE_ARCHIVE=...' line related to localeDefinitions is GONE.
-
-            echo "--- Nix Shell Environment (HTML Only) ---"
-            echo "Locale set to C.UTF-8 for broad compatibility." # Informative message
-            echo "Zig is assumed to be available via \$PATH: $(which zig || echo 'Not found in PATH')"
-            echo "R environment configured."
-            echo "  To check R's library paths: R -e '.libPaths()'"
-            echo "  To list R packages: R -e 'installed.packages()[,1]'"
-            echo "QUARTO_R set to: $QUARTO_R"
-            # The 'echo "LOCALE_ARCHIVE..."' line is GONE.
-            # --- ADDING BACK THE MISSING ECHO LINES ---
-            echo ""
-            echo "To build HTML: quarto render"
-            echo "-----------------------------------------"
-            # --- END OF ADDED BACK LINES ---
-          '';
-        };
-    });
-}
->>>>>>> origin

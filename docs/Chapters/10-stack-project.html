@@ -91,10 +91,12 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -160,6 +162,9 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Introduction to Zig</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -321,7 +326,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Project 3 - Building a stack data structure</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Project 3 - Building a stack data structure</span></h1>
 </div>
 
 
@@ -358,15 +363,12 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Take a look at this very simple example below, where we define a <code>twice()</code> function, that simply doubles the input value named <code>num</code>. Notice that we use the <code>comptime</code> keyword before the name of the function argument. This keyword is marking the function argument <code>num</code> as a “comptime argument”.</p>
 <p>That is a function argument whose value must be compile-time known. This is why the expression <code>twice(5678)</code> is valid, and no compilation errors are raised. Because the value <code>5678</code> is compile-time known, so this is the expected behaviour for this function.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> twice(<span class="kw">comptime</span> num: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> num * <span class="dv">2</span>;</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"test comptime"</span> <span class="op">{</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    _ = twice(<span class="dv">5678</span>);</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>1/1 filef044375a1f16.test.test comptime...OKAll 1 
    tests passed.</code></pre>
@@ -376,8 +378,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>In the example below, this “input from the user” is initially received as a string, which is then parsed and transformed into a integer value, and the result of this operation is stored inside the <code>n</code> object.</p>
 <p>Because the “input of the user” is known only at runtime, the value of the object <code>n</code> is determined only at runtime. As consequence, we cannot provide this object as input to the <code>twice()</code> function. The <code>zig</code> compiler will not allow it, because we marked the <code>num</code> argument as a “comptime argument”. That is why the <code>zig</code> compiler raises the compile-time error exposed below:</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> twice(<span class="kw">comptime</span> num: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> num * <span class="dv">2</span>;</span>
@@ -397,7 +397,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> twice_result = twice(n);</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"Result: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>twice_result<span class="op">}</span>);</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <pre><code>t.zig:12:16: error: unable to resolve comptime value
     const twice_result = twice(n);
@@ -405,12 +404,9 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Comptime arguments are frequently used on functions that return some sort of generic structure. In fact, <code>comptime</code> is the essence (or the basis) to make generics in Zig. We are going to talk more about generics in <a href="#sec-generics" class="quarto-xref"><span>Section 12.2</span></a>.</p>
 <p>For now, let’s take a look at this code example from <span class="citation" data-cites="karlseguin_generics">Seguin (<a href="../references.html#ref-karlseguin_generics" role="doc-biblioref">2024</a>)</span>. You can see that this <code>IntArray()</code> function has one argument named <code>length</code>. This argument is marked as comptime, and receives a value of type <code>usize</code> as input. So the value given to this argument must be compile-time known. We can also see that this function returns an array of <code>i64</code> values as output.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> IntArray(<span class="kw">comptime</span> length: <span class="dt">usize</span>) <span class="dt">type</span> <span class="op">{</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> [length]<span class="dt">i64</span>;</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Now, the key component of this function is the <code>length</code> argument. This argument is used to determine the size of the array that is produced by the function. Let’s think about the consequences of that. If the size of the array is dependent on the value assigned to the <code>length</code> argument, this means that the data type of the output of the function depends on the value of this <code>length</code> argument.</p>
 <p>Let this statement sink for a bit in your mind. As I described in <a href="01-zig-weird.html#sec-root-file" class="quarto-xref"><span>Section 1.2.2</span></a>, Zig is a strongly-typed language, especially on function declarations. So every time we write a function in Zig, we have to annotate the data type of the value returned by the function. But how can we do that, if this data type depends on the value given to the argument of the function?</p>
@@ -426,8 +422,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Take this example from the official documentation of Zig <span class="citation" data-cites="zigdocs">(<a href="../references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024</a>)</span>. We are executing the same <code>fibonacci()</code> function both at runtime, and, at compile-time. The function is executed by default at runtime, but because we use the <code>comptime</code> keyword in the second “try expression”, this expression is executed at compile-time.</p>
 <p>This might be a bit confusing for some people. Yes! When I say that this expression is executed at compile-time, I mean that this expression is compiled and executed while the <code>zig</code> compiler is compiling your Zig source code.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> expect = <span class="bu">@import</span>(<span class="st">"std"</span>).testing.expect;</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> fibonacci(index: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (index &lt; <span class="dv">2</span>) <span class="kw">return</span> index;</span>
@@ -440,7 +434,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// test fibonacci at compile-time</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> <span class="kw">comptime</span> expect(fibonacci(<span class="dv">7</span>) == <span class="dv">13</span>);</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>1/1 filef0447cb16f4d.test.fibonacci...OKAll 1 test
   ts passed.</code></pre>
@@ -454,8 +447,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Blocks were described in <a href="01-zig-weird.html#sec-blocks" class="quarto-xref"><span>Section 1.7</span></a>. When you apply the <code>comptime</code> keyword to a block of expressions, you get essentially the same effect as when you apply this keyword to a single expression. That is, the entire block of expressions is executed at compile-time by the <code>zig</code> compiler.</p>
 <p>In the example below, we mark the block labeled of <code>blk</code> as a comptime block, and, therefore, the expressions inside this block are executed at compile-time.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> expect = <span class="bu">@import</span>(<span class="st">"std"</span>).testing.expect;</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> fibonacci(index: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (index &lt; <span class="dv">2</span>) <span class="kw">return</span> index;</span>
@@ -472,7 +463,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    _ = x;</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>1/1 filef044524d5e27.test.fibonacci in a block...O
   OKAll 1 tests passed.</code></pre>
@@ -491,18 +481,13 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Because we have used this <code>type</code> keyword in the <code>T</code> argument, we are telling the <code>zig</code> compiler that this <code>T</code> argument will receive some data type as input. Also notice the use of the <code>comptime</code> keyword in this argument. As I described in <a href="#sec-comptime" class="quarto-xref"><span>Section 12.1</span></a>, every time you use this keyword in a function argument, this means that the value of this argument must be known at compile-time. This makes sense, right? Because there is no data type that is not known at compile-time.</p>
 <p>Think about this. Every data type that you will ever write is always known at compile-time. Especially because data types are an essential information for the compiler to actually compile your source code. Having this in mind, makes sense to mark this argument as a comptime argument.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> max(<span class="kw">comptime</span> T: <span class="dt">type</span>, a: T, b: T) T <span class="op">{</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">if</span> (a &gt; b) a <span class="kw">else</span> b;</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Also notice that the value of the <code>T</code> argument is actually used to define the data type of the other arguments in the function, <code>a</code> and <code>b</code>, and also at the return type annotation of the function. That is, the data type of these arguments (<code>a</code> and <code>b</code>), and, the return data type of the function itself, are determined by the input value given to the <code>T</code> argument.</p>
 <p>As a result, we have a generic function that works with different data types. For example, I can provide <code>u8</code> values to this <code>max()</code> function, and it will work as expected. But if I provide <code>f64</code> values instead, it will also work as expected. Without a generic function, I would have to write a different <code>max()</code> function for each data type I wanted to use. This generic function provides a very useful shortcut for us.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> max(<span class="kw">comptime</span> T: <span class="dt">type</span>, a: T, b: T) T <span class="op">{</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">if</span> (a &gt; b) a <span class="kw">else</span> b;</span>
@@ -513,7 +498,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n2 = max(<span class="dt">f64</span>, <span class="fl">89.24</span>, <span class="fl">64.001</span>);</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Max n2: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>n2<span class="op">}</span>);</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <pre><code>Max n1: 10
 Max n2: 89.24</code></pre>
@@ -551,8 +535,6 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <p>Also notice in our <code>Stack</code> struct that we have three other data members: <code>capacity</code>, <code>length</code> and <code>allocator</code>. The <code>capacity</code> member contains the capacity of the underlying array that stores the values in the stack. The <code>length</code> contains the number of values that are currently being stored in the stack. And the <code>allocator</code> contains the allocator object that will be used by the stack structure whenever it needs to allocate more space for the values that are being stored.</p>
 <p>We begin by defining an <code>init()</code> method of this struct, which is going to be responsible for instantiating a <code>Stack</code> object. Notice that, inside this <code>init()</code> method, we start by allocating an array with the capacity specified in the <code>capacity</code> argument.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Allocator = std.mem.Allocator;</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Stack = <span class="kw">struct</span> <span class="op">{</span></span>
@@ -571,7 +553,6 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>;</span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="implementing-the-push-operation" class="level3" data-number="12.4.1">
 <h3 data-number="12.4.1" class="anchored" data-anchor-id="implementing-the-push-operation"><span class="header-section-number">12.4.1</span> Implementing the <code>push</code> operation</h3>
@@ -583,8 +564,6 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <p>We are using this <code>@memcpy()</code> built-in function to copy the values that are currently stored in the underlying array of the stack object (<code>self.items</code>) into our new and bigger array that we have allocated (<code>new_buf</code>). After we execute this function, the <code>new_buf</code> contains a copy of the values that are present at <code>self.items</code>.</p>
 <p>Now that we have secured a copy of our current values in the <code>new_buf</code> object, we can now free the memory currently allocated at <code>self.items</code>. After that, we just need to assign our new and bigger array to <code>self.items</code>. This is the sequence of steps necessary to expand our array.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> push(self: *Stack, val: <span class="dt">u32</span>) !<span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> ((self.length + <span class="dv">1</span>) &gt; self.capacity) <span class="op">{</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">var</span> new_buf = <span class="kw">try</span> self.allocator.alloc(</span>
@@ -601,7 +580,6 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    self.items[self.length] = val;</span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    self.length += <span class="dv">1</span>;</span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>After we make sure that we have enough room to store this new value that we are adding to the stack, all we have to do is to assign this value to the top element in this stack, and, increase the value of the <code>length</code> attribute by one. We find the top element in the stack by using the <code>length</code> attribute.</p>
 </section>
@@ -611,15 +589,12 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <p>We just have to find the element in the underlying array that currently represents the top of the stack, and set this element to “undefined”, to indicate that this element is “empty”. After that, we also need to decrease the <code>length</code> attribute of the stack by one.</p>
 <p>If the current length of the stack is zero, it means that there is no values being stored in the stack currently. So, in this case, we could just return from the function and do nothing really. This is what the if statement inside this function is checking for.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> pop(self: *Stack) <span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (self.length == <span class="dv">0</span>) <span class="kw">return</span>;</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    self.items[self.length - <span class="dv">1</span>] = <span class="cn">undefined</span>;</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    self.length -= <span class="dv">1</span>;</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="implementing-the-deinit-method" class="level3" data-number="12.4.3">
@@ -628,12 +603,9 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <p>But now, we need to implement also the method responsible for destroying a <code>Stack</code> object. In Zig, this task is commonly associated with the method named <code>deinit()</code>. Most struct objects in Zig have such method, and it is commonly nicknamed “the destructor method”.</p>
 <p>In theory, all we have to do to destroy the <code>Stack</code> object is to make sure that we free the allocated memory for the underlying array, using the allocator object that is stored inside the <code>Stack</code> object. This is what the <code>deinit()</code> method below is doing.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> deinit(self: *Stack) <span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    self.allocator.free(self.items);</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
@@ -645,8 +617,6 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <p>We do that by using a generic function. Because a generic function can receive a data type as input, and we can pass this data type to the struct definition of our <code>Stack</code> object. Therefore, we can use the generic function to create a <code>Stack</code> object that can store the data type we want. If we want to create a stack structure that stores <code>User</code> values, we pass the <code>User</code> data type to this generic function, and it will create for us the struct definition that describes a <code>Stack</code> object that can store <code>User</code> values in it.</p>
 <p>Look at the code example below. I have omitted some parts of the <code>Stack</code> struct definition for brevity. However, if a specific part of our <code>Stack</code> struct is not exposed here in this example, then it’s because this part did not change from the previous example. It remains the same.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> Stack(<span class="kw">comptime</span> T: <span class="dt">type</span>) <span class="dt">type</span> <span class="op">{</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">struct</span> <span class="op">{</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        items: []T,</span>
@@ -670,13 +640,10 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Truncate the rest of the struct</span></span>
 <span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
 <span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Notice that we have created a function in this example named <code>Stack()</code>. This function takes a type as input, and passes this type to the struct definition of our <code>Stack</code> object. The data member <code>items</code> is now, an array of type <code>T</code>, which is the data type that we have provided as input to the function. The function argument <code>val</code> in the <code>push()</code> function is now a value of type <code>T</code> too.</p>
 <p>We can just provide a data type to this function, and it will create a definition of a <code>Stack</code> object that can store values of the data type that we have provided. In the example below, we are creating the definition of a <code>Stack</code> object that can store <code>u8</code> values in it. This definition is stored at the <code>Stacku8</code> object. This <code>Stacku8</code> object becomes our new struct, that we are going to use to create our <code>Stack</code> object.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.GeneralPurposeAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Stacku8 = Stack(<span class="dt">u8</span>);</span>
@@ -700,7 +667,6 @@ Figure&nbsp;12.1: A diagram of a stack structure. Source: Wikipedia, the free en
 <span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stack state: {any}</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span>stack.items[<span class="dv">0</span>..stack.length]<span class="op">}</span></span>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <pre><code>Stack len: 6
 Stack capacity: 10
@@ -713,8 +679,6 @@ Stack state: { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }</code></pre>
 <h2 data-number="12.6" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">12.6</span> Conclusion</h2>
 <p>The full source code of the stack structure discussed in this chapter is freely available in the official repository of this book. Just checkout the <a href="https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig"><code>stack.zig</code></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> for the <code>u32</code> version of our stack, and the <a href="https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig"><code>generic_stack.zig</code></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> for the generic version, available inside the <code>ZigExamples</code> folder of the repository.</p>
 
-
-<!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-geeks_generics" class="csl-entry" role="listitem">
@@ -758,6 +722,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -817,60 +925,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-<<<<<<< HEAD
-=======
-  const viewSource = window.document.getElementById('quarto-view-source') ||
-                     window.document.getElementById('quarto-code-tools-source');
-  if (viewSource) {
-    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
-    viewSource.addEventListener("click", function(e) {
-      if (sourceUrl) {
-        // rstudio viewer pane
-        if (/\bcapabilities=\b/.test(window.location)) {
-          window.open(sourceUrl);
-        } else {
-          window.location.href = sourceUrl;
-        }
-      } else {
-        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
-        modal.show();
-      }
-      return false;
-    });
-  }
-  function toggleCodeHandler(show) {
-    return function(e) {
-      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-      for (let i=0; i<detailsSrc.length; i++) {
-        const details = detailsSrc[i].parentElement;
-        if (show) {
-          details.open = true;
-        } else {
-          details.removeAttribute("open");
-        }
-      }
-      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
-      const fromCls = show ? "hidden" : "unhidden";
-      const toCls = show ? "unhidden" : "hidden";
-      for (let i=0; i<cellCodeDivs.length; i++) {
-        const codeDiv = cellCodeDivs[i];
-        if (codeDiv.classList.contains(fromCls)) {
-          codeDiv.classList.remove(fromCls);
-          codeDiv.classList.add(toCls);
-        } 
-      }
-      return false;
-    }
-  }
-  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
-  if (hideAllCode) {
-    hideAllCode.addEventListener("click", toggleCodeHandler(false));
-  }
-  const showAllCode = window.document.getElementById("quarto-show-all-code");
-  if (showAllCode) {
-    showAllCode.addEventListener("click", toggleCodeHandler(true));
-  }
->>>>>>> origin
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1212,713 +1266,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Filesystem and Input/Output (IO)</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb20" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="an">engine:</span><span class="co"> knitr</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="an">knitr:</span><span class="co"> true</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="an">syntax-definition:</span><span class="co"> "../Assets/zig.xml"</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../zig_engine.R"</span>)</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_main =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">build_type =</span> <span class="st">"lib"</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="fu"># Project 3 - Building a stack data structure</span></span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>In this chapter we are going to implement a stack data structure as our next small project</span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>in this book. Implementing basic data structures in any language is kind of a</span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>"kindergarten task" (if this term even exist) in computer science (CS), because</span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>we normally learn and implement them in the first semesters of CS.</span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>But this is actually good! Since this should be a very easy task, we don't need much to explain</span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>what a stack is, then, we can concentrate on what is really important here, which is learning</span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>how the concept of "generics" is implemented in the Zig language, and how one of the key</span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>features of Zig, which is comptime, works, and use the stack data structure to demonstrate</span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>these concepts on the fly.</span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>But before we get into building the stack data structure, we first need to understand</span>
-<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>what the <span class="in">`comptime`</span> keyword does to your code, and after that, we also need to learn about</span>
-<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>how generics work in Zig.</span>
-<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Understanding `comptime` in Zig {#sec-comptime}</span></span>
-<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>One of the key features of Zig is <span class="in">`comptime`</span>. This keyword introduces a whole</span>
-<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>new concept and paradigm, that is tightly connected with the compilation process.</span>
-<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>In @sec-compile-time we have described the importance and the role that "compile-time versus runtime"</span>
-<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>plays into Zig. In that section, we learned that the rules applied to a value/object change</span>
-<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>a lot depending on whether this value is known at compile-time, or just at runtime.</span>
-<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>The <span class="in">`comptime`</span> keyword is strongly related to these two spaces in time (compile-time and runtime).</span>
-<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>Let's quickly recap the differences. Compile-time is the period of time when your</span>
-<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>Zig source code is being compiled by the <span class="in">`zig`</span> compiler, while the runtime is</span>
-<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>the period of time when your Zig program is being executed, i.e., when we execute</span>
-<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>the binary files that were generated by the <span class="in">`zig`</span> compiler.</span>
-<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>There are three ways in which you can apply the <span class="in">`comptime`</span> keyword, which are:</span>
-<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>apply <span class="in">`comptime`</span> on a function argument.</span>
-<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>apply <span class="in">`comptime`</span> on an object.</span>
-<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>apply <span class="in">`comptime`</span> on a block of expressions.</span>
-<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applying over a function argument</span></span>
-<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a>When you apply the <span class="in">`comptime`</span> keyword on a function argument, you are saying to the <span class="in">`zig`</span> compiler</span>
-<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a>that the value assigned to that particular function argument must be known at compile-time.</span>
-<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a>We explained in detail in @sec-compile-time what exactly "value known at compile-time" means. So</span>
-<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a>if you have any doubts about this idea, refer back to that section.</span>
-<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a>Now let's think about the consequences of this idea. First of all, we are imposing a limit, or, a requirement</span>
-<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>to that particular function argument. If the programmer accidentally tries to give a value to this</span>
-<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>function argument that is not known at compile time, the <span class="in">`zig`</span> compiler will notice this problem, and</span>
-<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>as a consequence, it will raise a compilation error saying that it cannot compile your program. Because</span>
-<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>you are providing a value that is "runtime known" to a function argument that must be "compile-time known".</span>
-<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a>Take a look at this very simple example below, where we define a <span class="in">`twice()`</span> function, that simply</span>
-<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>doubles the input value named <span class="in">`num`</span>. Notice that we use the <span class="in">`comptime`</span> keyword before the name</span>
-<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a>of the function argument. This keyword is marking the function argument <span class="in">`num`</span> as a "comptime argument".</span>
-<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a>That is a function argument whose value must be compile-time known. This is why the expression</span>
-<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a><span class="in">`twice(5678)`</span> is valid, and no compilation errors are raised. Because the value <span class="in">`5678`</span></span>
-<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a>is compile-time known, so this is the expected behaviour for this function.</span>
-<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "test"</span></span>
-<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a><span class="in">fn twice(comptime num: u32) u32 {</span></span>
-<span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a><span class="in">    return num * 2;</span></span>
-<span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a><span class="in">test "test comptime" {</span></span>
-<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = twice(5678);</span></span>
-<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-94"><a href="#cb20-94" aria-hidden="true" tabindex="-1"></a>But what if we provide a number that is not compile-time known to this function?</span>
-<span id="cb20-95"><a href="#cb20-95" aria-hidden="true" tabindex="-1"></a>For example, your program might receive some input from the user through the <span class="in">`stdin`</span></span>
-<span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a>channel of your system. This input from the user might be many different things,</span>
-<span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a>and cannot be predicted at compile-time. These circumstances make this "input</span>
-<span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a>from the user" a value that is runtime-known only.</span>
-<span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a>In the example below, this "input from the user" is initially received as a string,</span>
-<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a>which is then parsed and transformed into a integer value, and the result of this operation</span>
-<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a>is stored inside the <span class="in">`n`</span> object.</span>
-<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a>Because the "input of the user" is known only at runtime, the value of the object <span class="in">`n`</span> is determined only at runtime.</span>
-<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a>As consequence, we cannot provide this object as input to the <span class="in">`twice()`</span> function.</span>
-<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a>The <span class="in">`zig`</span> compiler will not allow it, because we marked</span>
-<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a>the <span class="in">`num`</span> argument as a "comptime argument". That is why the <span class="in">`zig`</span> compiler raises</span>
-<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a>the compile-time error exposed below:</span>
-<span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
-<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a><span class="in">fn twice(comptime num: u32) u32 {</span></span>
-<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a><span class="in">    return num * 2;</span></span>
-<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
-<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a><span class="in">    var buffer: [5]u8 = .{ 0, 0, 0, 0, 0 };</span></span>
-<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a><span class="in">    const stdout = std.io.getStdOut().writer();</span></span>
-<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a><span class="in">    const stdin = std.io.getStdIn().reader();</span></span>
-<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = try stdout.write("Please write a 4-digit integer number\n");</span></span>
-<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = try stdin.readUntilDelimiter(&amp;buffer, '\n');</span></span>
-<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("Input: {s}", .{buffer});</span></span>
-<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a><span class="in">    const n: u32 = try std.fmt.parseInt(</span></span>
-<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a><span class="in">        u32, buffer[0 .. buffer.len - 1], 10</span></span>
-<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
-<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a><span class="in">    const twice_result = twice(n);</span></span>
-<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("Result: {d}\n", .{twice_result});</span></span>
-<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a><span class="in">t.zig:12:16: error: unable to resolve comptime value</span></span>
-<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a><span class="in">    const twice_result = twice(n);</span></span>
-<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a><span class="in">                               ^</span></span>
-<span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-142"><a href="#cb20-142" aria-hidden="true" tabindex="-1"></a>Comptime arguments are frequently used on functions that return some sort</span>
-<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a>of generic structure. In fact, <span class="in">`comptime`</span> is the essence (or the basis) to make generics in Zig.</span>
-<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a>We are going to talk more about generics in @sec-generics.</span>
-<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a>For now, let's take a look at this code example from @karlseguin_generics. You</span>
-<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a>can see that this <span class="in">`IntArray()`</span> function has one argument named <span class="in">`length`</span>.</span>
-<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a>This argument is marked as comptime, and receives a value of type <span class="in">`usize`</span> as input. So the value given to this argument</span>
-<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a>must be compile-time known.</span>
-<span id="cb20-150"><a href="#cb20-150" aria-hidden="true" tabindex="-1"></a>We can also see that this function returns an array of <span class="in">`i64`</span> values as output.</span>
-<span id="cb20-151"><a href="#cb20-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-154"><a href="#cb20-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a><span class="in">fn IntArray(comptime length: usize) type {</span></span>
-<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a><span class="in">    return [length]i64;</span></span>
-<span id="cb20-158"><a href="#cb20-158" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-159"><a href="#cb20-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-160"><a href="#cb20-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-161"><a href="#cb20-161" aria-hidden="true" tabindex="-1"></a>Now, the key component of this function is the <span class="in">`length`</span> argument. This argument</span>
-<span id="cb20-162"><a href="#cb20-162" aria-hidden="true" tabindex="-1"></a>is used to determine the size of the array that is produced by the function. Let's</span>
-<span id="cb20-163"><a href="#cb20-163" aria-hidden="true" tabindex="-1"></a>think about the consequences of that. If the size of the array is dependent on</span>
-<span id="cb20-164"><a href="#cb20-164" aria-hidden="true" tabindex="-1"></a>the value assigned to the <span class="in">`length`</span> argument, this means that the data type of the</span>
-<span id="cb20-165"><a href="#cb20-165" aria-hidden="true" tabindex="-1"></a>output of the function depends on the value of this <span class="in">`length`</span> argument.</span>
-<span id="cb20-166"><a href="#cb20-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-167"><a href="#cb20-167" aria-hidden="true" tabindex="-1"></a>Let this statement sink for a bit in your mind. As I described in @sec-root-file,</span>
-<span id="cb20-168"><a href="#cb20-168" aria-hidden="true" tabindex="-1"></a>Zig is a strongly-typed language, especially on function declarations.</span>
-<span id="cb20-169"><a href="#cb20-169" aria-hidden="true" tabindex="-1"></a>So every time we write a function in Zig, we have to annotate the data type of</span>
-<span id="cb20-170"><a href="#cb20-170" aria-hidden="true" tabindex="-1"></a>the value returned by the function. But how can we do that, if this data type</span>
-<span id="cb20-171"><a href="#cb20-171" aria-hidden="true" tabindex="-1"></a>depends on the value given to the argument of the function?</span>
-<span id="cb20-172"><a href="#cb20-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-173"><a href="#cb20-173" aria-hidden="true" tabindex="-1"></a>Think about this for a second. If <span class="in">`length`</span> is equal to 3 for example, then, the</span>
-<span id="cb20-174"><a href="#cb20-174" aria-hidden="true" tabindex="-1"></a>return type of the function is <span class="in">`[3]i64`</span>. But if <span class="in">`length`</span> is equal to 40, then,</span>
-<span id="cb20-175"><a href="#cb20-175" aria-hidden="true" tabindex="-1"></a>the return type becomes <span class="in">`[40]i64`</span>. At this point the <span class="in">`zig`</span> compiler would be confused,</span>
-<span id="cb20-176"><a href="#cb20-176" aria-hidden="true" tabindex="-1"></a>and raise a compilation error, saying something like this:</span>
-<span id="cb20-177"><a href="#cb20-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-178"><a href="#cb20-178" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Hey! You have annotated that this function should return a </span><span class="in">`[3]i64`</span><span class="at"> value, but I got a </span><span class="in">`[40]i64`</span><span class="at"> value instead! This doesn't look right!</span></span>
-<span id="cb20-179"><a href="#cb20-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-180"><a href="#cb20-180" aria-hidden="true" tabindex="-1"></a>So how can you solve this problem? How do we overcome this barrier? This is when</span>
-<span id="cb20-181"><a href="#cb20-181" aria-hidden="true" tabindex="-1"></a>the <span class="in">`type`</span> keyword comes in. This <span class="in">`type`</span> keyword is basically saying to the</span>
-<span id="cb20-182"><a href="#cb20-182" aria-hidden="true" tabindex="-1"></a><span class="in">`zig`</span> compiler that this function will return some data type as output, but it doesn't know yet</span>
-<span id="cb20-183"><a href="#cb20-183" aria-hidden="true" tabindex="-1"></a>what exactly data type that is. We will talk more about this in @sec-generics.</span>
-<span id="cb20-184"><a href="#cb20-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-185"><a href="#cb20-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-186"><a href="#cb20-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-187"><a href="#cb20-187" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applying over an expression</span></span>
-<span id="cb20-188"><a href="#cb20-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-189"><a href="#cb20-189" aria-hidden="true" tabindex="-1"></a>When you apply the <span class="in">`comptime`</span> keyword over an expression, then, it is guaranteed that the <span class="in">`zig`</span> compiler will</span>
-<span id="cb20-190"><a href="#cb20-190" aria-hidden="true" tabindex="-1"></a>execute this expression at compile-time. If for some reason, this expression cannot be executed at compile-time</span>
-<span id="cb20-191"><a href="#cb20-191" aria-hidden="true" tabindex="-1"></a>(e.g. for example, maybe this expression depends on a value that is only known at runtime), then, the <span class="in">`zig`</span> compiler</span>
-<span id="cb20-192"><a href="#cb20-192" aria-hidden="true" tabindex="-1"></a>will raise a compilation error.</span>
-<span id="cb20-193"><a href="#cb20-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-194"><a href="#cb20-194" aria-hidden="true" tabindex="-1"></a>Take this example from the official documentation of Zig <span class="co">[</span><span class="ot">@zigdocs</span><span class="co">]</span>. We</span>
-<span id="cb20-195"><a href="#cb20-195" aria-hidden="true" tabindex="-1"></a>are executing the same <span class="in">`fibonacci()`</span> function both at runtime, and, at compile-time.</span>
-<span id="cb20-196"><a href="#cb20-196" aria-hidden="true" tabindex="-1"></a>The function is executed by default at runtime, but because we use the <span class="in">`comptime`</span></span>
-<span id="cb20-197"><a href="#cb20-197" aria-hidden="true" tabindex="-1"></a>keyword in the second "try expression", this expression is executed at compile-time.</span>
-<span id="cb20-198"><a href="#cb20-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-199"><a href="#cb20-199" aria-hidden="true" tabindex="-1"></a>This might be a bit confusing for some people. Yes! When I say that this expression</span>
-<span id="cb20-200"><a href="#cb20-200" aria-hidden="true" tabindex="-1"></a>is executed at compile-time, I mean that this expression is compiled and executed</span>
-<span id="cb20-201"><a href="#cb20-201" aria-hidden="true" tabindex="-1"></a>while the <span class="in">`zig`</span> compiler is compiling your Zig source code.</span>
-<span id="cb20-202"><a href="#cb20-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-203"><a href="#cb20-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-206"><a href="#cb20-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-207"><a href="#cb20-207" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-208"><a href="#cb20-208" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "test"</span></span>
-<span id="cb20-209"><a href="#cb20-209" aria-hidden="true" tabindex="-1"></a><span class="in">const expect = @import("std").testing.expect;</span></span>
-<span id="cb20-210"><a href="#cb20-210" aria-hidden="true" tabindex="-1"></a><span class="in">fn fibonacci(index: u32) u32 {</span></span>
-<span id="cb20-211"><a href="#cb20-211" aria-hidden="true" tabindex="-1"></a><span class="in">    if (index &lt; 2) return index;</span></span>
-<span id="cb20-212"><a href="#cb20-212" aria-hidden="true" tabindex="-1"></a><span class="in">    return fibonacci(index - 1) + fibonacci(index - 2);</span></span>
-<span id="cb20-213"><a href="#cb20-213" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-214"><a href="#cb20-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-215"><a href="#cb20-215" aria-hidden="true" tabindex="-1"></a><span class="in">test "fibonacci" {</span></span>
-<span id="cb20-216"><a href="#cb20-216" aria-hidden="true" tabindex="-1"></a><span class="in">    // test fibonacci at run-time</span></span>
-<span id="cb20-217"><a href="#cb20-217" aria-hidden="true" tabindex="-1"></a><span class="in">    try expect(fibonacci(7) == 13);</span></span>
-<span id="cb20-218"><a href="#cb20-218" aria-hidden="true" tabindex="-1"></a><span class="in">    // test fibonacci at compile-time</span></span>
-<span id="cb20-219"><a href="#cb20-219" aria-hidden="true" tabindex="-1"></a><span class="in">    try comptime expect(fibonacci(7) == 13);</span></span>
-<span id="cb20-220"><a href="#cb20-220" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-221"><a href="#cb20-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-222"><a href="#cb20-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-223"><a href="#cb20-223" aria-hidden="true" tabindex="-1"></a>A lot of your Zig source code might be potentially executed at compile-time,</span>
-<span id="cb20-224"><a href="#cb20-224" aria-hidden="true" tabindex="-1"></a>because the <span class="in">`zig`</span> compiler can figure out the output of some expressions.</span>
-<span id="cb20-225"><a href="#cb20-225" aria-hidden="true" tabindex="-1"></a>Especially if these expressions depend only on compile-time known values.</span>
-<span id="cb20-226"><a href="#cb20-226" aria-hidden="true" tabindex="-1"></a>We have talked about this in @sec-compile-time.</span>
-<span id="cb20-227"><a href="#cb20-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-228"><a href="#cb20-228" aria-hidden="true" tabindex="-1"></a>But when you use the <span class="in">`comptime`</span> keyword on an expression, there is no "it might be executed</span>
-<span id="cb20-229"><a href="#cb20-229" aria-hidden="true" tabindex="-1"></a>at compile-time" anymore. With the <span class="in">`comptime`</span> keyword you are ordering the <span class="in">`zig`</span> compiler</span>
-<span id="cb20-230"><a href="#cb20-230" aria-hidden="true" tabindex="-1"></a>to execute this expression at compile-time. You are imposing this rule, it is guaranteed</span>
-<span id="cb20-231"><a href="#cb20-231" aria-hidden="true" tabindex="-1"></a>that the compiler will always execute it at compile-time. Or, at least, the compiler</span>
-<span id="cb20-232"><a href="#cb20-232" aria-hidden="true" tabindex="-1"></a>will try to execute it. If the compiler cannot execute the expression for whatever reason,</span>
-<span id="cb20-233"><a href="#cb20-233" aria-hidden="true" tabindex="-1"></a>the compiler will raise a compilation error.</span>
-<span id="cb20-234"><a href="#cb20-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-235"><a href="#cb20-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-236"><a href="#cb20-236" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applying over a block</span></span>
-<span id="cb20-237"><a href="#cb20-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-238"><a href="#cb20-238" aria-hidden="true" tabindex="-1"></a>Blocks were described in @sec-blocks. When you apply the <span class="in">`comptime`</span> keyword to a</span>
-<span id="cb20-239"><a href="#cb20-239" aria-hidden="true" tabindex="-1"></a>block of expressions, you get essentially the same effect as when you apply this keyword to</span>
-<span id="cb20-240"><a href="#cb20-240" aria-hidden="true" tabindex="-1"></a>a single expression. That is, the entire block of expressions is executed at</span>
-<span id="cb20-241"><a href="#cb20-241" aria-hidden="true" tabindex="-1"></a>compile-time by the <span class="in">`zig`</span> compiler.</span>
-<span id="cb20-242"><a href="#cb20-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-243"><a href="#cb20-243" aria-hidden="true" tabindex="-1"></a>In the example below, we mark the block labeled of <span class="in">`blk`</span> as a comptime block,</span>
-<span id="cb20-244"><a href="#cb20-244" aria-hidden="true" tabindex="-1"></a>and, therefore, the expressions inside this block are executed at compile-time.</span>
-<span id="cb20-245"><a href="#cb20-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-248"><a href="#cb20-248" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-249"><a href="#cb20-249" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-250"><a href="#cb20-250" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "test"</span></span>
-<span id="cb20-251"><a href="#cb20-251" aria-hidden="true" tabindex="-1"></a><span class="in">const expect = @import("std").testing.expect;</span></span>
-<span id="cb20-252"><a href="#cb20-252" aria-hidden="true" tabindex="-1"></a><span class="in">fn fibonacci(index: u32) u32 {</span></span>
-<span id="cb20-253"><a href="#cb20-253" aria-hidden="true" tabindex="-1"></a><span class="in">    if (index &lt; 2) return index;</span></span>
-<span id="cb20-254"><a href="#cb20-254" aria-hidden="true" tabindex="-1"></a><span class="in">    return fibonacci(index - 1) + fibonacci(index - 2);</span></span>
-<span id="cb20-255"><a href="#cb20-255" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-256"><a href="#cb20-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-257"><a href="#cb20-257" aria-hidden="true" tabindex="-1"></a><span class="in">test "fibonacci in a block" {</span></span>
-<span id="cb20-258"><a href="#cb20-258" aria-hidden="true" tabindex="-1"></a><span class="in">    const x = comptime blk: {</span></span>
-<span id="cb20-259"><a href="#cb20-259" aria-hidden="true" tabindex="-1"></a><span class="in">        const n1 = 5;</span></span>
-<span id="cb20-260"><a href="#cb20-260" aria-hidden="true" tabindex="-1"></a><span class="in">        const n2 = 2;</span></span>
-<span id="cb20-261"><a href="#cb20-261" aria-hidden="true" tabindex="-1"></a><span class="in">        const n3 = n1 + n2;</span></span>
-<span id="cb20-262"><a href="#cb20-262" aria-hidden="true" tabindex="-1"></a><span class="in">        try expect(fibonacci(n3) == 13);</span></span>
-<span id="cb20-263"><a href="#cb20-263" aria-hidden="true" tabindex="-1"></a><span class="in">        break :blk n3;</span></span>
-<span id="cb20-264"><a href="#cb20-264" aria-hidden="true" tabindex="-1"></a><span class="in">    };</span></span>
-<span id="cb20-265"><a href="#cb20-265" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = x;</span></span>
-<span id="cb20-266"><a href="#cb20-266" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-267"><a href="#cb20-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-268"><a href="#cb20-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-269"><a href="#cb20-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-270"><a href="#cb20-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-271"><a href="#cb20-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-272"><a href="#cb20-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-273"><a href="#cb20-273" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducing Generics {#sec-generics}</span></span>
-<span id="cb20-274"><a href="#cb20-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-275"><a href="#cb20-275" aria-hidden="true" tabindex="-1"></a>First of all, what is a generic? Generic is the idea to allow a type</span>
-<span id="cb20-276"><a href="#cb20-276" aria-hidden="true" tabindex="-1"></a>(<span class="in">`f64`</span>, <span class="in">`u8`</span>, <span class="in">`u32`</span>, <span class="in">`bool`</span>, and also, user-defined types, like the <span class="in">`User`</span> struct</span>
-<span id="cb20-277"><a href="#cb20-277" aria-hidden="true" tabindex="-1"></a>that we defined in @sec-structs-and-oop) to be a parameter to methods, classes and</span>
-<span id="cb20-278"><a href="#cb20-278" aria-hidden="true" tabindex="-1"></a>interfaces <span class="co">[</span><span class="ot">@geeks_generics</span><span class="co">]</span>. In other words, a "generic" is a class (or a method) that can work</span>
-<span id="cb20-279"><a href="#cb20-279" aria-hidden="true" tabindex="-1"></a>with multiple data types.</span>
-<span id="cb20-280"><a href="#cb20-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-281"><a href="#cb20-281" aria-hidden="true" tabindex="-1"></a>For example, in Java, generics are created through the operator <span class="in">`&lt;&gt;`</span>. With this operator,</span>
-<span id="cb20-282"><a href="#cb20-282" aria-hidden="true" tabindex="-1"></a>a Java class is capable of receiving a data type as input, and therefore, the class can fit</span>
-<span id="cb20-283"><a href="#cb20-283" aria-hidden="true" tabindex="-1"></a>its features according to this input data type.</span>
-<span id="cb20-284"><a href="#cb20-284" aria-hidden="true" tabindex="-1"></a>As another example, generics in C++ are supported through the concept of templates.</span>
-<span id="cb20-285"><a href="#cb20-285" aria-hidden="true" tabindex="-1"></a>Class templates in C++ are generics.</span>
-<span id="cb20-286"><a href="#cb20-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-287"><a href="#cb20-287" aria-hidden="true" tabindex="-1"></a>In Zig, generics are implemented through <span class="in">`comptime`</span>. The <span class="in">`comptime`</span> keyword</span>
-<span id="cb20-288"><a href="#cb20-288" aria-hidden="true" tabindex="-1"></a>allows us to collect a data type at compile time, and pass this data type as</span>
-<span id="cb20-289"><a href="#cb20-289" aria-hidden="true" tabindex="-1"></a>input to a piece of code.</span>
-<span id="cb20-290"><a href="#cb20-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-291"><a href="#cb20-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-292"><a href="#cb20-292" aria-hidden="true" tabindex="-1"></a><span class="fu">### A generic function {#sec-generic-fun}</span></span>
-<span id="cb20-293"><a href="#cb20-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-294"><a href="#cb20-294" aria-hidden="true" tabindex="-1"></a>Take the <span class="in">`max()`</span> function exposed below as a first example.</span>
-<span id="cb20-295"><a href="#cb20-295" aria-hidden="true" tabindex="-1"></a>This function is essentially a "generic function".</span>
-<span id="cb20-296"><a href="#cb20-296" aria-hidden="true" tabindex="-1"></a>In this function, we have a comptime function argument named <span class="in">`T`</span>.</span>
-<span id="cb20-297"><a href="#cb20-297" aria-hidden="true" tabindex="-1"></a>Notice that this <span class="in">`T`</span> argument has a data type of <span class="in">`type`</span>. Weird right? This <span class="in">`type`</span> keyword is the</span>
-<span id="cb20-298"><a href="#cb20-298" aria-hidden="true" tabindex="-1"></a>"father of all types", or, "the type of types" in Zig.</span>
-<span id="cb20-299"><a href="#cb20-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-300"><a href="#cb20-300" aria-hidden="true" tabindex="-1"></a>Because we have used this <span class="in">`type`</span> keyword in the <span class="in">`T`</span> argument, we are telling</span>
-<span id="cb20-301"><a href="#cb20-301" aria-hidden="true" tabindex="-1"></a>the <span class="in">`zig`</span> compiler that this <span class="in">`T`</span> argument will receive some data type as input.</span>
-<span id="cb20-302"><a href="#cb20-302" aria-hidden="true" tabindex="-1"></a>Also notice the use of the <span class="in">`comptime`</span> keyword in this argument.</span>
-<span id="cb20-303"><a href="#cb20-303" aria-hidden="true" tabindex="-1"></a>As I described in @sec-comptime, every time you use this keyword in a function argument,</span>
-<span id="cb20-304"><a href="#cb20-304" aria-hidden="true" tabindex="-1"></a>this means that the value of this argument must be known at compile-time.</span>
-<span id="cb20-305"><a href="#cb20-305" aria-hidden="true" tabindex="-1"></a>This makes sense, right? Because there is no data type that is not known at compile-time.</span>
-<span id="cb20-306"><a href="#cb20-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-307"><a href="#cb20-307" aria-hidden="true" tabindex="-1"></a>Think about this. Every data type that you will ever write is always</span>
-<span id="cb20-308"><a href="#cb20-308" aria-hidden="true" tabindex="-1"></a>known at compile-time. Especially because data types are an essential</span>
-<span id="cb20-309"><a href="#cb20-309" aria-hidden="true" tabindex="-1"></a>information for the compiler to actually compile your source code.</span>
-<span id="cb20-310"><a href="#cb20-310" aria-hidden="true" tabindex="-1"></a>Having this in mind, makes sense to mark this argument as a comptime argument.</span>
-<span id="cb20-311"><a href="#cb20-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-312"><a href="#cb20-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-315"><a href="#cb20-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-316"><a href="#cb20-316" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-317"><a href="#cb20-317" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
-<span id="cb20-318"><a href="#cb20-318" aria-hidden="true" tabindex="-1"></a><span class="in">fn max(comptime T: type, a: T, b: T) T {</span></span>
-<span id="cb20-319"><a href="#cb20-319" aria-hidden="true" tabindex="-1"></a><span class="in">    return if (a &gt; b) a else b;</span></span>
-<span id="cb20-320"><a href="#cb20-320" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-321"><a href="#cb20-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-322"><a href="#cb20-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-323"><a href="#cb20-323" aria-hidden="true" tabindex="-1"></a>Also notice that the value of the <span class="in">`T`</span> argument is actually used</span>
-<span id="cb20-324"><a href="#cb20-324" aria-hidden="true" tabindex="-1"></a>to define the data type of the other arguments in the function, <span class="in">`a`</span> and <span class="in">`b`</span>, and also at the</span>
-<span id="cb20-325"><a href="#cb20-325" aria-hidden="true" tabindex="-1"></a>return type annotation of the function.</span>
-<span id="cb20-326"><a href="#cb20-326" aria-hidden="true" tabindex="-1"></a>That is, the data type of these arguments (<span class="in">`a`</span> and <span class="in">`b`</span>), and, the return data type of the function itself,</span>
-<span id="cb20-327"><a href="#cb20-327" aria-hidden="true" tabindex="-1"></a>are determined by the input value given to the <span class="in">`T`</span> argument.</span>
-<span id="cb20-328"><a href="#cb20-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-329"><a href="#cb20-329" aria-hidden="true" tabindex="-1"></a>As a result, we have a generic function that works with different data types.</span>
-<span id="cb20-330"><a href="#cb20-330" aria-hidden="true" tabindex="-1"></a>For example, I can provide <span class="in">`u8`</span> values to this <span class="in">`max()`</span> function, and it will work as expected.</span>
-<span id="cb20-331"><a href="#cb20-331" aria-hidden="true" tabindex="-1"></a>But if I provide <span class="in">`f64`</span> values instead, it will also work as expected.</span>
-<span id="cb20-332"><a href="#cb20-332" aria-hidden="true" tabindex="-1"></a>Without a generic function, I would have to write a different <span class="in">`max()`</span> function</span>
-<span id="cb20-333"><a href="#cb20-333" aria-hidden="true" tabindex="-1"></a>for each data type I wanted to use.</span>
-<span id="cb20-334"><a href="#cb20-334" aria-hidden="true" tabindex="-1"></a>This generic function provides a very useful shortcut for us.</span>
-<span id="cb20-335"><a href="#cb20-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-338"><a href="#cb20-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-339"><a href="#cb20-339" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-340"><a href="#cb20-340" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
-<span id="cb20-341"><a href="#cb20-341" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
-<span id="cb20-342"><a href="#cb20-342" aria-hidden="true" tabindex="-1"></a><span class="in">fn max(comptime T: type, a: T, b: T) T {</span></span>
-<span id="cb20-343"><a href="#cb20-343" aria-hidden="true" tabindex="-1"></a><span class="in">    return if (a &gt; b) a else b;</span></span>
-<span id="cb20-344"><a href="#cb20-344" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-345"><a href="#cb20-345" aria-hidden="true" tabindex="-1"></a><span class="in">test "test max" {</span></span>
-<span id="cb20-346"><a href="#cb20-346" aria-hidden="true" tabindex="-1"></a><span class="in">    const n1 = max(u8, 4, 10);</span></span>
-<span id="cb20-347"><a href="#cb20-347" aria-hidden="true" tabindex="-1"></a><span class="in">    std.debug.print("Max n1: {d}\n", .{n1});</span></span>
-<span id="cb20-348"><a href="#cb20-348" aria-hidden="true" tabindex="-1"></a><span class="in">    const n2 = max(f64, 89.24, 64.001);</span></span>
-<span id="cb20-349"><a href="#cb20-349" aria-hidden="true" tabindex="-1"></a><span class="in">    std.debug.print("Max n2: {d}\n", .{n2});</span></span>
-<span id="cb20-350"><a href="#cb20-350" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-351"><a href="#cb20-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-352"><a href="#cb20-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-353"><a href="#cb20-353" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-354"><a href="#cb20-354" aria-hidden="true" tabindex="-1"></a><span class="in">Max n1: 10</span></span>
-<span id="cb20-355"><a href="#cb20-355" aria-hidden="true" tabindex="-1"></a><span class="in">Max n2: 89.24</span></span>
-<span id="cb20-356"><a href="#cb20-356" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-357"><a href="#cb20-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-358"><a href="#cb20-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-359"><a href="#cb20-359" aria-hidden="true" tabindex="-1"></a><span class="fu">### A generic data structure {#sec-generic-struct}</span></span>
-<span id="cb20-360"><a href="#cb20-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-361"><a href="#cb20-361" aria-hidden="true" tabindex="-1"></a>Every data structure that you find in the Zig Standard Library (e.g. <span class="in">`ArrayList`</span>, <span class="in">`HashMap`</span>, etc.)</span>
-<span id="cb20-362"><a href="#cb20-362" aria-hidden="true" tabindex="-1"></a>is essentially a generic data structure.</span>
-<span id="cb20-363"><a href="#cb20-363" aria-hidden="true" tabindex="-1"></a>These data structures are generic in the sense that they work with any data type you want.</span>
-<span id="cb20-364"><a href="#cb20-364" aria-hidden="true" tabindex="-1"></a>You just say which is the data type of the values that are going to be stored in this data</span>
-<span id="cb20-365"><a href="#cb20-365" aria-hidden="true" tabindex="-1"></a>structure, and they just work as expected.</span>
-<span id="cb20-366"><a href="#cb20-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-367"><a href="#cb20-367" aria-hidden="true" tabindex="-1"></a>A generic data structure in Zig is how you replicate a generic class from Java,</span>
-<span id="cb20-368"><a href="#cb20-368" aria-hidden="true" tabindex="-1"></a>or, a class template from C++. But you may ask yourself: how do we build a</span>
-<span id="cb20-369"><a href="#cb20-369" aria-hidden="true" tabindex="-1"></a>generic data structure in Zig?</span>
-<span id="cb20-370"><a href="#cb20-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-371"><a href="#cb20-371" aria-hidden="true" tabindex="-1"></a>The basic idea is to write a generic function that creates the data structure definition</span>
-<span id="cb20-372"><a href="#cb20-372" aria-hidden="true" tabindex="-1"></a>for the specific type we want. In other words, this generic function behaves as a "factory of data structures".</span>
-<span id="cb20-373"><a href="#cb20-373" aria-hidden="true" tabindex="-1"></a>The generic function outputs the <span class="in">`struct`</span> definition that defines this data structure for a</span>
-<span id="cb20-374"><a href="#cb20-374" aria-hidden="true" tabindex="-1"></a>specific data type.</span>
-<span id="cb20-375"><a href="#cb20-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-376"><a href="#cb20-376" aria-hidden="true" tabindex="-1"></a>To create such function, we need to add a comptime argument to this function that receives a data type</span>
-<span id="cb20-377"><a href="#cb20-377" aria-hidden="true" tabindex="-1"></a>as input. We already learned how to do this in the previous section (@sec-generic-fun).</span>
-<span id="cb20-378"><a href="#cb20-378" aria-hidden="true" tabindex="-1"></a>I think the best way to demonstrate how to create a generic data structure is to actually write one.</span>
-<span id="cb20-379"><a href="#cb20-379" aria-hidden="true" tabindex="-1"></a>This where we go into our next small project in this book. This one is a very small project,</span>
-<span id="cb20-380"><a href="#cb20-380" aria-hidden="true" tabindex="-1"></a>which is to write a generic stack data structure.</span>
-<span id="cb20-381"><a href="#cb20-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-382"><a href="#cb20-382" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-383"><a href="#cb20-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-384"><a href="#cb20-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-385"><a href="#cb20-385" aria-hidden="true" tabindex="-1"></a><span class="fu">## What is a stack? {#sec-what-stack}</span></span>
-<span id="cb20-386"><a href="#cb20-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-387"><a href="#cb20-387" aria-hidden="true" tabindex="-1"></a>A stack data structure is a structure that follows a LIFO (*last in, first out*) principle.</span>
-<span id="cb20-388"><a href="#cb20-388" aria-hidden="true" tabindex="-1"></a>Only two operations are normally supported in a stack data structure, which are <span class="in">`push`</span> and <span class="in">`pop`</span>.</span>
-<span id="cb20-389"><a href="#cb20-389" aria-hidden="true" tabindex="-1"></a>The <span class="in">`push`</span> operation is used to add new values to the stack, while <span class="in">`pop`</span> is used to remove</span>
-<span id="cb20-390"><a href="#cb20-390" aria-hidden="true" tabindex="-1"></a>values from the stack.</span>
-<span id="cb20-391"><a href="#cb20-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-392"><a href="#cb20-392" aria-hidden="true" tabindex="-1"></a>When people try to explain how the stack data structure works, the most common analogy</span>
-<span id="cb20-393"><a href="#cb20-393" aria-hidden="true" tabindex="-1"></a>that they use is a stack of plates. Imagine that you have a stack of plates,</span>
-<span id="cb20-394"><a href="#cb20-394" aria-hidden="true" tabindex="-1"></a>for example, a stack of 10 plates in your table. Each plate represents a value that</span>
-<span id="cb20-395"><a href="#cb20-395" aria-hidden="true" tabindex="-1"></a>is currently stored in this stack.</span>
-<span id="cb20-396"><a href="#cb20-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-397"><a href="#cb20-397" aria-hidden="true" tabindex="-1"></a>We begin with a stack of 10 different values, or 10 different plates. Now, imagine that you want to</span>
-<span id="cb20-398"><a href="#cb20-398" aria-hidden="true" tabindex="-1"></a>add a new plate (or a new value) to this stack, which translates to the <span class="in">`push`</span> operation.</span>
-<span id="cb20-399"><a href="#cb20-399" aria-hidden="true" tabindex="-1"></a>You would add this plate (or this value) by just putting the new plate</span>
-<span id="cb20-400"><a href="#cb20-400" aria-hidden="true" tabindex="-1"></a>on the top of the stack. Then, you would increase the stack to 11 plates.</span>
-<span id="cb20-401"><a href="#cb20-401" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-402"><a href="#cb20-402" aria-hidden="true" tabindex="-1"></a>But how would you remove plates (or remove values) from this stack (a.k.a. the <span class="in">`pop`</span> operation) ?</span>
-<span id="cb20-403"><a href="#cb20-403" aria-hidden="true" tabindex="-1"></a>To do that, we would have to remove the plate on the top of the stack, and, as a result, we would</span>
-<span id="cb20-404"><a href="#cb20-404" aria-hidden="true" tabindex="-1"></a>have, once again, 10 plates in the stack.</span>
-<span id="cb20-405"><a href="#cb20-405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-406"><a href="#cb20-406" aria-hidden="true" tabindex="-1"></a>This demonstrates the LIFO concept, because the first plate in the stack, which is the plate</span>
-<span id="cb20-407"><a href="#cb20-407" aria-hidden="true" tabindex="-1"></a>in the bottom of the stack, is always the last plate to get out of the stack. Think about it. In order</span>
-<span id="cb20-408"><a href="#cb20-408" aria-hidden="true" tabindex="-1"></a>to remove this specific plate from the stack, we have to remove all plates in the</span>
-<span id="cb20-409"><a href="#cb20-409" aria-hidden="true" tabindex="-1"></a>stack. So every operation in the stack, either insertion or deletion, is always made at the top of the stack.</span>
-<span id="cb20-410"><a href="#cb20-410" aria-hidden="true" tabindex="-1"></a>The @fig-stack below exposes this logic visually:</span>
-<span id="cb20-411"><a href="#cb20-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-412"><a href="#cb20-412" aria-hidden="true" tabindex="-1"></a><span class="al">![A diagram of a stack structure. Source: Wikipedia, the free encyclopedia.](./../Figures/lifo-stack.svg)</span>{#fig-stack}</span>
-<span id="cb20-413"><a href="#cb20-413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-414"><a href="#cb20-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-415"><a href="#cb20-415" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-416"><a href="#cb20-416" aria-hidden="true" tabindex="-1"></a><span class="fu">## Writing the stack data structure</span></span>
-<span id="cb20-417"><a href="#cb20-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-418"><a href="#cb20-418" aria-hidden="true" tabindex="-1"></a>We are going to write the stack data structure in two steps. First, we are going</span>
-<span id="cb20-419"><a href="#cb20-419" aria-hidden="true" tabindex="-1"></a>to implement a stack that can only store <span class="in">`u32`</span> values. Then, after that, we are going</span>
-<span id="cb20-420"><a href="#cb20-420" aria-hidden="true" tabindex="-1"></a>to extend our implementation to make it generic, so that it works with any data type</span>
-<span id="cb20-421"><a href="#cb20-421" aria-hidden="true" tabindex="-1"></a>we want.</span>
-<span id="cb20-422"><a href="#cb20-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-423"><a href="#cb20-423" aria-hidden="true" tabindex="-1"></a>First, we need to decide how the values will be stored inside the stack. There are multiple</span>
-<span id="cb20-424"><a href="#cb20-424" aria-hidden="true" tabindex="-1"></a>ways to implement the storage behind a stack structure. Some people prefer to use a doubly linked list,</span>
-<span id="cb20-425"><a href="#cb20-425" aria-hidden="true" tabindex="-1"></a>others prefer to use a dynamic array, etc. In this example we are going to use an array behind the hood,</span>
-<span id="cb20-426"><a href="#cb20-426" aria-hidden="true" tabindex="-1"></a>to store the values in the stack, which is the <span class="in">`items`</span> data member of our <span class="in">`Stack`</span> struct definition.</span>
-<span id="cb20-427"><a href="#cb20-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-428"><a href="#cb20-428" aria-hidden="true" tabindex="-1"></a>Also notice in our <span class="in">`Stack`</span> struct that we have three other data members: <span class="in">`capacity`</span>, <span class="in">`length`</span> and <span class="in">`allocator`</span>.</span>
-<span id="cb20-429"><a href="#cb20-429" aria-hidden="true" tabindex="-1"></a>The <span class="in">`capacity`</span> member contains the capacity of the underlying array that stores the values in the stack.</span>
-<span id="cb20-430"><a href="#cb20-430" aria-hidden="true" tabindex="-1"></a>The <span class="in">`length`</span> contains the number of values that are currently being stored in the stack.</span>
-<span id="cb20-431"><a href="#cb20-431" aria-hidden="true" tabindex="-1"></a>And the <span class="in">`allocator`</span> contains the allocator object that will be used by the stack structure whenever it</span>
-<span id="cb20-432"><a href="#cb20-432" aria-hidden="true" tabindex="-1"></a>needs to allocate more space for the values that are being stored.</span>
-<span id="cb20-433"><a href="#cb20-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-434"><a href="#cb20-434" aria-hidden="true" tabindex="-1"></a>We begin by defining an <span class="in">`init()`</span> method of this struct, which is going to be</span>
-<span id="cb20-435"><a href="#cb20-435" aria-hidden="true" tabindex="-1"></a>responsible for instantiating a <span class="in">`Stack`</span> object. Notice that, inside this</span>
-<span id="cb20-436"><a href="#cb20-436" aria-hidden="true" tabindex="-1"></a><span class="in">`init()`</span> method, we start by allocating an array with the capacity specified</span>
-<span id="cb20-437"><a href="#cb20-437" aria-hidden="true" tabindex="-1"></a>in the <span class="in">`capacity`</span> argument.</span>
-<span id="cb20-438"><a href="#cb20-438" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-439"><a href="#cb20-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-442"><a href="#cb20-442" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-443"><a href="#cb20-443" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
-<span id="cb20-444"><a href="#cb20-444" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
-<span id="cb20-445"><a href="#cb20-445" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
-<span id="cb20-446"><a href="#cb20-446" aria-hidden="true" tabindex="-1"></a><span class="in">const Allocator = std.mem.Allocator;</span></span>
-<span id="cb20-447"><a href="#cb20-447" aria-hidden="true" tabindex="-1"></a><span class="in">const Stack = struct {</span></span>
-<span id="cb20-448"><a href="#cb20-448" aria-hidden="true" tabindex="-1"></a><span class="in">    items: []u32,</span></span>
-<span id="cb20-449"><a href="#cb20-449" aria-hidden="true" tabindex="-1"></a><span class="in">    capacity: usize,</span></span>
-<span id="cb20-450"><a href="#cb20-450" aria-hidden="true" tabindex="-1"></a><span class="in">    length: usize,</span></span>
-<span id="cb20-451"><a href="#cb20-451" aria-hidden="true" tabindex="-1"></a><span class="in">    allocator: Allocator,</span></span>
-<span id="cb20-452"><a href="#cb20-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-453"><a href="#cb20-453" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn init(allocator: Allocator, capacity: usize) !Stack {</span></span>
-<span id="cb20-454"><a href="#cb20-454" aria-hidden="true" tabindex="-1"></a><span class="in">        var buf = try allocator.alloc(u32, capacity);</span></span>
-<span id="cb20-455"><a href="#cb20-455" aria-hidden="true" tabindex="-1"></a><span class="in">        return .{</span></span>
-<span id="cb20-456"><a href="#cb20-456" aria-hidden="true" tabindex="-1"></a><span class="in">            .items = buf[0..],</span></span>
-<span id="cb20-457"><a href="#cb20-457" aria-hidden="true" tabindex="-1"></a><span class="in">            .capacity = capacity,</span></span>
-<span id="cb20-458"><a href="#cb20-458" aria-hidden="true" tabindex="-1"></a><span class="in">            .length = 0,</span></span>
-<span id="cb20-459"><a href="#cb20-459" aria-hidden="true" tabindex="-1"></a><span class="in">            .allocator = allocator,</span></span>
-<span id="cb20-460"><a href="#cb20-460" aria-hidden="true" tabindex="-1"></a><span class="in">        };</span></span>
-<span id="cb20-461"><a href="#cb20-461" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
-<span id="cb20-462"><a href="#cb20-462" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
-<span id="cb20-463"><a href="#cb20-463" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-464"><a href="#cb20-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-465"><a href="#cb20-465" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-466"><a href="#cb20-466" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementing the `push` operation</span></span>
-<span id="cb20-467"><a href="#cb20-467" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-468"><a href="#cb20-468" aria-hidden="true" tabindex="-1"></a>Now that we have written the basic logic to create a new <span class="in">`Stack`</span> object,</span>
-<span id="cb20-469"><a href="#cb20-469" aria-hidden="true" tabindex="-1"></a>we can start writing the logic responsible for performing a push operation.</span>
-<span id="cb20-470"><a href="#cb20-470" aria-hidden="true" tabindex="-1"></a>Remember, a push operation in a stack data structure is the operation</span>
-<span id="cb20-471"><a href="#cb20-471" aria-hidden="true" tabindex="-1"></a>responsible for adding a new value to the stack.</span>
-<span id="cb20-472"><a href="#cb20-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-473"><a href="#cb20-473" aria-hidden="true" tabindex="-1"></a>So how can we add a new value to the <span class="in">`Stack`</span> object that we have?</span>
-<span id="cb20-474"><a href="#cb20-474" aria-hidden="true" tabindex="-1"></a>The <span class="in">`push()`</span> function exposed below is a possible answer to this question.</span>
-<span id="cb20-475"><a href="#cb20-475" aria-hidden="true" tabindex="-1"></a>Remember from what we discussed in @sec-what-stack that values are always added to the top of the stack.</span>
-<span id="cb20-476"><a href="#cb20-476" aria-hidden="true" tabindex="-1"></a>This means that this <span class="in">`push()`</span> function must always find the element in the underlying array</span>
-<span id="cb20-477"><a href="#cb20-477" aria-hidden="true" tabindex="-1"></a>that currently represents the top position of the stack, and then, add the input value there.</span>
-<span id="cb20-478"><a href="#cb20-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-479"><a href="#cb20-479" aria-hidden="true" tabindex="-1"></a>First, we have an if statement in this function. This if statement is</span>
-<span id="cb20-480"><a href="#cb20-480" aria-hidden="true" tabindex="-1"></a>checking whether we need to expand the underlying array to store</span>
-<span id="cb20-481"><a href="#cb20-481" aria-hidden="true" tabindex="-1"></a>this new value that we are adding to the stack. In other words, maybe</span>
-<span id="cb20-482"><a href="#cb20-482" aria-hidden="true" tabindex="-1"></a>the underlying array does not have enough capacity to store this new</span>
-<span id="cb20-483"><a href="#cb20-483" aria-hidden="true" tabindex="-1"></a>value, and, in this case, we need to expand our array to get the capacity that we need.</span>
-<span id="cb20-484"><a href="#cb20-484" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-485"><a href="#cb20-485" aria-hidden="true" tabindex="-1"></a>So, if the logical test in this if statement returns true, it means that the array</span>
-<span id="cb20-486"><a href="#cb20-486" aria-hidden="true" tabindex="-1"></a>does not have enough capacity, and we need to expand it before we store this new value.</span>
-<span id="cb20-487"><a href="#cb20-487" aria-hidden="true" tabindex="-1"></a>So inside this if statement we are executing the necessary expressions to expand the underlying array.</span>
-<span id="cb20-488"><a href="#cb20-488" aria-hidden="true" tabindex="-1"></a>Notice that we use the allocator object to allocate a new array that is twice as bigger</span>
-<span id="cb20-489"><a href="#cb20-489" aria-hidden="true" tabindex="-1"></a>than the current array (<span class="in">`self.capacity * 2`</span>).</span>
-<span id="cb20-490"><a href="#cb20-490" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-491"><a href="#cb20-491" aria-hidden="true" tabindex="-1"></a>After that, we use a different built-in function named <span class="in">`@memcpy()`</span>. This built-in function</span>
-<span id="cb20-492"><a href="#cb20-492" aria-hidden="true" tabindex="-1"></a>is equivalent to the <span class="in">`memcpy()`</span> function from the C Standard Library<span class="ot">[^cmemcpy]</span>. It's used to</span>
-<span id="cb20-493"><a href="#cb20-493" aria-hidden="true" tabindex="-1"></a>copy the values from one block of memory to another block of memory. In other words,</span>
-<span id="cb20-494"><a href="#cb20-494" aria-hidden="true" tabindex="-1"></a>you can use this function to copy the values from one array into another array.</span>
-<span id="cb20-495"><a href="#cb20-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-496"><a href="#cb20-496" aria-hidden="true" tabindex="-1"></a><span class="ot">[^cmemcpy]: &lt;https://www.tutorialspoint.com/c_standard_library/c_function_memcpy.htm&gt;</span></span>
-<span id="cb20-497"><a href="#cb20-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-498"><a href="#cb20-498" aria-hidden="true" tabindex="-1"></a>We are using this <span class="in">`@memcpy()`</span> built-in function to copy the values that are currently stored</span>
-<span id="cb20-499"><a href="#cb20-499" aria-hidden="true" tabindex="-1"></a>in the underlying array of the stack object (<span class="in">`self.items`</span>) into our new and bigger array that</span>
-<span id="cb20-500"><a href="#cb20-500" aria-hidden="true" tabindex="-1"></a>we have allocated (<span class="in">`new_buf`</span>). After we execute this function, the <span class="in">`new_buf`</span> contains a copy</span>
-<span id="cb20-501"><a href="#cb20-501" aria-hidden="true" tabindex="-1"></a>of the values that are present at <span class="in">`self.items`</span>.</span>
-<span id="cb20-502"><a href="#cb20-502" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-503"><a href="#cb20-503" aria-hidden="true" tabindex="-1"></a>Now that we have secured a copy of our current values in the <span class="in">`new_buf`</span> object, we</span>
-<span id="cb20-504"><a href="#cb20-504" aria-hidden="true" tabindex="-1"></a>can now free the memory currently allocated at <span class="in">`self.items`</span>. After that, we just need</span>
-<span id="cb20-505"><a href="#cb20-505" aria-hidden="true" tabindex="-1"></a>to assign our new and bigger array to <span class="in">`self.items`</span>. This is the sequence</span>
-<span id="cb20-506"><a href="#cb20-506" aria-hidden="true" tabindex="-1"></a>of steps necessary to expand our array.</span>
-<span id="cb20-507"><a href="#cb20-507" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-508"><a href="#cb20-508" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-511"><a href="#cb20-511" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-512"><a href="#cb20-512" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-513"><a href="#cb20-513" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn push(self: *Stack, val: u32) !void {</span></span>
-<span id="cb20-514"><a href="#cb20-514" aria-hidden="true" tabindex="-1"></a><span class="in">    if ((self.length + 1) &gt; self.capacity) {</span></span>
-<span id="cb20-515"><a href="#cb20-515" aria-hidden="true" tabindex="-1"></a><span class="in">        var new_buf = try self.allocator.alloc(</span></span>
-<span id="cb20-516"><a href="#cb20-516" aria-hidden="true" tabindex="-1"></a><span class="in">            u32, self.capacity * 2</span></span>
-<span id="cb20-517"><a href="#cb20-517" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
-<span id="cb20-518"><a href="#cb20-518" aria-hidden="true" tabindex="-1"></a><span class="in">        @memcpy(</span></span>
-<span id="cb20-519"><a href="#cb20-519" aria-hidden="true" tabindex="-1"></a><span class="in">            new_buf[0..self.capacity], self.items</span></span>
-<span id="cb20-520"><a href="#cb20-520" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
-<span id="cb20-521"><a href="#cb20-521" aria-hidden="true" tabindex="-1"></a><span class="in">        self.allocator.free(self.items);</span></span>
-<span id="cb20-522"><a href="#cb20-522" aria-hidden="true" tabindex="-1"></a><span class="in">        self.items = new_buf;</span></span>
-<span id="cb20-523"><a href="#cb20-523" aria-hidden="true" tabindex="-1"></a><span class="in">        self.capacity = self.capacity * 2;</span></span>
-<span id="cb20-524"><a href="#cb20-524" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
-<span id="cb20-525"><a href="#cb20-525" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-526"><a href="#cb20-526" aria-hidden="true" tabindex="-1"></a><span class="in">    self.items[self.length] = val;</span></span>
-<span id="cb20-527"><a href="#cb20-527" aria-hidden="true" tabindex="-1"></a><span class="in">    self.length += 1;</span></span>
-<span id="cb20-528"><a href="#cb20-528" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-529"><a href="#cb20-529" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-530"><a href="#cb20-530" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-531"><a href="#cb20-531" aria-hidden="true" tabindex="-1"></a>After we make sure that we have enough room to store this new value</span>
-<span id="cb20-532"><a href="#cb20-532" aria-hidden="true" tabindex="-1"></a>that we are adding to the stack, all we have to do is to assign</span>
-<span id="cb20-533"><a href="#cb20-533" aria-hidden="true" tabindex="-1"></a>this value to the top element in this stack, and, increase the</span>
-<span id="cb20-534"><a href="#cb20-534" aria-hidden="true" tabindex="-1"></a>value of the <span class="in">`length`</span> attribute by one. We find the top element</span>
-<span id="cb20-535"><a href="#cb20-535" aria-hidden="true" tabindex="-1"></a>in the stack by using the <span class="in">`length`</span> attribute.</span>
-<span id="cb20-536"><a href="#cb20-536" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-537"><a href="#cb20-537" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-538"><a href="#cb20-538" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-539"><a href="#cb20-539" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementing the `pop` operation</span></span>
-<span id="cb20-540"><a href="#cb20-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-541"><a href="#cb20-541" aria-hidden="true" tabindex="-1"></a>Now we can implement the pop operation of our stack object.</span>
-<span id="cb20-542"><a href="#cb20-542" aria-hidden="true" tabindex="-1"></a>This is a much easier operation to implement, and the <span class="in">`pop()`</span> method below summarises</span>
-<span id="cb20-543"><a href="#cb20-543" aria-hidden="true" tabindex="-1"></a>all the logic that is needed.</span>
-<span id="cb20-544"><a href="#cb20-544" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-545"><a href="#cb20-545" aria-hidden="true" tabindex="-1"></a>We just have to find the element in the underlying array that currently represents the top</span>
-<span id="cb20-546"><a href="#cb20-546" aria-hidden="true" tabindex="-1"></a>of the stack, and set this element to "undefined", to indicate that</span>
-<span id="cb20-547"><a href="#cb20-547" aria-hidden="true" tabindex="-1"></a>this element is "empty". After that, we also need to decrease</span>
-<span id="cb20-548"><a href="#cb20-548" aria-hidden="true" tabindex="-1"></a>the <span class="in">`length`</span> attribute of the stack by one.</span>
-<span id="cb20-549"><a href="#cb20-549" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-550"><a href="#cb20-550" aria-hidden="true" tabindex="-1"></a>If the current length of the stack is zero, it means that there is</span>
-<span id="cb20-551"><a href="#cb20-551" aria-hidden="true" tabindex="-1"></a>no values being stored in the stack currently. So, in this case,</span>
-<span id="cb20-552"><a href="#cb20-552" aria-hidden="true" tabindex="-1"></a>we could just return from the function and do nothing really.</span>
-<span id="cb20-553"><a href="#cb20-553" aria-hidden="true" tabindex="-1"></a>This is what the if statement inside this function is checking for.</span>
-<span id="cb20-554"><a href="#cb20-554" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-557"><a href="#cb20-557" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-558"><a href="#cb20-558" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-559"><a href="#cb20-559" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn pop(self: *Stack) void {</span></span>
-<span id="cb20-560"><a href="#cb20-560" aria-hidden="true" tabindex="-1"></a><span class="in">    if (self.length == 0) return;</span></span>
-<span id="cb20-561"><a href="#cb20-561" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-562"><a href="#cb20-562" aria-hidden="true" tabindex="-1"></a><span class="in">    self.items[self.length - 1] = undefined;</span></span>
-<span id="cb20-563"><a href="#cb20-563" aria-hidden="true" tabindex="-1"></a><span class="in">    self.length -= 1;</span></span>
-<span id="cb20-564"><a href="#cb20-564" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-565"><a href="#cb20-565" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-566"><a href="#cb20-566" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-567"><a href="#cb20-567" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-568"><a href="#cb20-568" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-569"><a href="#cb20-569" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementing the `deinit` method</span></span>
-<span id="cb20-570"><a href="#cb20-570" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-571"><a href="#cb20-571" aria-hidden="true" tabindex="-1"></a>We have implemented the methods responsible for the two main operations</span>
-<span id="cb20-572"><a href="#cb20-572" aria-hidden="true" tabindex="-1"></a>associated with the stack data structure, which is <span class="in">`pop()`</span> and <span class="in">`push()`</span>,</span>
-<span id="cb20-573"><a href="#cb20-573" aria-hidden="true" tabindex="-1"></a>and we also have implemented the method responsible for instantiating</span>
-<span id="cb20-574"><a href="#cb20-574" aria-hidden="true" tabindex="-1"></a>a new <span class="in">`Stack`</span> object, which is the <span class="in">`init()`</span> method.</span>
-<span id="cb20-575"><a href="#cb20-575" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-576"><a href="#cb20-576" aria-hidden="true" tabindex="-1"></a>But now, we need to implement also the method responsible for destroying</span>
-<span id="cb20-577"><a href="#cb20-577" aria-hidden="true" tabindex="-1"></a>a <span class="in">`Stack`</span> object. In Zig, this task is commonly associated with the method</span>
-<span id="cb20-578"><a href="#cb20-578" aria-hidden="true" tabindex="-1"></a>named <span class="in">`deinit()`</span>. Most struct objects in Zig have such method, and it</span>
-<span id="cb20-579"><a href="#cb20-579" aria-hidden="true" tabindex="-1"></a>is commonly nicknamed "the destructor method".</span>
-<span id="cb20-580"><a href="#cb20-580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-581"><a href="#cb20-581" aria-hidden="true" tabindex="-1"></a>In theory, all we have to do to destroy the <span class="in">`Stack`</span> object is to make</span>
-<span id="cb20-582"><a href="#cb20-582" aria-hidden="true" tabindex="-1"></a>sure that we free the allocated memory for the underlying array, using</span>
-<span id="cb20-583"><a href="#cb20-583" aria-hidden="true" tabindex="-1"></a>the allocator object that is stored inside the <span class="in">`Stack`</span> object.</span>
-<span id="cb20-584"><a href="#cb20-584" aria-hidden="true" tabindex="-1"></a>This is what the <span class="in">`deinit()`</span> method below is doing.</span>
-<span id="cb20-585"><a href="#cb20-585" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-588"><a href="#cb20-588" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-589"><a href="#cb20-589" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-590"><a href="#cb20-590" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn deinit(self: *Stack) void {</span></span>
-<span id="cb20-591"><a href="#cb20-591" aria-hidden="true" tabindex="-1"></a><span class="in">    self.allocator.free(self.items);</span></span>
-<span id="cb20-592"><a href="#cb20-592" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-593"><a href="#cb20-593" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-594"><a href="#cb20-594" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-595"><a href="#cb20-595" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-596"><a href="#cb20-596" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-597"><a href="#cb20-597" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-598"><a href="#cb20-598" aria-hidden="true" tabindex="-1"></a><span class="fu">## Making it generic</span></span>
-<span id="cb20-599"><a href="#cb20-599" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-600"><a href="#cb20-600" aria-hidden="true" tabindex="-1"></a>Now that we have implemented the basic skeleton of our stack data structure,</span>
-<span id="cb20-601"><a href="#cb20-601" aria-hidden="true" tabindex="-1"></a>we can now focus on discussing how we can make it generic. How can we make</span>
-<span id="cb20-602"><a href="#cb20-602" aria-hidden="true" tabindex="-1"></a>this basic skeleton to work not only with <span class="in">`u32`</span> values, but also with any other</span>
-<span id="cb20-603"><a href="#cb20-603" aria-hidden="true" tabindex="-1"></a>data type we want?</span>
-<span id="cb20-604"><a href="#cb20-604" aria-hidden="true" tabindex="-1"></a>For example, we might need to create a stack object to store <span class="in">`User`</span> values</span>
-<span id="cb20-605"><a href="#cb20-605" aria-hidden="true" tabindex="-1"></a>in it. How can we make this possible? The answer lies in the use of generics</span>
-<span id="cb20-606"><a href="#cb20-606" aria-hidden="true" tabindex="-1"></a>and <span class="in">`comptime`</span>.</span>
-<span id="cb20-607"><a href="#cb20-607" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-608"><a href="#cb20-608" aria-hidden="true" tabindex="-1"></a>As I described in @sec-generic-struct, the basic idea is to write a generic</span>
-<span id="cb20-609"><a href="#cb20-609" aria-hidden="true" tabindex="-1"></a>function that returns a struct definition as output.</span>
-<span id="cb20-610"><a href="#cb20-610" aria-hidden="true" tabindex="-1"></a>In theory, we do not need much to transform our <span class="in">`Stack`</span> struct into a generic</span>
-<span id="cb20-611"><a href="#cb20-611" aria-hidden="true" tabindex="-1"></a>data structure. All that we need to do is to transform the underlying array</span>
-<span id="cb20-612"><a href="#cb20-612" aria-hidden="true" tabindex="-1"></a>of the stack into a generic array.</span>
-<span id="cb20-613"><a href="#cb20-613" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-614"><a href="#cb20-614" aria-hidden="true" tabindex="-1"></a>In other words, this underlying array needs to be a "chameleon". It needs to adapt,</span>
-<span id="cb20-615"><a href="#cb20-615" aria-hidden="true" tabindex="-1"></a>and transform it into an array of any data type that we want. For example, if we need to create</span>
-<span id="cb20-616"><a href="#cb20-616" aria-hidden="true" tabindex="-1"></a>a stack that will store <span class="in">`u8`</span> values, then this underlying array needs to be</span>
-<span id="cb20-617"><a href="#cb20-617" aria-hidden="true" tabindex="-1"></a>a <span class="in">`u8`</span> array (i.e., <span class="in">`[]u8`</span>). But if we need to store <span class="in">`User`</span> values instead, then,</span>
-<span id="cb20-618"><a href="#cb20-618" aria-hidden="true" tabindex="-1"></a>this array needs to be a <span class="in">`User`</span> array (i.e., <span class="in">`[]User`</span>). Etc.</span>
-<span id="cb20-619"><a href="#cb20-619" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-620"><a href="#cb20-620" aria-hidden="true" tabindex="-1"></a>We do that by using a generic function. Because a generic function can receive a data type</span>
-<span id="cb20-621"><a href="#cb20-621" aria-hidden="true" tabindex="-1"></a>as input, and we can pass this data type to the struct definition of our <span class="in">`Stack`</span> object.</span>
-<span id="cb20-622"><a href="#cb20-622" aria-hidden="true" tabindex="-1"></a>Therefore, we can use the generic function to create a <span class="in">`Stack`</span> object that can store</span>
-<span id="cb20-623"><a href="#cb20-623" aria-hidden="true" tabindex="-1"></a>the data type we want. If we want to create a stack structure that stores <span class="in">`User`</span> values,</span>
-<span id="cb20-624"><a href="#cb20-624" aria-hidden="true" tabindex="-1"></a>we pass the <span class="in">`User`</span> data type to this generic function, and it will create for us</span>
-<span id="cb20-625"><a href="#cb20-625" aria-hidden="true" tabindex="-1"></a>the struct definition that describes a <span class="in">`Stack`</span> object that can store <span class="in">`User`</span> values in it.</span>
-<span id="cb20-626"><a href="#cb20-626" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-627"><a href="#cb20-627" aria-hidden="true" tabindex="-1"></a>Look at the code example below. I have omitted some parts of the <span class="in">`Stack`</span> struct definition</span>
-<span id="cb20-628"><a href="#cb20-628" aria-hidden="true" tabindex="-1"></a>for brevity. However, if a specific part of our <span class="in">`Stack`</span> struct is not exposed here</span>
-<span id="cb20-629"><a href="#cb20-629" aria-hidden="true" tabindex="-1"></a>in this example, then it's because this part did not change from the previous example.</span>
-<span id="cb20-630"><a href="#cb20-630" aria-hidden="true" tabindex="-1"></a>It remains the same.</span>
-<span id="cb20-631"><a href="#cb20-631" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-632"><a href="#cb20-632" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-633"><a href="#cb20-633" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-634"><a href="#cb20-634" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-637"><a href="#cb20-637" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-638"><a href="#cb20-638" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-639"><a href="#cb20-639" aria-hidden="true" tabindex="-1"></a><span class="in">fn Stack(comptime T: type) type {</span></span>
-<span id="cb20-640"><a href="#cb20-640" aria-hidden="true" tabindex="-1"></a><span class="in">    return struct {</span></span>
-<span id="cb20-641"><a href="#cb20-641" aria-hidden="true" tabindex="-1"></a><span class="in">        items: []T,</span></span>
-<span id="cb20-642"><a href="#cb20-642" aria-hidden="true" tabindex="-1"></a><span class="in">        capacity: usize,</span></span>
-<span id="cb20-643"><a href="#cb20-643" aria-hidden="true" tabindex="-1"></a><span class="in">        length: usize,</span></span>
-<span id="cb20-644"><a href="#cb20-644" aria-hidden="true" tabindex="-1"></a><span class="in">        allocator: Allocator,</span></span>
-<span id="cb20-645"><a href="#cb20-645" aria-hidden="true" tabindex="-1"></a><span class="in">        const Self = @This();</span></span>
-<span id="cb20-646"><a href="#cb20-646" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-647"><a href="#cb20-647" aria-hidden="true" tabindex="-1"></a><span class="in">        pub fn init(allocator: Allocator,</span></span>
-<span id="cb20-648"><a href="#cb20-648" aria-hidden="true" tabindex="-1"></a><span class="in">                    capacity: usize) !Stack(T) {</span></span>
-<span id="cb20-649"><a href="#cb20-649" aria-hidden="true" tabindex="-1"></a><span class="in">            var buf = try allocator.alloc(T, capacity);</span></span>
-<span id="cb20-650"><a href="#cb20-650" aria-hidden="true" tabindex="-1"></a><span class="in">            return .{</span></span>
-<span id="cb20-651"><a href="#cb20-651" aria-hidden="true" tabindex="-1"></a><span class="in">                .items = buf[0..],</span></span>
-<span id="cb20-652"><a href="#cb20-652" aria-hidden="true" tabindex="-1"></a><span class="in">                .capacity = capacity,</span></span>
-<span id="cb20-653"><a href="#cb20-653" aria-hidden="true" tabindex="-1"></a><span class="in">                .length = 0,</span></span>
-<span id="cb20-654"><a href="#cb20-654" aria-hidden="true" tabindex="-1"></a><span class="in">                .allocator = allocator,</span></span>
-<span id="cb20-655"><a href="#cb20-655" aria-hidden="true" tabindex="-1"></a><span class="in">            };</span></span>
-<span id="cb20-656"><a href="#cb20-656" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb20-657"><a href="#cb20-657" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-658"><a href="#cb20-658" aria-hidden="true" tabindex="-1"></a><span class="in">        pub fn push(self: *Self, val: T) !void {</span></span>
-<span id="cb20-659"><a href="#cb20-659" aria-hidden="true" tabindex="-1"></a><span class="in">        // Truncate the rest of the struct</span></span>
-<span id="cb20-660"><a href="#cb20-660" aria-hidden="true" tabindex="-1"></a><span class="in">    };</span></span>
-<span id="cb20-661"><a href="#cb20-661" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb20-662"><a href="#cb20-662" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-663"><a href="#cb20-663" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-664"><a href="#cb20-664" aria-hidden="true" tabindex="-1"></a>Notice that we have created a function in this example named <span class="in">`Stack()`</span>. This function</span>
-<span id="cb20-665"><a href="#cb20-665" aria-hidden="true" tabindex="-1"></a>takes a type as input, and passes this type to the struct definition of our</span>
-<span id="cb20-666"><a href="#cb20-666" aria-hidden="true" tabindex="-1"></a><span class="in">`Stack`</span> object. The data member <span class="in">`items`</span> is now, an array of type <span class="in">`T`</span>, which is the</span>
-<span id="cb20-667"><a href="#cb20-667" aria-hidden="true" tabindex="-1"></a>data type that we have provided as input to the function. The function argument</span>
-<span id="cb20-668"><a href="#cb20-668" aria-hidden="true" tabindex="-1"></a><span class="in">`val`</span> in the <span class="in">`push()`</span> function is now a value of type <span class="in">`T`</span> too.</span>
-<span id="cb20-669"><a href="#cb20-669" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-670"><a href="#cb20-670" aria-hidden="true" tabindex="-1"></a>We can just provide a data type to this function, and it will create a definition of a</span>
-<span id="cb20-671"><a href="#cb20-671" aria-hidden="true" tabindex="-1"></a><span class="in">`Stack`</span> object that can store values of the data type that we have provided. In the example below, we are creating</span>
-<span id="cb20-672"><a href="#cb20-672" aria-hidden="true" tabindex="-1"></a>the definition of a</span>
-<span id="cb20-673"><a href="#cb20-673" aria-hidden="true" tabindex="-1"></a><span class="in">`Stack`</span> object that can store <span class="in">`u8`</span> values in it. This definition is stored at the <span class="in">`Stacku8`</span> object.</span>
-<span id="cb20-674"><a href="#cb20-674" aria-hidden="true" tabindex="-1"></a>This <span class="in">`Stacku8`</span> object becomes our new struct, that we are going to use</span>
-<span id="cb20-675"><a href="#cb20-675" aria-hidden="true" tabindex="-1"></a>to create our <span class="in">`Stack`</span> object.</span>
-<span id="cb20-676"><a href="#cb20-676" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-677"><a href="#cb20-677" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-680"><a href="#cb20-680" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
-<span id="cb20-681"><a href="#cb20-681" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
-<span id="cb20-682"><a href="#cb20-682" aria-hidden="true" tabindex="-1"></a><span class="in">var gpa = std.heap.GeneralPurposeAllocator(.{}){};</span></span>
-<span id="cb20-683"><a href="#cb20-683" aria-hidden="true" tabindex="-1"></a><span class="in">const allocator = gpa.allocator();</span></span>
-<span id="cb20-684"><a href="#cb20-684" aria-hidden="true" tabindex="-1"></a><span class="in">const Stacku8 = Stack(u8);</span></span>
-<span id="cb20-685"><a href="#cb20-685" aria-hidden="true" tabindex="-1"></a><span class="in">var stack = try Stacku8.init(allocator, 10);</span></span>
-<span id="cb20-686"><a href="#cb20-686" aria-hidden="true" tabindex="-1"></a><span class="in">defer stack.deinit();</span></span>
-<span id="cb20-687"><a href="#cb20-687" aria-hidden="true" tabindex="-1"></a><span class="in">try stack.push(1);</span></span>
-<span id="cb20-688"><a href="#cb20-688" aria-hidden="true" tabindex="-1"></a><span class="in">try stack.push(2);</span></span>
-<span id="cb20-689"><a href="#cb20-689" aria-hidden="true" tabindex="-1"></a><span class="in">try stack.push(3);</span></span>
-<span id="cb20-690"><a href="#cb20-690" aria-hidden="true" tabindex="-1"></a><span class="in">try stack.push(4);</span></span>
-<span id="cb20-691"><a href="#cb20-691" aria-hidden="true" tabindex="-1"></a><span class="in">try stack.push(5);</span></span>
-<span id="cb20-692"><a href="#cb20-692" aria-hidden="true" tabindex="-1"></a><span class="in">try stack.push(6);</span></span>
-<span id="cb20-693"><a href="#cb20-693" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-694"><a href="#cb20-694" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print("Stack len: {d}\n", .{stack.length});</span></span>
-<span id="cb20-695"><a href="#cb20-695" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print("Stack capacity: {d}\n", .{stack.capacity});</span></span>
-<span id="cb20-696"><a href="#cb20-696" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-697"><a href="#cb20-697" aria-hidden="true" tabindex="-1"></a><span class="in">stack.pop();</span></span>
-<span id="cb20-698"><a href="#cb20-698" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print("Stack len: {d}\n", .{stack.length});</span></span>
-<span id="cb20-699"><a href="#cb20-699" aria-hidden="true" tabindex="-1"></a><span class="in">stack.pop();</span></span>
-<span id="cb20-700"><a href="#cb20-700" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print("Stack len: {d}\n", .{stack.length});</span></span>
-<span id="cb20-701"><a href="#cb20-701" aria-hidden="true" tabindex="-1"></a><span class="in">std.debug.print(</span></span>
-<span id="cb20-702"><a href="#cb20-702" aria-hidden="true" tabindex="-1"></a><span class="in">    "Stack state: {any}\n",</span></span>
-<span id="cb20-703"><a href="#cb20-703" aria-hidden="true" tabindex="-1"></a><span class="in">    .{stack.items[0..stack.length]}</span></span>
-<span id="cb20-704"><a href="#cb20-704" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
-<span id="cb20-705"><a href="#cb20-705" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-706"><a href="#cb20-706" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-707"><a href="#cb20-707" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-708"><a href="#cb20-708" aria-hidden="true" tabindex="-1"></a><span class="in">Stack len: 6</span></span>
-<span id="cb20-709"><a href="#cb20-709" aria-hidden="true" tabindex="-1"></a><span class="in">Stack capacity: 10</span></span>
-<span id="cb20-710"><a href="#cb20-710" aria-hidden="true" tabindex="-1"></a><span class="in">Stack len: 5</span></span>
-<span id="cb20-711"><a href="#cb20-711" aria-hidden="true" tabindex="-1"></a><span class="in">Stack len: 4</span></span>
-<span id="cb20-712"><a href="#cb20-712" aria-hidden="true" tabindex="-1"></a><span class="in">Stack state: { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }</span></span>
-<span id="cb20-713"><a href="#cb20-713" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-714"><a href="#cb20-714" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-715"><a href="#cb20-715" aria-hidden="true" tabindex="-1"></a>Every generic data structure in the Zig Standard Library (<span class="in">`ArrayList`</span>, <span class="in">`HashMap`</span>, <span class="in">`SinlyLinkedList`</span>, etc.)</span>
-<span id="cb20-716"><a href="#cb20-716" aria-hidden="true" tabindex="-1"></a>is implemented through this logic. They use a generic function to create the struct definition that can work</span>
-<span id="cb20-717"><a href="#cb20-717" aria-hidden="true" tabindex="-1"></a>with the data type that you provided as input.</span>
-<span id="cb20-718"><a href="#cb20-718" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-719"><a href="#cb20-719" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-720"><a href="#cb20-720" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-721"><a href="#cb20-721" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-722"><a href="#cb20-722" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
-<span id="cb20-723"><a href="#cb20-723" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-724"><a href="#cb20-724" aria-hidden="true" tabindex="-1"></a>The full source code of the stack structure discussed in this chapter is freely available in the official</span>
-<span id="cb20-725"><a href="#cb20-725" aria-hidden="true" tabindex="-1"></a>repository of this book. Just checkout the <span class="co">[</span><span class="ot">`stack.zig`</span><span class="co">](https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig)</span><span class="ot">[^zig-stack]</span></span>
-<span id="cb20-726"><a href="#cb20-726" aria-hidden="true" tabindex="-1"></a>for the <span class="in">`u32`</span> version of our stack,</span>
-<span id="cb20-727"><a href="#cb20-727" aria-hidden="true" tabindex="-1"></a>and the <span class="co">[</span><span class="ot">`generic_stack.zig`</span><span class="co">](https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig)</span><span class="ot">[^zig-stack2]</span></span>
-<span id="cb20-728"><a href="#cb20-728" aria-hidden="true" tabindex="-1"></a>for the generic version, available inside the <span class="in">`ZigExamples`</span> folder of the repository.</span>
-<span id="cb20-729"><a href="#cb20-729" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-730"><a href="#cb20-730" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-731"><a href="#cb20-731" aria-hidden="true" tabindex="-1"></a><span class="ot">[^zig-stack]: &lt;https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig&gt;</span></span>
-<span id="cb20-732"><a href="#cb20-732" aria-hidden="true" tabindex="-1"></a><span class="ot">[^zig-stack2]: &lt;https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig&gt;</span></span>
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div></div></div></div>
+</nav>
 </div> <!-- /content -->
 
 
