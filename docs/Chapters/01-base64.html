@@ -91,12 +91,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -191,9 +189,6 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Introduction to Zig</a> 
-        <div class="sidebar-tools-main">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -359,7 +354,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-base64" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Project 1 - Building a base64 encoder/decoder</span></span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-base64" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Project 1 - Building a base64 encoder/decoder</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -403,6 +398,8 @@ window.Quarto = {
 <p>Instead of calculating the results everytime you need them, you calculate all possible results at once, and then, you store them in an array (which behaves lake a “table”). Then, every time you need to use one of the characters in the base64 scale, instead of using many resources to calculate the exact character to be used, you simply retrieve this character from the array where you stored all the possible characters in the base64 scale. We retrieve the character that we need directly from memory.</p>
 <p>We can start building a Zig struct to store our base64 decoder/encoder logic. We start with the <code>Base64</code> struct below. For now, we only have one single data member in this struct, i.e., the member <code>_table</code>, which represents our lookup table. We also have an <code>init()</code> method, to create a new instance of a <code>Base64</code> object, and, a <code>_char_at()</code> method, which is a “get character at index <span class="math inline">\(x\)</span>” type of function.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Base64 = <span class="kw">struct</span> <span class="op">{</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    _table: *<span class="kw">const</span> [<span class="dv">64</span>]<span class="dt">u8</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -419,14 +416,18 @@ window.Quarto = {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> self._table[index];</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>In other words, the <code>_char_at()</code> method is responsible for getting the character in the lookup table (i.e., the <code>_table</code> struct data member) that corresponds to a particular index in the “base64 scale”. So, in the example below, we know that the character that corresponds to the index 28 in the “base64 scale” is the character “c”.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> base64 = Base64.init();</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Character at index 28: {c}</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span>base64._char_at(<span class="dv">28</span>)<span class="op">}</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Character at index 28: c</code></pre>
 </section>
@@ -485,6 +486,8 @@ Figure&nbsp;4.2: The logic behind a base64 decoder
 <p>The <code>_calc_encode_length()</code> function below encapsulates this logic. Inside this function, we take the length of the input array, we divide it by 3, and apply a ceil operation over the result by using the <code>divCeil()</code> function from the Zig Standard Library. Lastly, we multiply the end result by 4 to get the answer we need.</p>
 <p>Also, you might have notice that, if the input length is less than 3 bytes, then, the output length of the encoder is always 4 bytes. This is the case for every input with less than 3 bytes, because, as I described in <a href="#sec-base64-encoder-algo" class="quarto-xref"><span>Section 4.1.3</span></a>, the algorithm always produces enough “padding-groups” in the end result, to complete the 4 bytes window.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _calc_encode_length(input: []<span class="kw">const</span> <span class="dt">u8</span>) !<span class="dt">usize</span> <span class="op">{</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (input.len &lt; <span class="dv">3</span>) <span class="op">{</span></span>
@@ -495,11 +498,14 @@ Figure&nbsp;4.2: The logic behind a base64 decoder
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n_groups * <span class="dv">4</span>;</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now, the logic to calculate the length of the output from the decoder is a little bit more complicated. But, it is basically just the inverse logic that we’ve used for the encoder: for each 4 bytes in the input, 3 bytes will be produced in the output of the decoder. However, this time we need to take the <code>=</code> character into account, which is always ignored by the decoder, as we described in <a href="#sec-base64-decoder-algo" class="quarto-xref"><span>Section 4.1.4</span></a>, and, in <a href="#fig-base64-algo2" class="quarto-xref">Figure&nbsp;<span>4.2</span></a>.</p>
 <p>In essence, we take the length of the input and divide it by 4, then we apply a floor function on the result, then we multiply the result by 3, and then, we subtract from the result how much times the character <code>=</code> is found in the input.</p>
 <p>The function <code>_calc_decode_length()</code> exposed below summarizes this logic that we described. It’s similar to the function <code>_calc_encode_length()</code>. Notice that the division part is twisted. Also notice that this time, we apply a floor operation over the output of the division, by using the <code>divFloor()</code> function (instead of a ceiling operation with <code>divCeil()</code>).</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _calc_decode_length(input: []<span class="kw">const</span> <span class="dt">u8</span>) !<span class="dt">usize</span> <span class="op">{</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (input.len &lt; <span class="dv">4</span>) <span class="op">{</span></span>
@@ -521,6 +527,7 @@ Figure&nbsp;4.2: The logic behind a base64 decoder
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> multiple_groups;</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-encoder-logic" class="level2" data-number="4.4">
@@ -654,12 +661,15 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <p>We have already seen in <a href="#fig-encoder-bitshift" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> the effect produced by a bit-shift. But let’s use the first byte in the output of the base64 encoder as another example of what bit-shifting means. This is the easiest byte of the 4 bytes in the output to build. Because we only need to move the bits from the first byte in the input two positions to the right, with the <em>bit shift to the right</em> (<code>&gt;&gt;</code>) operator.</p>
 <p>If we take the string “Hi” that we used in <a href="#fig-base64-algo1" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> as an example, the first byte in this string is “H”, which is the sequence <code>01001000</code> in binary. If we move the bits of this byte, two places to the right, we get the sequence <code>00010010</code> as result. This binary sequence is the value <code>18</code> in decimal, and also, the value <code>0x12</code> in hexadecimal. Notice that the first 6 bits of “H” were moved to the end of the byte. With this operation, we get the first byte of the output.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> stdout = std.io.getStdOut().writer();</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> input = <span class="st">"Hi"</span>;</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>input[<span class="dv">0</span>] &gt;&gt; <span class="dv">2</span><span class="op">}</span>);</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>18</code></pre>
 </div>
@@ -677,12 +687,15 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <p>As an example, suppose you have the binary sequence <code>10010111</code>, which is the number 151 in decimal. How can we get a new binary sequence which contains only the third and fourth bits of this sequence?</p>
 <p>We just need to combine this sequence with <code>00110000</code> (is <code>0x30</code> in hexadecimal) using the <code>&amp;</code> operator. Notice that only the third and fourth positions in this binary sequence is setted to 1. As a consequence, only the third and fourth values of both binary sequences are potentially preserved in the output. All the remaining positions are setted to zero in the output sequence, which is <code>00010000</code> (is the number 16 in decimal).</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> stdout = std.io.getStdOut().writer();</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bits = <span class="bn">0b10010111</span>;</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>bits &amp; <span class="bn">0b00110000</span><span class="op">}</span>);</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>16</code></pre>
 </div>
@@ -709,6 +722,8 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <p>The main for loop in the function is responsible for iterating through the entire input string. In every iteration, we use a <code>count</code> variable to count how many iterations we had at the moment. When <code>count</code> reaches 3, then, we try to encode the 3 characters (or bytes) that we have accumulated in the temporary buffer object (<code>buf</code>).</p>
 <p>After encoding these 3 characters and storing the result in the <code>output</code> variable, we reset the <code>count</code> variable to zero, and start to count again on the next iteration of the loop. If the loop hits the end of the string, and, the <code>count</code> variable is less than 3, then, it means that the temporary buffer contains the last 1 or 2 bytes from the input. That is why we have two <code>if</code> statements after the for loop. To deal which each possible case.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> encode(self: Base64,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              allocator: std.mem.Allocator,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              input: []<span class="kw">const</span> <span class="dt">u8</span>) ![]<span class="dt">u8</span> <span class="op">{</span></span>
@@ -763,6 +778,7 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> out;</span>
 <span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -778,6 +794,8 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <p>Notice that, if the input character is <code>'='</code>, the function returns the index 64, which is “out of range” in the scale. But, as I described in <a href="#sec-base64-scale" class="quarto-xref"><span>Section 4.1.1</span></a>, the character <code>'='</code> does not belong to the base64 scale itself. It’s a special and meaningless character in base64.</p>
 <p>Also notice that this <code>_char_index()</code> function is a method from our <code>Base64</code> struct, because of the <code>self</code> argument. Again, I have omitted the <code>Base64</code> struct definition in this example for brevity reasons.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _char_index(self: Base64, char: <span class="dt">u8</span>) <span class="dt">u8</span> <span class="op">{</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (char == <span class="ch">'='</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">64</span>;</span>
@@ -790,6 +808,7 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> index;</span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-6-bit-transformation" class="level3" data-number="4.5.2">
@@ -797,9 +816,12 @@ Table&nbsp;4.1: How the 6-bit transformation translates into code in different w
 <p>Once again, the core part of the algorithm is the 6-bit transformation. If we understand the necessary steps to perform this transformation, the rest of the algorithm becomes much easier.</p>
 <p>First of all, before we actually go to the 6-bit transformation, we need to make sure that we use <code>_char_index()</code> to convert the sequence of base64 characters into a sequence of indexes. So the snippet below is important for the job that will be done. The result of <code>_char_index()</code> is stored in a temporary buffer, and this temporary buffer is what we are going to use in the 6-bit transformation, instead of the actual <code>input</code> object.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (<span class="dv">0</span>..input.len) |i| <span class="op">{</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    buf[i] = self._char_index(input[i]);</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now, instead of producing 4 bytes (or 4 characters) as output per each window of 3 characters in the input, a base64 decoder produces 3 bytes (or 3 characters) as output per each window of 4 characters in the input. Once again, is the inverse process.</p>
 <p>So, the steps to produce the 3 bytes in the output are:</p>
@@ -861,6 +883,8 @@ Table&nbsp;4.2: The necessary steps for the 6-transformation in the decode proce
 <p>Then, in each iteration of the for loop we fill the temporary buffer with the current window of bytes. When <code>count</code> hits the number 4, then, we have a full window of indexes in <code>buf</code> to be converted, and then, we apply the 6-bit transformation over the temporary buffer.</p>
 <p>Notice that we check if the indexes 2 and 3 in the temporary buffer are the number 64, which, if you recall from <a href="#sec-map-base64-index" class="quarto-xref"><span>Section 4.5.1</span></a>, is when the <code>_calc_index()</code> function receives a <code>'='</code> character as input. So, if these indexes are equal to the number 64, the <code>decode()</code> function knows that it can simply ignore these indexes. They are not converted because, as I described before, the character <code>'='</code> has no meaning, despite being the end of meaningful characters in the sequence. So we can safely ignore them when they appear in the sequence.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> decode(self: Base64,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>          allocator: std.mem.Allocator,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>          input: []<span class="kw">const</span> <span class="dt">u8</span>) ![]<span class="dt">u8</span> <span class="op">{</span></span>
@@ -892,6 +916,7 @@ Table&nbsp;4.2: The necessary steps for the 6-transformation in the decode proce
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> output;</span>
 <span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -899,6 +924,8 @@ Table&nbsp;4.2: The necessary steps for the 6-transformation in the decode proce
 <h2 data-number="4.6" class="anchored" data-anchor-id="the-end-result"><span class="header-section-number">4.6</span> The end result</h2>
 <p>Now that we have both <code>decode()</code> and <code>encode()</code> implemented. We have a fully functioning base64 encoder/decoder implemented in Zig. Here is an usage example of our <code>Base64</code> struct with the <code>encode()</code> and <code>decode()</code> methods that we have implemented.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> memory_buffer: [<span class="dv">1000</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> fba = std.heap.FixedBufferAllocator.init(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    &amp;memory_buffer</span>
@@ -920,11 +947,14 @@ Table&nbsp;4.2: The necessary steps for the 6-transformation in the decode proce
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(</span>
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Decoded text: {s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>decoded_text<span class="op">}</span></span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>Encoded text: VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=
 Decoded text: Testing some more stuff</code></pre>
 <p>You can also see the full source code at once, by visiting the official repository of this book<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. More precisely inside the <code>ZigExamples</code> folder<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
 
+
+<!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-microsoftbitwiseand" class="csl-entry" role="listitem">
@@ -963,150 +993,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1166,6 +1052,60 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+<<<<<<< HEAD
+=======
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+>>>>>>> origin
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1507,7 +1447,884 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Debugging Zig applications</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">engine:</span><span class="co"> knitr</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">knitr:</span><span class="co"> true</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">syntax-definition:</span><span class="co"> "../Assets/zig.xml"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../zig_engine.R"</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_main =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">build_type =</span> <span class="st">"lib"</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="fu"># Project 1 - Building a base64 encoder/decoder {#sec-base64}</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>As our first small project, I want to implement a base64 encoder/decoder with you.</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>Base64 is an encoding system which translates binary data to text.</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>A big chunk of the web uses base64 to deliver binary data to systems</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>that can only read text data.</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>The most common example of a modern use case for base64 is essentially any email system,</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>like GMail, Outlook, etc. Because email systems normally use</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>the Simple Mail Transfer Protocol (SMTP), which is a web protocol</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>that supports only text data. So, if you need, for any reason, to</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>send a binary file (like for example, a PDF, or an Excel file) as</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>an attachment in your email, these binary files are normally</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>converted to base64, before they are included in the SMTP message.</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>So, the base64 encoding is largely used in these email systems to include</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>binary data into the SMTP message.</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## How the base64 algorithm work?</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>But how exactly does the algorithm behind the base64 encoding work? Let's discuss that. First, I will</span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>explain the base64 scale, which is the 64-character scale that is the basis for</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>the base64 encoding system.</span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>After that, I explain the algorithm behind a base64 encoder, which is the part of the algorithm that is responsible for encoding messages</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>into the base64 encoding system. Then, after that, I explain the algorithm behind a base64 decoder, which is</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>the part of the algorithm that is responsible for translating base64 messages back into their original meaning.</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>If you are unsure about the differences between an "encoder" and a "decoder",</span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>take a look at @sec-encode-vs-decode.</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### The base64 scale {#sec-base64-scale}</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>The base64 encoding system is based on a scale that goes from 0 to 63 (hence the name).</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>Each index in this scale is represented by a character (it's a scale of 64 characters).</span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>So, in order to convert some binary data, to the base64 encoding, we need to convert each binary number to the corresponding</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>character in this "scale of 64 characters".</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>The base64 scale starts with all ASCII uppercase letters (A to Z) which represents</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>the first 25 indexes in this scale (0 to 25). After that, we have all ASCII lowercase letters</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>(a to z), which represents the range 26 to 51 in the scale. After that, we</span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>have the one digit numbers (0 to 9), which represents the indexes from 52 to 61 in the scale.</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>Finally, the last two indexes in the scale (62 and 63) are represented by the characters <span class="in">`+`</span> and <span class="in">`/`</span>,</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>respectively.</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>These are the 64 characters that compose the base64 scale. The equal sign character (<span class="in">`=`</span>) is not part of the scale itself,</span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>but it is a special character in the base64 encoding system. This character is used solely as a suffix, to mark the end of the character sequence,</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>or, to mark the end of meaningful characters in the sequence.</span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>The bullet points below summarises the base64 scale:</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>range 0 to 25 is represented by: ASCII uppercase letters <span class="in">`-&gt; [A-Z]`</span>;</span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>range 26 to 51 is represented by: ASCII lowercase letters <span class="in">`-&gt; [a-z]`</span>;</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>range 52 to 61 is represented by: one digit numbers <span class="in">`-&gt; [0-9]`</span>;</span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>index 62 and 63 are represented by the characters <span class="in">`+`</span> and <span class="in">`/`</span>, respectively;</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the character <span class="in">`=`</span> represents the end of meaningful characters in the sequence;</span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Creating the scale as a lookup table {#sec-base64-table}</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>The best way to represent this scale in code, is to represent it as a *lookup table*.</span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>Lookup tables are a classic strategy in computer science to speed up calculations. The basic idea</span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>is to replace a runtime calculation (which can take a long time to be done) with a basic array indexing</span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>operation.</span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>Instead of calculating the results everytime you need them, you calculate all possible results at once, and then, you store them in an array</span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>(which behaves lake a "table"). Then, every time you need to use one of the characters in the base64 scale, instead of</span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>using many resources to calculate the exact character to be used, you simply retrieve this character</span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>from the array where you stored all the possible characters in the base64 scale.</span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>We retrieve the character that we need directly from memory.</span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>We can start building a Zig struct to store our base64 decoder/encoder logic.</span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>We start with the <span class="in">`Base64`</span> struct below. For now, we only have one single data member in this</span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>struct, i.e., the member <span class="in">`_table`</span>, which represents our lookup table. We also have an <span class="in">`init()`</span> method,</span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a>to create a new instance of a <span class="in">`Base64`</span> object, and, a <span class="in">`_char_at()`</span> method, which is a</span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>"get character at index $x$" type of function.</span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="in">const Base64 = struct {</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="in">    _table: *const [64]u8,</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn init() Base64 {</span></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="in">        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";</span></span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a><span class="in">        const lower = "abcdefghijklmnopqrstuvwxyz";</span></span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a><span class="in">        const numbers_symb = "0123456789+/";</span></span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a><span class="in">        return Base64{</span></span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a><span class="in">            ._table = upper ++ lower ++ numbers_symb,</span></span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a><span class="in">        };</span></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn _char_at(self: Base64, index: usize) u8 {</span></span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a><span class="in">        return self._table[index];</span></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a>In other words, the <span class="in">`_char_at()`</span> method is responsible for getting the character in the lookup</span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a>table (i.e., the <span class="in">`_table`</span> struct data member) that corresponds to a particular index in the</span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a>"base64 scale". So, in the example below, we know that the character that corresponds to the</span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a>index 28 in the "base64 scale" is the character "c".</span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a><span class="in">const base64 = Base64.init();</span></span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a><span class="in">try stdout.print(</span></span>
+<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a><span class="in">    "Character at index 28: {c}\n",</span></span>
+<span id="cb16-142"><a href="#cb16-142" aria-hidden="true" tabindex="-1"></a><span class="in">    .{base64._char_at(28)}</span></span>
+<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a><span class="in">Character at index 28: c</span></span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a><span class="fu">### A base64 encoder {#sec-base64-encoder-algo}</span></span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a>The algorithm behind a base64 encoder usually works on a window of 3 bytes. Because each byte has</span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a>8 bits, so, 3 bytes forms a set of $8 \times 3 = 24$ bits. This is desirable for the base64 algorithm, because</span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a>24 bits is divisible by 6, which forms $24 / 6 = 4$ groups of 6 bits each.</span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a>Therefore, the base64 algorithm works by converting 3 bytes at a time</span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a>into 4 characters from the base64 scale. It keeps iterating through the input string,</span>
+<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a>3 bytes at a time, and converting them into the base64 scale, producing 4 characters</span>
+<span id="cb16-161"><a href="#cb16-161" aria-hidden="true" tabindex="-1"></a>per iteration. It keeps iterating, and producing these "new characters"</span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a>until it hits the end of the input string.</span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a>Now you may think, what if you have a particular string that has a number of bytes</span>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a>that is not divisible by 3 - what happens? For example, if you have a string</span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a>that contains only two characters/bytes, such as "Hi". How would the algorithm</span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a>behave in such situation? You find the answer in @fig-base64-algo1.</span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>You can see in @fig-base64-algo1 that the string "Hi", when converted to base64,</span>
+<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>becomes the string "SGk=":</span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a><span class="al">![The logic behind a base64 encoder](./../Figures/base64-encoder-flow.png)</span>{#fig-base64-algo1}</span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a>Taking the string "Hi" as an example, we have 2 bytes, or, 16 bits in total. So, we lack a full byte (8 bits)</span>
+<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a>to complete the window of 24 bits that the base64 algorithm likes to work on. The first thing that</span>
+<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a>the algorithm does, is to check how to divide the input bytes into groups of 6 bits.</span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a>If the algorithm notices that there is a group of 6 bits that it's not complete, meaning that, this group contains $nbits$, where $0 &lt; nbits &lt; 6$,</span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>the algorithm simply adds extra zeros in this group to fill the space that it needs.</span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a>That is why in @fig-base64-algo1, in the third group after the 6-bit transformation,</span>
+<span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a>2 extra zeros were added to fill the gap.</span>
+<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a>When we have a 6-bit group that is not completely full, like the third group, extra zeros</span>
+<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a>are added to fill the gap. But what about when an entire 6-bit group is empty, or, it</span>
+<span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a>simply doesn't exist? This is the case of the fourth 6-bit group exposed at</span>
+<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a>@fig-base64-algo1.</span>
+<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a>This fourth group is necessary, because the algorithm works on 4 groups of 6 bits.</span>
+<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a>But the input string does not have enough bytes to create a fourth 6-bit group.</span>
+<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a>Every time this happens, where an entire group of 6 bits is empty,</span>
+<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a>this group becomes a "padding group". Every "padding group" is mapped to</span>
+<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a>the character <span class="in">`=`</span> (equal sign), which represents "null", or, the end</span>
+<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a>of meaningful characters in the sequence. Hence, everytime that the algorithm produces a</span>
+<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a>"padding group", this group is automatically mapped to <span class="in">`=`</span>.</span>
+<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a>As another example, if you give the string "0" as input to a base64 encoder, this string is</span>
+<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a>translated into the base64 sequence "MA==".</span>
+<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a>The character "0" is, in binary, the sequence <span class="in">`00110000`</span><span class="ot">[^zero-note]</span>. So, with the 6-bit transformation</span>
+<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a>exposed in @fig-base64-algo1, this single character would produce these two 6-bit groups: <span class="in">`001100`</span>, <span class="in">`000000`</span>.</span>
+<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a>The remaining two 6-bit groups become "padding groups". That is why the last</span>
+<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a>two characters in the output sequence (MA==) are <span class="in">`==`</span>.</span>
+<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a><span class="ot">[^zero-note]: </span>Notice that, the character "0" is different than the actual number 0, which is simply zero in binary.</span>
+<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### A base64 decoder {#sec-base64-decoder-algo}</span></span>
+<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a>The algorithm behind a base64 decoder is essentially the inverse process of a base64 encoder.</span>
+<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a>A base64 decoder needs to translate base64 messages back into their original meaning,</span>
+<span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a>i.e., into the original sequence of binary data.</span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a>A base64 decoder usually works on a window of 4 bytes. Because it wants to convert these 4 bytes</span>
+<span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a>back into the original sequence of 3 bytes, that was converted into 4 groups of 6 bits by the</span>
+<span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a>base64 encoder. Remember, in a base64 decoder we are essentially reverting the process made</span>
+<span id="cb16-215"><a href="#cb16-215" aria-hidden="true" tabindex="-1"></a>by the base64 encoder.</span>
+<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a>Each byte in the input string (the base64 encoded string) normally contributes to re-create</span>
+<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a>two different bytes in the output (the original binary data).</span>
+<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a>In other words, each byte that comes out of a base64 decoder is created by transforming merging two different</span>
+<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a>bytes in the input together. You can visualize this relationship in @fig-base64-algo2:</span>
+<span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a><span class="al">![The logic behind a base64 decoder](./../Figures/base64-decoder-flow.png)</span>{#fig-base64-algo2}</span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a>The exact transformations, or, the exact steps applied to each byte from the input to transform them</span>
+<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a>into the bytes of the output, are a bit tricky to visualize in a figure like this. Because of that, I have</span>
+<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a>summarized these transformations as "Some bit shifting and additions ..." in the figure. These transformations</span>
+<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a>will be described in depth later.</span>
+<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a>Besides that, if you look again in @fig-base64-algo2, you will notice that the character <span class="in">`=`</span> was completely</span>
+<span id="cb16-230"><a href="#cb16-230" aria-hidden="true" tabindex="-1"></a>ignored by the algorithm. Remember, this is just a special character that marks the end of meaningful characters</span>
+<span id="cb16-231"><a href="#cb16-231" aria-hidden="true" tabindex="-1"></a>in the base64 sequence. So, every <span class="in">`=`</span> character in a base64 encoded sequence should be ignored by a base64 decoder.</span>
+<span id="cb16-232"><a href="#cb16-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-233"><a href="#cb16-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-234"><a href="#cb16-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Difference between encode and decode {#sec-encode-vs-decode}</span></span>
+<span id="cb16-235"><a href="#cb16-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-236"><a href="#cb16-236" aria-hidden="true" tabindex="-1"></a>If you don't have any previous experience with base64, you might not understand the differences</span>
+<span id="cb16-237"><a href="#cb16-237" aria-hidden="true" tabindex="-1"></a>between "encode" and "decode". Essentially, the terms "encode" and "decode" here</span>
+<span id="cb16-238"><a href="#cb16-238" aria-hidden="true" tabindex="-1"></a>have the exact same meaning as they have in the field of encryption (i.e., they mean the same thing as "encode" and "decode" in hashing</span>
+<span id="cb16-239"><a href="#cb16-239" aria-hidden="true" tabindex="-1"></a>algorithms, like the MD5 algorithm).</span>
+<span id="cb16-240"><a href="#cb16-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-241"><a href="#cb16-241" aria-hidden="true" tabindex="-1"></a>Thus, "encode" means that we want to encode, or, in other words, we want to translate some message into</span>
+<span id="cb16-242"><a href="#cb16-242" aria-hidden="true" tabindex="-1"></a>the base64 encoding system. We want to produce the sequence of base64 characters that represent this</span>
+<span id="cb16-243"><a href="#cb16-243" aria-hidden="true" tabindex="-1"></a>original message in the base64 encoding system.</span>
+<span id="cb16-244"><a href="#cb16-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-245"><a href="#cb16-245" aria-hidden="true" tabindex="-1"></a>In contrast, "decode" represents the inverse process.</span>
+<span id="cb16-246"><a href="#cb16-246" aria-hidden="true" tabindex="-1"></a>We want to decode, or, in other words, translate a base64 message back to its original content.</span>
+<span id="cb16-247"><a href="#cb16-247" aria-hidden="true" tabindex="-1"></a>So, in this process we get a sequence of base64 characters as input, and produce as output,</span>
+<span id="cb16-248"><a href="#cb16-248" aria-hidden="true" tabindex="-1"></a>the binary data that is represented by this sequence of base64 characters.</span>
+<span id="cb16-249"><a href="#cb16-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-250"><a href="#cb16-250" aria-hidden="true" tabindex="-1"></a>Any base64 library is normally composed of these two parts: 1) the encoder, which is a function that encodes</span>
+<span id="cb16-251"><a href="#cb16-251" aria-hidden="true" tabindex="-1"></a>(i.e., it converts) any sequence of binary data into a sequence of base64 characters; 2) the decoder, which is a function</span>
+<span id="cb16-252"><a href="#cb16-252" aria-hidden="true" tabindex="-1"></a>that converts a sequence of base64 characters back into the original sequence of binary data.</span>
+<span id="cb16-253"><a href="#cb16-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-254"><a href="#cb16-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-255"><a href="#cb16-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-256"><a href="#cb16-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calculating the size of the output {#sec-base64-length-out}</span></span>
+<span id="cb16-257"><a href="#cb16-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-258"><a href="#cb16-258" aria-hidden="true" tabindex="-1"></a>One task that we need to do is to calculate how much space we need to reserve for the</span>
+<span id="cb16-259"><a href="#cb16-259" aria-hidden="true" tabindex="-1"></a>output, both of the encoder and decoder. This is simple math, and can be done easily in Zig</span>
+<span id="cb16-260"><a href="#cb16-260" aria-hidden="true" tabindex="-1"></a>because every array has its length (its number of elements) easily accesible by consulting</span>
+<span id="cb16-261"><a href="#cb16-261" aria-hidden="true" tabindex="-1"></a>the <span class="in">`.len`</span> property of the array.</span>
+<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-263"><a href="#cb16-263" aria-hidden="true" tabindex="-1"></a>For the encoder, the logic is the following: for each 3 bytes that we find in the input,</span>
+<span id="cb16-264"><a href="#cb16-264" aria-hidden="true" tabindex="-1"></a>4 new bytes are created in the output. So, we take the number of bytes in the input, divide it</span>
+<span id="cb16-265"><a href="#cb16-265" aria-hidden="true" tabindex="-1"></a>by 3, use a ceiling function, then, we multiply the result by 4. That way, we get the total</span>
+<span id="cb16-266"><a href="#cb16-266" aria-hidden="true" tabindex="-1"></a>number of bytes that will be produced by the encoder in its output.</span>
+<span id="cb16-267"><a href="#cb16-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-268"><a href="#cb16-268" aria-hidden="true" tabindex="-1"></a>The <span class="in">`_calc_encode_length()`</span> function below encapsulates this logic.</span>
+<span id="cb16-269"><a href="#cb16-269" aria-hidden="true" tabindex="-1"></a>Inside this function, we take the length of the input array,</span>
+<span id="cb16-270"><a href="#cb16-270" aria-hidden="true" tabindex="-1"></a>we divide it by 3, and apply a ceil operation over the result by using the</span>
+<span id="cb16-271"><a href="#cb16-271" aria-hidden="true" tabindex="-1"></a><span class="in">`divCeil()`</span> function from the Zig Standard Library. Lastly, we multiply</span>
+<span id="cb16-272"><a href="#cb16-272" aria-hidden="true" tabindex="-1"></a>the end result by 4 to get the answer we need.</span>
+<span id="cb16-273"><a href="#cb16-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-274"><a href="#cb16-274" aria-hidden="true" tabindex="-1"></a>Also, you might have notice that, if the input length is less than 3 bytes, then, the output length of the encoder is</span>
+<span id="cb16-275"><a href="#cb16-275" aria-hidden="true" tabindex="-1"></a>always 4 bytes. This is the case for every input with less than 3 bytes, because, as I described in @sec-base64-encoder-algo,</span>
+<span id="cb16-276"><a href="#cb16-276" aria-hidden="true" tabindex="-1"></a>the algorithm always produces enough "padding-groups" in the end result, to complete the 4 bytes window.</span>
+<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-280"><a href="#cb16-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-281"><a href="#cb16-281" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb16-282"><a href="#cb16-282" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb16-283"><a href="#cb16-283" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb16-284"><a href="#cb16-284" aria-hidden="true" tabindex="-1"></a><span class="in">fn _calc_encode_length(input: []const u8) !usize {</span></span>
+<span id="cb16-285"><a href="#cb16-285" aria-hidden="true" tabindex="-1"></a><span class="in">    if (input.len &lt; 3) {</span></span>
+<span id="cb16-286"><a href="#cb16-286" aria-hidden="true" tabindex="-1"></a><span class="in">        return 4;</span></span>
+<span id="cb16-287"><a href="#cb16-287" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-288"><a href="#cb16-288" aria-hidden="true" tabindex="-1"></a><span class="in">    const n_groups: usize = try std.math.divCeil(</span></span>
+<span id="cb16-289"><a href="#cb16-289" aria-hidden="true" tabindex="-1"></a><span class="in">        usize, input.len, 3</span></span>
+<span id="cb16-290"><a href="#cb16-290" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb16-291"><a href="#cb16-291" aria-hidden="true" tabindex="-1"></a><span class="in">    return n_groups * 4;</span></span>
+<span id="cb16-292"><a href="#cb16-292" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-293"><a href="#cb16-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-294"><a href="#cb16-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-295"><a href="#cb16-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-296"><a href="#cb16-296" aria-hidden="true" tabindex="-1"></a>Now, the logic to calculate the length of the output from the decoder is a little bit more complicated. But, it is basically</span>
+<span id="cb16-297"><a href="#cb16-297" aria-hidden="true" tabindex="-1"></a>just the inverse logic that we've used for the encoder: for each 4 bytes in the input, 3 bytes</span>
+<span id="cb16-298"><a href="#cb16-298" aria-hidden="true" tabindex="-1"></a>will be produced in the output of the decoder. However, this time we need to</span>
+<span id="cb16-299"><a href="#cb16-299" aria-hidden="true" tabindex="-1"></a>take the <span class="in">`=`</span> character into account, which is always ignored by the decoder, as we described in @sec-base64-decoder-algo, and,</span>
+<span id="cb16-300"><a href="#cb16-300" aria-hidden="true" tabindex="-1"></a>in @fig-base64-algo2.</span>
+<span id="cb16-301"><a href="#cb16-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-302"><a href="#cb16-302" aria-hidden="true" tabindex="-1"></a>In essence, we take the length of the input and divide it by 4, then we apply a floor function on the result, then</span>
+<span id="cb16-303"><a href="#cb16-303" aria-hidden="true" tabindex="-1"></a>we multiply the result by 3, and then, we subtract from the result how much times the character <span class="in">`=`</span> is found</span>
+<span id="cb16-304"><a href="#cb16-304" aria-hidden="true" tabindex="-1"></a>in the input.</span>
+<span id="cb16-305"><a href="#cb16-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-306"><a href="#cb16-306" aria-hidden="true" tabindex="-1"></a>The function <span class="in">`_calc_decode_length()`</span> exposed below summarizes this logic that we described. It's similar</span>
+<span id="cb16-307"><a href="#cb16-307" aria-hidden="true" tabindex="-1"></a>to the function <span class="in">`_calc_encode_length()`</span>. Notice that the division part is twisted. Also notice that this time, we apply</span>
+<span id="cb16-308"><a href="#cb16-308" aria-hidden="true" tabindex="-1"></a>a floor operation over the output of the division, by using the <span class="in">`divFloor()`</span></span>
+<span id="cb16-309"><a href="#cb16-309" aria-hidden="true" tabindex="-1"></a>function (instead of a ceiling operation with <span class="in">`divCeil()`</span>).</span>
+<span id="cb16-310"><a href="#cb16-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-311"><a href="#cb16-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-314"><a href="#cb16-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-315"><a href="#cb16-315" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb16-316"><a href="#cb16-316" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb16-317"><a href="#cb16-317" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb16-318"><a href="#cb16-318" aria-hidden="true" tabindex="-1"></a><span class="in">fn _calc_decode_length(input: []const u8) !usize {</span></span>
+<span id="cb16-319"><a href="#cb16-319" aria-hidden="true" tabindex="-1"></a><span class="in">    if (input.len &lt; 4) {</span></span>
+<span id="cb16-320"><a href="#cb16-320" aria-hidden="true" tabindex="-1"></a><span class="in">        return 3;</span></span>
+<span id="cb16-321"><a href="#cb16-321" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-322"><a href="#cb16-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-323"><a href="#cb16-323" aria-hidden="true" tabindex="-1"></a><span class="in">    const n_groups: usize = try std.math.divFloor(</span></span>
+<span id="cb16-324"><a href="#cb16-324" aria-hidden="true" tabindex="-1"></a><span class="in">        usize, input.len, 4</span></span>
+<span id="cb16-325"><a href="#cb16-325" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb16-326"><a href="#cb16-326" aria-hidden="true" tabindex="-1"></a><span class="in">    var multiple_groups: usize = n_groups * 3;</span></span>
+<span id="cb16-327"><a href="#cb16-327" aria-hidden="true" tabindex="-1"></a><span class="in">    var i: usize = input.len - 1;</span></span>
+<span id="cb16-328"><a href="#cb16-328" aria-hidden="true" tabindex="-1"></a><span class="in">    while (i &gt; 0) : (i -= 1) {</span></span>
+<span id="cb16-329"><a href="#cb16-329" aria-hidden="true" tabindex="-1"></a><span class="in">        if (input[i] == '=') {</span></span>
+<span id="cb16-330"><a href="#cb16-330" aria-hidden="true" tabindex="-1"></a><span class="in">            multiple_groups -= 1;</span></span>
+<span id="cb16-331"><a href="#cb16-331" aria-hidden="true" tabindex="-1"></a><span class="in">        } else {</span></span>
+<span id="cb16-332"><a href="#cb16-332" aria-hidden="true" tabindex="-1"></a><span class="in">            break;</span></span>
+<span id="cb16-333"><a href="#cb16-333" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb16-334"><a href="#cb16-334" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-335"><a href="#cb16-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-336"><a href="#cb16-336" aria-hidden="true" tabindex="-1"></a><span class="in">    return multiple_groups;</span></span>
+<span id="cb16-337"><a href="#cb16-337" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-338"><a href="#cb16-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-339"><a href="#cb16-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-340"><a href="#cb16-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-341"><a href="#cb16-341" aria-hidden="true" tabindex="-1"></a><span class="fu">## Building the encoder logic {#sec-encoder-logic}</span></span>
+<span id="cb16-342"><a href="#cb16-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-343"><a href="#cb16-343" aria-hidden="true" tabindex="-1"></a>In this section, we can start building the logic behind the <span class="in">`encode()`</span> function, which</span>
+<span id="cb16-344"><a href="#cb16-344" aria-hidden="true" tabindex="-1"></a>will be responsible for encoding messages into the base64 encoding system.</span>
+<span id="cb16-345"><a href="#cb16-345" aria-hidden="true" tabindex="-1"></a>If you are an anxious person, and you want to see now the full source code of the implementation</span>
+<span id="cb16-346"><a href="#cb16-346" aria-hidden="true" tabindex="-1"></a>for this base64 encoder/decoder, you can find it at the <span class="in">`ZigExamples`</span> folder in the official repository of</span>
+<span id="cb16-347"><a href="#cb16-347" aria-hidden="true" tabindex="-1"></a>this book<span class="ot">[^zig-base64-algo]</span>.</span>
+<span id="cb16-348"><a href="#cb16-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-349"><a href="#cb16-349" aria-hidden="true" tabindex="-1"></a><span class="ot">[^zig-base64-algo]: &lt;https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig&gt;</span>.</span>
+<span id="cb16-350"><a href="#cb16-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-351"><a href="#cb16-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-352"><a href="#cb16-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-353"><a href="#cb16-353" aria-hidden="true" tabindex="-1"></a><span class="fu">### The 6-bit transformation {#sec-6bit-transf}</span></span>
+<span id="cb16-354"><a href="#cb16-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-355"><a href="#cb16-355" aria-hidden="true" tabindex="-1"></a>The 6-bit transformation presented in @fig-base64-algo1 is the core part of the base64 encoder algorithm.</span>
+<span id="cb16-356"><a href="#cb16-356" aria-hidden="true" tabindex="-1"></a>By understanding how this transformation is made in code, the rest of the algorithm becomes much simpler</span>
+<span id="cb16-357"><a href="#cb16-357" aria-hidden="true" tabindex="-1"></a>to comprehend.</span>
+<span id="cb16-358"><a href="#cb16-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-359"><a href="#cb16-359" aria-hidden="true" tabindex="-1"></a>In essence, this 6-bit transformation is made with the help of bitwise operators.</span>
+<span id="cb16-360"><a href="#cb16-360" aria-hidden="true" tabindex="-1"></a>Bitwise operators are essential to any type of low-level operation that is done at the bit-level. For the specific case of the base64 algorithm,</span>
+<span id="cb16-361"><a href="#cb16-361" aria-hidden="true" tabindex="-1"></a>the operators *bif shift to the left* (`&lt;&lt;`), *bit shift to the right* (`&gt;&gt;`), and the *bitwise and* (<span class="in">`&amp;`</span>) are used. They</span>
+<span id="cb16-362"><a href="#cb16-362" aria-hidden="true" tabindex="-1"></a>are the core solution for the 6-bit transformation.</span>
+<span id="cb16-363"><a href="#cb16-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-364"><a href="#cb16-364" aria-hidden="true" tabindex="-1"></a>There are 3 different scenarios that we need to take into account in this transformation. First, is the perfect scenario,</span>
+<span id="cb16-365"><a href="#cb16-365" aria-hidden="true" tabindex="-1"></a>where we have the perfect window of 3 bytes to work on. Second, we have the scenario where we have a window of only</span>
+<span id="cb16-366"><a href="#cb16-366" aria-hidden="true" tabindex="-1"></a>two bytes to work with. And last, we have the scenario where we have a window of one single byte.</span>
+<span id="cb16-367"><a href="#cb16-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-368"><a href="#cb16-368" aria-hidden="true" tabindex="-1"></a>In each of these 3 scenarios, the 6-bit transformation works a bit differently. To make the explanation</span>
+<span id="cb16-369"><a href="#cb16-369" aria-hidden="true" tabindex="-1"></a>easier, I will use the variable <span class="in">`output`</span> to refer to the bytes in the output of the base64 encoder,</span>
+<span id="cb16-370"><a href="#cb16-370" aria-hidden="true" tabindex="-1"></a>and the variable <span class="in">`input`</span> to refer to the bytes in the input of the encoder.</span>
+<span id="cb16-371"><a href="#cb16-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-372"><a href="#cb16-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-373"><a href="#cb16-373" aria-hidden="true" tabindex="-1"></a>So, if you have the perfect window of 3 bytes, these are steps for the 6-bit transformation:</span>
+<span id="cb16-374"><a href="#cb16-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-375"><a href="#cb16-375" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[0]`</span> is produced by moving the bits from <span class="in">`input[0]`</span> two positions to the right.</span>
+<span id="cb16-376"><a href="#cb16-376" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[1]`</span> is produced by summing two components. First, take the last two bits from <span class="in">`input[0]`</span>, then, move them four positions to the left. Second, move the bits from <span class="in">`input[1]`</span> four positions to the right. Sum these two components.</span>
+<span id="cb16-377"><a href="#cb16-377" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[2]`</span> is produced by summing two components. First, take the last four bits from <span class="in">`input[1]`</span>, then, move them two positions to the left. Second, move the bits from <span class="in">`input[2]`</span> six positions to the right. Sum these two components.</span>
+<span id="cb16-378"><a href="#cb16-378" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[3]`</span> is produced by taking the last six bits from <span class="in">`input[2]`</span>.</span>
+<span id="cb16-379"><a href="#cb16-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-380"><a href="#cb16-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-381"><a href="#cb16-381" aria-hidden="true" tabindex="-1"></a>This is the perfect scenario, where we have a full window of 3 bytes to work on.</span>
+<span id="cb16-382"><a href="#cb16-382" aria-hidden="true" tabindex="-1"></a>Just to make things as clear as possible, the @fig-encoder-bitshift demonstrates visually how</span>
+<span id="cb16-383"><a href="#cb16-383" aria-hidden="true" tabindex="-1"></a>the step 2 mentioned above works. So the 2nd byte in the <span class="in">`output`</span> of the encoder, is made by taking the 1st byte (dark purple)</span>
+<span id="cb16-384"><a href="#cb16-384" aria-hidden="true" tabindex="-1"></a>and the 2nd byte (orange) from the input. You can see that, at the end of the process, we get a new</span>
+<span id="cb16-385"><a href="#cb16-385" aria-hidden="true" tabindex="-1"></a>byte that contains the last 2 bits from the 1st byte in the <span class="in">`input`</span>, and the first 4 bits</span>
+<span id="cb16-386"><a href="#cb16-386" aria-hidden="true" tabindex="-1"></a>from the 2nd byte in the <span class="in">`input`</span>.</span>
+<span id="cb16-387"><a href="#cb16-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-388"><a href="#cb16-388" aria-hidden="true" tabindex="-1"></a><span class="al">![How the 2nd byte in the output of the encoder is produced from the 1st byte (dark purple) and the 2nd byte (orange) of the input.](../Figures/base64-encoder-bit-shift.png)</span>{#fig-encoder-bitshift}</span>
+<span id="cb16-389"><a href="#cb16-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-390"><a href="#cb16-390" aria-hidden="true" tabindex="-1"></a>On the other hand, we must be prepared for the instances where we do not have the perfect window of 3 bytes.</span>
+<span id="cb16-391"><a href="#cb16-391" aria-hidden="true" tabindex="-1"></a>If you have a window of 2 bytes, then, the steps 3 and 4, which produces the bytes <span class="in">`output[2]`</span> and <span class="in">`output[3]`</span>, change a little bit,</span>
+<span id="cb16-392"><a href="#cb16-392" aria-hidden="true" tabindex="-1"></a>and they become:</span>
+<span id="cb16-393"><a href="#cb16-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-394"><a href="#cb16-394" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`output[2]`</span> is produced by taking the last 4 bits from <span class="in">`input[1]`</span>, then, move them two positions to the left.</span>
+<span id="cb16-395"><a href="#cb16-395" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`output[3]`</span> is the character <span class="in">`'='`</span>.</span>
+<span id="cb16-396"><a href="#cb16-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-397"><a href="#cb16-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-398"><a href="#cb16-398" aria-hidden="true" tabindex="-1"></a>Finally, if you have a window of a single byte, then, the steps 2 to 4, which produces the bytes <span class="in">`output[1]`</span>, <span class="in">`output[2]`</span> and <span class="in">`output[3]`</span> change,</span>
+<span id="cb16-399"><a href="#cb16-399" aria-hidden="true" tabindex="-1"></a>becoming:</span>
+<span id="cb16-400"><a href="#cb16-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-401"><a href="#cb16-401" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`output[1]`</span> is produced by taking the last two bits from <span class="in">`input[0]`</span>, then, move them four positions to the left.</span>
+<span id="cb16-402"><a href="#cb16-402" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`output[2]`</span> and <span class="in">`output[3]`</span> are the character <span class="in">`=`</span>.</span>
+<span id="cb16-403"><a href="#cb16-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-404"><a href="#cb16-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-405"><a href="#cb16-405" aria-hidden="true" tabindex="-1"></a>If these bullet points were a bit confusing for you, you may find the @tbl-transf-6bit more intuitive.</span>
+<span id="cb16-406"><a href="#cb16-406" aria-hidden="true" tabindex="-1"></a>This table unifies all this logic into a simple table. Notice that</span>
+<span id="cb16-407"><a href="#cb16-407" aria-hidden="true" tabindex="-1"></a>this table also provides the exact expression in Zig that creates the corresponding</span>
+<span id="cb16-408"><a href="#cb16-408" aria-hidden="true" tabindex="-1"></a>byte in the output.</span>
+<span id="cb16-409"><a href="#cb16-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-410"><a href="#cb16-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-411"><a href="#cb16-411" aria-hidden="true" tabindex="-1"></a>::: {#tbl-transf-6bit}</span>
+<span id="cb16-412"><a href="#cb16-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-413"><a href="#cb16-413" aria-hidden="true" tabindex="-1"></a>| Number of bytes in the window | Byte index in the output | In code                                    |</span>
+<span id="cb16-414"><a href="#cb16-414" aria-hidden="true" tabindex="-1"></a>|-------------------------------|--------------------------|--------------------------------------------|</span>
+<span id="cb16-415"><a href="#cb16-415" aria-hidden="true" tabindex="-1"></a>| 3                             | 0                        | input<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &gt;&gt; 2                              |</span>
+<span id="cb16-416"><a href="#cb16-416" aria-hidden="true" tabindex="-1"></a>| 3                             | 1                        | ((input<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &amp; 0x03) &lt;&lt; 4) + (input<span class="co">[</span><span class="ot">1</span><span class="co">]</span> &gt;&gt; 4) |</span>
+<span id="cb16-417"><a href="#cb16-417" aria-hidden="true" tabindex="-1"></a>| 3                             | 2                        | ((input<span class="co">[</span><span class="ot">1</span><span class="co">]</span> &amp; 0x0f) &lt;&lt; 2) + (input<span class="co">[</span><span class="ot">2</span><span class="co">]</span> &gt;&gt; 6) |</span>
+<span id="cb16-418"><a href="#cb16-418" aria-hidden="true" tabindex="-1"></a>| 3                             | 3                        | input<span class="co">[</span><span class="ot">2</span><span class="co">]</span> &amp; 0x3f                            |</span>
+<span id="cb16-419"><a href="#cb16-419" aria-hidden="true" tabindex="-1"></a>| 2                             | 0                        | input<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &gt;&gt; 2                              |</span>
+<span id="cb16-420"><a href="#cb16-420" aria-hidden="true" tabindex="-1"></a>| 2                             | 1                        | ((input<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &amp; 0x03) &lt;&lt; 4) + (input<span class="co">[</span><span class="ot">1</span><span class="co">]</span> &gt;&gt; 4) |</span>
+<span id="cb16-421"><a href="#cb16-421" aria-hidden="true" tabindex="-1"></a>| 2                             | 2                        | ((input<span class="co">[</span><span class="ot">1</span><span class="co">]</span> &amp; 0x0f) &lt;&lt; 2)                   |</span>
+<span id="cb16-422"><a href="#cb16-422" aria-hidden="true" tabindex="-1"></a>| 2                             | 3                        | '='                                        |</span>
+<span id="cb16-423"><a href="#cb16-423" aria-hidden="true" tabindex="-1"></a>| 1                             | 0                        | input<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &gt;&gt; 2                              |</span>
+<span id="cb16-424"><a href="#cb16-424" aria-hidden="true" tabindex="-1"></a>| 1                             | 1                        | ((input<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &amp; 0x03) &lt;&lt; 4)                   |</span>
+<span id="cb16-425"><a href="#cb16-425" aria-hidden="true" tabindex="-1"></a>| 1                             | 2                        | '='                                        |</span>
+<span id="cb16-426"><a href="#cb16-426" aria-hidden="true" tabindex="-1"></a>| 1                             | 3                        | '='                                        |</span>
+<span id="cb16-427"><a href="#cb16-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-428"><a href="#cb16-428" aria-hidden="true" tabindex="-1"></a>: How the 6-bit transformation translates into code in different window settings.</span>
+<span id="cb16-429"><a href="#cb16-429" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-430"><a href="#cb16-430" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-431"><a href="#cb16-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-432"><a href="#cb16-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-433"><a href="#cb16-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-434"><a href="#cb16-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-435"><a href="#cb16-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-436"><a href="#cb16-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-437"><a href="#cb16-437" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bit-shifting in Zig</span></span>
+<span id="cb16-438"><a href="#cb16-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-439"><a href="#cb16-439" aria-hidden="true" tabindex="-1"></a>Bit-shifting in Zig works similarly to bit-shifting in C.</span>
+<span id="cb16-440"><a href="#cb16-440" aria-hidden="true" tabindex="-1"></a>All bitwise operators that exist in C are available in Zig.</span>
+<span id="cb16-441"><a href="#cb16-441" aria-hidden="true" tabindex="-1"></a>Here, in the base64 encoder algorithm, they are essential</span>
+<span id="cb16-442"><a href="#cb16-442" aria-hidden="true" tabindex="-1"></a>to produce the result we want.</span>
+<span id="cb16-443"><a href="#cb16-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-444"><a href="#cb16-444" aria-hidden="true" tabindex="-1"></a>For those who are not familiar with these operators, they are</span>
+<span id="cb16-445"><a href="#cb16-445" aria-hidden="true" tabindex="-1"></a>operators that operates at the bit-level of your values.</span>
+<span id="cb16-446"><a href="#cb16-446" aria-hidden="true" tabindex="-1"></a>This means that these operators takes the bits that form the value</span>
+<span id="cb16-447"><a href="#cb16-447" aria-hidden="true" tabindex="-1"></a>you have, and change them in some way. This ultimately also changes</span>
+<span id="cb16-448"><a href="#cb16-448" aria-hidden="true" tabindex="-1"></a>the value itself, because the binary representation of this value</span>
+<span id="cb16-449"><a href="#cb16-449" aria-hidden="true" tabindex="-1"></a>changes.</span>
+<span id="cb16-450"><a href="#cb16-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-451"><a href="#cb16-451" aria-hidden="true" tabindex="-1"></a>We have already seen in @fig-encoder-bitshift the effect produced by a bit-shift.</span>
+<span id="cb16-452"><a href="#cb16-452" aria-hidden="true" tabindex="-1"></a>But let's use the first byte in the output of the base64 encoder as another example of what</span>
+<span id="cb16-453"><a href="#cb16-453" aria-hidden="true" tabindex="-1"></a>bit-shifting means. This is the easiest byte of the 4 bytes in the output</span>
+<span id="cb16-454"><a href="#cb16-454" aria-hidden="true" tabindex="-1"></a>to build. Because we only need to move the bits from the first byte in the input two positions to the right,</span>
+<span id="cb16-455"><a href="#cb16-455" aria-hidden="true" tabindex="-1"></a>with the *bit shift to the right* (<span class="in">`&gt;&gt;`</span>) operator.</span>
+<span id="cb16-456"><a href="#cb16-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-457"><a href="#cb16-457" aria-hidden="true" tabindex="-1"></a>If we take the string "Hi" that we used in @fig-base64-algo1 as an example, the first byte in</span>
+<span id="cb16-458"><a href="#cb16-458" aria-hidden="true" tabindex="-1"></a>this string is "H", which is the sequence <span class="in">`01001000`</span> in binary.</span>
+<span id="cb16-459"><a href="#cb16-459" aria-hidden="true" tabindex="-1"></a>If we move the bits of this byte, two places to the right, we get the sequence <span class="in">`00010010`</span> as result.</span>
+<span id="cb16-460"><a href="#cb16-460" aria-hidden="true" tabindex="-1"></a>This binary sequence is the value <span class="in">`18`</span> in decimal, and also, the value <span class="in">`0x12`</span> in hexadecimal.</span>
+<span id="cb16-461"><a href="#cb16-461" aria-hidden="true" tabindex="-1"></a>Notice that the first 6 bits of "H" were moved to the end of the byte.</span>
+<span id="cb16-462"><a href="#cb16-462" aria-hidden="true" tabindex="-1"></a>With this operation, we get the first byte of the output.</span>
+<span id="cb16-463"><a href="#cb16-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-464"><a href="#cb16-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-467"><a href="#cb16-467" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-468"><a href="#cb16-468" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb16-469"><a href="#cb16-469" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "run"</span></span>
+<span id="cb16-470"><a href="#cb16-470" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb16-471"><a href="#cb16-471" aria-hidden="true" tabindex="-1"></a><span class="in">const stdout = std.io.getStdOut().writer();</span></span>
+<span id="cb16-472"><a href="#cb16-472" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb16-473"><a href="#cb16-473" aria-hidden="true" tabindex="-1"></a><span class="in">    const input = "Hi";</span></span>
+<span id="cb16-474"><a href="#cb16-474" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("{d}\n", .{input[0] &gt;&gt; 2});</span></span>
+<span id="cb16-475"><a href="#cb16-475" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-476"><a href="#cb16-476" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-477"><a href="#cb16-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-478"><a href="#cb16-478" aria-hidden="true" tabindex="-1"></a>If you recall @fig-base64-algo1, the first byte present in the output should</span>
+<span id="cb16-479"><a href="#cb16-479" aria-hidden="true" tabindex="-1"></a>be equivalent to the 6-bit group <span class="in">`010010`</span>. Although being visually different, the</span>
+<span id="cb16-480"><a href="#cb16-480" aria-hidden="true" tabindex="-1"></a>sequences <span class="in">`010010`</span> and <span class="in">`00010010`</span> are semantically equal. They mean the same thing.</span>
+<span id="cb16-481"><a href="#cb16-481" aria-hidden="true" tabindex="-1"></a>They both represent the number 18 in decimal, and the value <span class="in">`0x12`</span> in hexadecimal.</span>
+<span id="cb16-482"><a href="#cb16-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-483"><a href="#cb16-483" aria-hidden="true" tabindex="-1"></a>So, don't take the "6-bit group" factor so seriously. We do not need necessarily to</span>
+<span id="cb16-484"><a href="#cb16-484" aria-hidden="true" tabindex="-1"></a>get a 6-bit sequence as result. As long as the meaning of the 8-bit sequence we get is the same</span>
+<span id="cb16-485"><a href="#cb16-485" aria-hidden="true" tabindex="-1"></a>of the 6-bit sequence, we are in the clear.</span>
+<span id="cb16-486"><a href="#cb16-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-487"><a href="#cb16-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-488"><a href="#cb16-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-489"><a href="#cb16-489" aria-hidden="true" tabindex="-1"></a><span class="fu">### Selecting specific bits with the `&amp;` operator</span></span>
+<span id="cb16-490"><a href="#cb16-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-491"><a href="#cb16-491" aria-hidden="true" tabindex="-1"></a>If you comeback to @sec-6bit-transf, you will see that, in order to produce</span>
+<span id="cb16-492"><a href="#cb16-492" aria-hidden="true" tabindex="-1"></a>the second and third bytes in the output, we need to select specific</span>
+<span id="cb16-493"><a href="#cb16-493" aria-hidden="true" tabindex="-1"></a>bits from the first and second bytes in the input string. But how</span>
+<span id="cb16-494"><a href="#cb16-494" aria-hidden="true" tabindex="-1"></a>can we do that? The answer relies on the *bitwise and* (<span class="in">`&amp;`</span>) operator.</span>
+<span id="cb16-495"><a href="#cb16-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-496"><a href="#cb16-496" aria-hidden="true" tabindex="-1"></a>The @fig-encoder-bitshift already showed you what effect this <span class="in">`&amp;`</span> operator</span>
+<span id="cb16-497"><a href="#cb16-497" aria-hidden="true" tabindex="-1"></a>produces in the bits of its operands. But let's make a clear description of it.</span>
+<span id="cb16-498"><a href="#cb16-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-499"><a href="#cb16-499" aria-hidden="true" tabindex="-1"></a>In summary, the <span class="in">`&amp;`</span> operator performs a logical conjunction operation</span>
+<span id="cb16-500"><a href="#cb16-500" aria-hidden="true" tabindex="-1"></a>between the bits of its operands. In more details, the operator <span class="in">`&amp;`</span></span>
+<span id="cb16-501"><a href="#cb16-501" aria-hidden="true" tabindex="-1"></a>compares each bit of the first operand to the corresponding bit of the second operand.</span>
+<span id="cb16-502"><a href="#cb16-502" aria-hidden="true" tabindex="-1"></a>If both bits are 1, the corresponding result bit is set to 1.</span>
+<span id="cb16-503"><a href="#cb16-503" aria-hidden="true" tabindex="-1"></a>Otherwise, the corresponding result bit is set to 0 <span class="co">[</span><span class="ot">@microsoftbitwiseand</span><span class="co">]</span>.</span>
+<span id="cb16-504"><a href="#cb16-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-505"><a href="#cb16-505" aria-hidden="true" tabindex="-1"></a>So, if we apply this operator to the binary sequences <span class="in">`1000100`</span> and <span class="in">`00001101`</span></span>
+<span id="cb16-506"><a href="#cb16-506" aria-hidden="true" tabindex="-1"></a>the result of this operation is the binary sequence <span class="in">`00000100`</span>. Because only</span>
+<span id="cb16-507"><a href="#cb16-507" aria-hidden="true" tabindex="-1"></a>at the sixth position in both binary sequences we had a 1 value. So any</span>
+<span id="cb16-508"><a href="#cb16-508" aria-hidden="true" tabindex="-1"></a>position where we do not have both binary sequences setted to 1, we get</span>
+<span id="cb16-509"><a href="#cb16-509" aria-hidden="true" tabindex="-1"></a>a 0 bit in the resulting binary sequence.</span>
+<span id="cb16-510"><a href="#cb16-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-511"><a href="#cb16-511" aria-hidden="true" tabindex="-1"></a>We lose information about the original bit values</span>
+<span id="cb16-512"><a href="#cb16-512" aria-hidden="true" tabindex="-1"></a>from both sequences in this case. Because we no longer know</span>
+<span id="cb16-513"><a href="#cb16-513" aria-hidden="true" tabindex="-1"></a>if this 0 bit in the resulting binary sequence was produced by</span>
+<span id="cb16-514"><a href="#cb16-514" aria-hidden="true" tabindex="-1"></a>combining 0 with 0, or 1 with 0, or 0 with 1.</span>
+<span id="cb16-515"><a href="#cb16-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-516"><a href="#cb16-516" aria-hidden="true" tabindex="-1"></a>As an example, suppose you have the binary sequence <span class="in">`10010111`</span>, which is the number 151 in decimal. How</span>
+<span id="cb16-517"><a href="#cb16-517" aria-hidden="true" tabindex="-1"></a>can we get a new binary sequence which contains only the third and</span>
+<span id="cb16-518"><a href="#cb16-518" aria-hidden="true" tabindex="-1"></a>fourth bits of this sequence?</span>
+<span id="cb16-519"><a href="#cb16-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-520"><a href="#cb16-520" aria-hidden="true" tabindex="-1"></a>We just need to combine this sequence with <span class="in">`00110000`</span> (is <span class="in">`0x30`</span> in hexadecimal) using the <span class="in">`&amp;`</span> operator.</span>
+<span id="cb16-521"><a href="#cb16-521" aria-hidden="true" tabindex="-1"></a>Notice that only the third and fourth positions in this binary sequence is setted to 1. As a consequence, only the</span>
+<span id="cb16-522"><a href="#cb16-522" aria-hidden="true" tabindex="-1"></a>third and fourth values of both binary sequences are potentially preserved in the output. All the remaining positions</span>
+<span id="cb16-523"><a href="#cb16-523" aria-hidden="true" tabindex="-1"></a>are setted to zero in the output sequence, which is <span class="in">`00010000`</span> (is the number 16 in decimal).</span>
+<span id="cb16-524"><a href="#cb16-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-527"><a href="#cb16-527" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-528"><a href="#cb16-528" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb16-529"><a href="#cb16-529" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "run"</span></span>
+<span id="cb16-530"><a href="#cb16-530" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb16-531"><a href="#cb16-531" aria-hidden="true" tabindex="-1"></a><span class="in">const stdout = std.io.getStdOut().writer();</span></span>
+<span id="cb16-532"><a href="#cb16-532" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb16-533"><a href="#cb16-533" aria-hidden="true" tabindex="-1"></a><span class="in">    const bits = 0b10010111;</span></span>
+<span id="cb16-534"><a href="#cb16-534" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("{d}\n", .{bits &amp; 0b00110000});</span></span>
+<span id="cb16-535"><a href="#cb16-535" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-536"><a href="#cb16-536" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-537"><a href="#cb16-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-538"><a href="#cb16-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-539"><a href="#cb16-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-540"><a href="#cb16-540" aria-hidden="true" tabindex="-1"></a><span class="fu">### Allocating space for the output</span></span>
+<span id="cb16-541"><a href="#cb16-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-542"><a href="#cb16-542" aria-hidden="true" tabindex="-1"></a>As I described in @sec-stack, to store an object in the stack,</span>
+<span id="cb16-543"><a href="#cb16-543" aria-hidden="true" tabindex="-1"></a>this object needs to have a known and fixed length at compile-time. This is an important</span>
+<span id="cb16-544"><a href="#cb16-544" aria-hidden="true" tabindex="-1"></a>limitation for our base64 encoder/decoder case. Because the size of</span>
+<span id="cb16-545"><a href="#cb16-545" aria-hidden="true" tabindex="-1"></a>the output (from both the encoder and decoder) depends</span>
+<span id="cb16-546"><a href="#cb16-546" aria-hidden="true" tabindex="-1"></a>directly on the size of the input.</span>
+<span id="cb16-547"><a href="#cb16-547" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-548"><a href="#cb16-548" aria-hidden="true" tabindex="-1"></a>Having this in mind, we cannot know at compile time which is</span>
+<span id="cb16-549"><a href="#cb16-549" aria-hidden="true" tabindex="-1"></a>the size of the output for both the encoder and decoder.</span>
+<span id="cb16-550"><a href="#cb16-550" aria-hidden="true" tabindex="-1"></a>So, if we can't know the size of the output at compile time,</span>
+<span id="cb16-551"><a href="#cb16-551" aria-hidden="true" tabindex="-1"></a>this means that we cannot store the output for both the encoder</span>
+<span id="cb16-552"><a href="#cb16-552" aria-hidden="true" tabindex="-1"></a>and decoder in the stack.</span>
+<span id="cb16-553"><a href="#cb16-553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-554"><a href="#cb16-554" aria-hidden="true" tabindex="-1"></a>Consequently, we need to store this output on the heap,</span>
+<span id="cb16-555"><a href="#cb16-555" aria-hidden="true" tabindex="-1"></a>and, as I commented in @sec-heap, we can only</span>
+<span id="cb16-556"><a href="#cb16-556" aria-hidden="true" tabindex="-1"></a>store objects in the heap by using allocator objects.</span>
+<span id="cb16-557"><a href="#cb16-557" aria-hidden="true" tabindex="-1"></a>So, one the arguments to both the <span class="in">`encode()`</span> and <span class="in">`decode()`</span></span>
+<span id="cb16-558"><a href="#cb16-558" aria-hidden="true" tabindex="-1"></a>functions, needs to be an allocator object, because</span>
+<span id="cb16-559"><a href="#cb16-559" aria-hidden="true" tabindex="-1"></a>we know for sure that, at some point inside the body of these</span>
+<span id="cb16-560"><a href="#cb16-560" aria-hidden="true" tabindex="-1"></a>functions, we need to allocate space on the heap to</span>
+<span id="cb16-561"><a href="#cb16-561" aria-hidden="true" tabindex="-1"></a>store the output of these functions.</span>
+<span id="cb16-562"><a href="#cb16-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-563"><a href="#cb16-563" aria-hidden="true" tabindex="-1"></a>That is why, both the <span class="in">`encode()`</span> and <span class="in">`decode()`</span> functions that I</span>
+<span id="cb16-564"><a href="#cb16-564" aria-hidden="true" tabindex="-1"></a>present in this book, have an argument called <span class="in">`allocator`</span>,</span>
+<span id="cb16-565"><a href="#cb16-565" aria-hidden="true" tabindex="-1"></a>which receives a allocator object as input, identified by</span>
+<span id="cb16-566"><a href="#cb16-566" aria-hidden="true" tabindex="-1"></a>the type <span class="in">`std.mem.Allocator`</span> from the Zig Standard Library.</span>
+<span id="cb16-567"><a href="#cb16-567" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-568"><a href="#cb16-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-569"><a href="#cb16-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-570"><a href="#cb16-570" aria-hidden="true" tabindex="-1"></a><span class="fu">### Writing the `encode()` function</span></span>
+<span id="cb16-571"><a href="#cb16-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-572"><a href="#cb16-572" aria-hidden="true" tabindex="-1"></a>Now that we have a basic understanding on how the bitwise operators work, and how</span>
+<span id="cb16-573"><a href="#cb16-573" aria-hidden="true" tabindex="-1"></a>exactly they help us to achieve the result we want to achieve. We can now encapsulate</span>
+<span id="cb16-574"><a href="#cb16-574" aria-hidden="true" tabindex="-1"></a>all the logic that we have described in @fig-base64-algo1 and @tbl-transf-6bit into a nice</span>
+<span id="cb16-575"><a href="#cb16-575" aria-hidden="true" tabindex="-1"></a>function that we can add to our <span class="in">`Base64`</span> struct definition, that we started in @sec-base64-table.</span>
+<span id="cb16-576"><a href="#cb16-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-577"><a href="#cb16-577" aria-hidden="true" tabindex="-1"></a>You can find the <span class="in">`encode()`</span> function below. Notice that the first argument of this function,</span>
+<span id="cb16-578"><a href="#cb16-578" aria-hidden="true" tabindex="-1"></a>is the <span class="in">`Base64`</span> struct itself. Therefore, this argument clearly signals</span>
+<span id="cb16-579"><a href="#cb16-579" aria-hidden="true" tabindex="-1"></a>that this function is a method from the <span class="in">`Base64`</span> struct.</span>
+<span id="cb16-580"><a href="#cb16-580" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-581"><a href="#cb16-581" aria-hidden="true" tabindex="-1"></a>Because the <span class="in">`encode()`</span> function itself is fairly long,</span>
+<span id="cb16-582"><a href="#cb16-582" aria-hidden="true" tabindex="-1"></a>I intentionally omitted the <span class="in">`Base64`</span> struct definition in this source code,</span>
+<span id="cb16-583"><a href="#cb16-583" aria-hidden="true" tabindex="-1"></a>just for brevity reasons. So, just remember that this function is a public function (or a public method) from the</span>
+<span id="cb16-584"><a href="#cb16-584" aria-hidden="true" tabindex="-1"></a><span class="in">`Base64`</span> struct.</span>
+<span id="cb16-585"><a href="#cb16-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-586"><a href="#cb16-586" aria-hidden="true" tabindex="-1"></a>Furthermore, this <span class="in">`encode()`</span> function has two other arguments:</span>
+<span id="cb16-587"><a href="#cb16-587" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-588"><a href="#cb16-588" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`input`</span> is the input sequence of characters that you want to encode in base64;</span>
+<span id="cb16-589"><a href="#cb16-589" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`allocator`</span> is an allocator object to use in the necessary memory allocations.</span>
+<span id="cb16-590"><a href="#cb16-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-591"><a href="#cb16-591" aria-hidden="true" tabindex="-1"></a>I described everything you need to know about allocator objects in @sec-allocators.</span>
+<span id="cb16-592"><a href="#cb16-592" aria-hidden="true" tabindex="-1"></a>So, if you are not familiar with them, I highly recommend you to comeback to</span>
+<span id="cb16-593"><a href="#cb16-593" aria-hidden="true" tabindex="-1"></a>that section, and read it.</span>
+<span id="cb16-594"><a href="#cb16-594" aria-hidden="true" tabindex="-1"></a>By looking at the <span class="in">`encode()`</span> function, you will see that we use this</span>
+<span id="cb16-595"><a href="#cb16-595" aria-hidden="true" tabindex="-1"></a>allocator object to allocate enough memory to store the output of</span>
+<span id="cb16-596"><a href="#cb16-596" aria-hidden="true" tabindex="-1"></a>the encoding process.</span>
+<span id="cb16-597"><a href="#cb16-597" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-598"><a href="#cb16-598" aria-hidden="true" tabindex="-1"></a>The main for loop in the function is responsible for iterating through the entire input string.</span>
+<span id="cb16-599"><a href="#cb16-599" aria-hidden="true" tabindex="-1"></a>In every iteration, we use a <span class="in">`count`</span> variable to count how many iterations we had at the</span>
+<span id="cb16-600"><a href="#cb16-600" aria-hidden="true" tabindex="-1"></a>moment. When <span class="in">`count`</span> reaches 3, then, we try to encode the 3 characters (or bytes) that we have accumulated</span>
+<span id="cb16-601"><a href="#cb16-601" aria-hidden="true" tabindex="-1"></a>in the temporary buffer object (<span class="in">`buf`</span>).</span>
+<span id="cb16-602"><a href="#cb16-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-603"><a href="#cb16-603" aria-hidden="true" tabindex="-1"></a>After encoding these 3 characters and storing the result in the <span class="in">`output`</span> variable, we reset</span>
+<span id="cb16-604"><a href="#cb16-604" aria-hidden="true" tabindex="-1"></a>the <span class="in">`count`</span> variable to zero, and start to count again on the next iteration of the loop.</span>
+<span id="cb16-605"><a href="#cb16-605" aria-hidden="true" tabindex="-1"></a>If the loop hits the end of the string, and, the <span class="in">`count`</span> variable is less than 3, then, it means that</span>
+<span id="cb16-606"><a href="#cb16-606" aria-hidden="true" tabindex="-1"></a>the temporary buffer contains the last 1 or 2 bytes from the input.</span>
+<span id="cb16-607"><a href="#cb16-607" aria-hidden="true" tabindex="-1"></a>That is why we have two <span class="in">`if`</span> statements after the for loop. To deal which each possible case.</span>
+<span id="cb16-608"><a href="#cb16-608" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-609"><a href="#cb16-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-612"><a href="#cb16-612" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-613"><a href="#cb16-613" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb16-614"><a href="#cb16-614" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn encode(self: Base64,</span></span>
+<span id="cb16-615"><a href="#cb16-615" aria-hidden="true" tabindex="-1"></a><span class="in">              allocator: std.mem.Allocator,</span></span>
+<span id="cb16-616"><a href="#cb16-616" aria-hidden="true" tabindex="-1"></a><span class="in">              input: []const u8) ![]u8 {</span></span>
+<span id="cb16-617"><a href="#cb16-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-618"><a href="#cb16-618" aria-hidden="true" tabindex="-1"></a><span class="in">    if (input.len == 0) {</span></span>
+<span id="cb16-619"><a href="#cb16-619" aria-hidden="true" tabindex="-1"></a><span class="in">        return "";</span></span>
+<span id="cb16-620"><a href="#cb16-620" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-621"><a href="#cb16-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-622"><a href="#cb16-622" aria-hidden="true" tabindex="-1"></a><span class="in">    const n_out = try _calc_encode_length(input);</span></span>
+<span id="cb16-623"><a href="#cb16-623" aria-hidden="true" tabindex="-1"></a><span class="in">    var out = try allocator.alloc(u8, n_out);</span></span>
+<span id="cb16-624"><a href="#cb16-624" aria-hidden="true" tabindex="-1"></a><span class="in">    var buf = [3]u8{ 0, 0, 0 };</span></span>
+<span id="cb16-625"><a href="#cb16-625" aria-hidden="true" tabindex="-1"></a><span class="in">    var count: u8 = 0;</span></span>
+<span id="cb16-626"><a href="#cb16-626" aria-hidden="true" tabindex="-1"></a><span class="in">    var iout: u64 = 0;</span></span>
+<span id="cb16-627"><a href="#cb16-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-628"><a href="#cb16-628" aria-hidden="true" tabindex="-1"></a><span class="in">    for (input, 0..) |_, i| {</span></span>
+<span id="cb16-629"><a href="#cb16-629" aria-hidden="true" tabindex="-1"></a><span class="in">        buf[count] = input[i];</span></span>
+<span id="cb16-630"><a href="#cb16-630" aria-hidden="true" tabindex="-1"></a><span class="in">        count += 1;</span></span>
+<span id="cb16-631"><a href="#cb16-631" aria-hidden="true" tabindex="-1"></a><span class="in">        if (count == 3) {</span></span>
+<span id="cb16-632"><a href="#cb16-632" aria-hidden="true" tabindex="-1"></a><span class="in">            out[iout] = self._char_at(buf[0] &gt;&gt; 2);</span></span>
+<span id="cb16-633"><a href="#cb16-633" aria-hidden="true" tabindex="-1"></a><span class="in">            out[iout + 1] = self._char_at(</span></span>
+<span id="cb16-634"><a href="#cb16-634" aria-hidden="true" tabindex="-1"></a><span class="in">                ((buf[0] &amp; 0x03) &lt;&lt; 4) + (buf[1] &gt;&gt; 4)</span></span>
+<span id="cb16-635"><a href="#cb16-635" aria-hidden="true" tabindex="-1"></a><span class="in">            );</span></span>
+<span id="cb16-636"><a href="#cb16-636" aria-hidden="true" tabindex="-1"></a><span class="in">            out[iout + 2] = self._char_at(</span></span>
+<span id="cb16-637"><a href="#cb16-637" aria-hidden="true" tabindex="-1"></a><span class="in">                ((buf[1] &amp; 0x0f) &lt;&lt; 2) + (buf[2] &gt;&gt; 6)</span></span>
+<span id="cb16-638"><a href="#cb16-638" aria-hidden="true" tabindex="-1"></a><span class="in">            );</span></span>
+<span id="cb16-639"><a href="#cb16-639" aria-hidden="true" tabindex="-1"></a><span class="in">            out[iout + 3] = self._char_at(buf[2] &amp; 0x3f);</span></span>
+<span id="cb16-640"><a href="#cb16-640" aria-hidden="true" tabindex="-1"></a><span class="in">            iout += 4;</span></span>
+<span id="cb16-641"><a href="#cb16-641" aria-hidden="true" tabindex="-1"></a><span class="in">            count = 0;</span></span>
+<span id="cb16-642"><a href="#cb16-642" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb16-643"><a href="#cb16-643" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-644"><a href="#cb16-644" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-645"><a href="#cb16-645" aria-hidden="true" tabindex="-1"></a><span class="in">    if (count == 1) {</span></span>
+<span id="cb16-646"><a href="#cb16-646" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout] = self._char_at(buf[0] &gt;&gt; 2);</span></span>
+<span id="cb16-647"><a href="#cb16-647" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout + 1] = self._char_at(</span></span>
+<span id="cb16-648"><a href="#cb16-648" aria-hidden="true" tabindex="-1"></a><span class="in">            (buf[0] &amp; 0x03) &lt;&lt; 4</span></span>
+<span id="cb16-649"><a href="#cb16-649" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
+<span id="cb16-650"><a href="#cb16-650" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout + 2] = '=';</span></span>
+<span id="cb16-651"><a href="#cb16-651" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout + 3] = '=';</span></span>
+<span id="cb16-652"><a href="#cb16-652" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-653"><a href="#cb16-653" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-654"><a href="#cb16-654" aria-hidden="true" tabindex="-1"></a><span class="in">    if (count == 2) {</span></span>
+<span id="cb16-655"><a href="#cb16-655" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout] = self._char_at(buf[0] &gt;&gt; 2);</span></span>
+<span id="cb16-656"><a href="#cb16-656" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout + 1] = self._char_at(</span></span>
+<span id="cb16-657"><a href="#cb16-657" aria-hidden="true" tabindex="-1"></a><span class="in">            ((buf[0] &amp; 0x03) &lt;&lt; 4) + (buf[1] &gt;&gt; 4)</span></span>
+<span id="cb16-658"><a href="#cb16-658" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
+<span id="cb16-659"><a href="#cb16-659" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout + 2] = self._char_at(</span></span>
+<span id="cb16-660"><a href="#cb16-660" aria-hidden="true" tabindex="-1"></a><span class="in">            (buf[1] &amp; 0x0f) &lt;&lt; 2</span></span>
+<span id="cb16-661"><a href="#cb16-661" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
+<span id="cb16-662"><a href="#cb16-662" aria-hidden="true" tabindex="-1"></a><span class="in">        out[iout + 3] = '=';</span></span>
+<span id="cb16-663"><a href="#cb16-663" aria-hidden="true" tabindex="-1"></a><span class="in">        iout += 4;</span></span>
+<span id="cb16-664"><a href="#cb16-664" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-665"><a href="#cb16-665" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-666"><a href="#cb16-666" aria-hidden="true" tabindex="-1"></a><span class="in">    return out;</span></span>
+<span id="cb16-667"><a href="#cb16-667" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-668"><a href="#cb16-668" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-669"><a href="#cb16-669" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-670"><a href="#cb16-670" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-671"><a href="#cb16-671" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-672"><a href="#cb16-672" aria-hidden="true" tabindex="-1"></a><span class="fu">## Building the decoder logic {#sec-decoder-logic}</span></span>
+<span id="cb16-673"><a href="#cb16-673" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-674"><a href="#cb16-674" aria-hidden="true" tabindex="-1"></a>Now, we can focus on writing the base64 decoder logic. Remember from @fig-base64-algo2 that,</span>
+<span id="cb16-675"><a href="#cb16-675" aria-hidden="true" tabindex="-1"></a>a base64 decoder does the inverse process of an encoder. So, all we need to do, is to</span>
+<span id="cb16-676"><a href="#cb16-676" aria-hidden="true" tabindex="-1"></a>write a <span class="in">`decode()`</span> function that performs the inverse process that I exposed in @sec-encoder-logic.</span>
+<span id="cb16-677"><a href="#cb16-677" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-678"><a href="#cb16-678" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-679"><a href="#cb16-679" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping base64 characters to their indexes {#sec-map-base64-index}</span></span>
+<span id="cb16-680"><a href="#cb16-680" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-681"><a href="#cb16-681" aria-hidden="true" tabindex="-1"></a>One thing that we need to do, in order to decode a base64-encoded message, is to calculate</span>
+<span id="cb16-682"><a href="#cb16-682" aria-hidden="true" tabindex="-1"></a>the index in the base64 scale of every base64 character that we encounter in the decoder input.</span>
+<span id="cb16-683"><a href="#cb16-683" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-684"><a href="#cb16-684" aria-hidden="true" tabindex="-1"></a>In other words, the decoder receives as input, a sequence of base64 characters. We need</span>
+<span id="cb16-685"><a href="#cb16-685" aria-hidden="true" tabindex="-1"></a>to translate this sequence of characters into a sequence of indexes. These indexes</span>
+<span id="cb16-686"><a href="#cb16-686" aria-hidden="true" tabindex="-1"></a>are the index of each character in the base64 scale. This way, we get the value/byte</span>
+<span id="cb16-687"><a href="#cb16-687" aria-hidden="true" tabindex="-1"></a>that was calculated in the 6-bit transformation step of the encoder process.</span>
+<span id="cb16-688"><a href="#cb16-688" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-689"><a href="#cb16-689" aria-hidden="true" tabindex="-1"></a>There are probably better/faster ways to calculate this, especially using a "divide and conquer"</span>
+<span id="cb16-690"><a href="#cb16-690" aria-hidden="true" tabindex="-1"></a>type of strategy. But for now, I am satisfied with a simple and "brute force" type of strategy.</span>
+<span id="cb16-691"><a href="#cb16-691" aria-hidden="true" tabindex="-1"></a>The <span class="in">`_char_index()`</span> function below contains this strategy.</span>
+<span id="cb16-692"><a href="#cb16-692" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-693"><a href="#cb16-693" aria-hidden="true" tabindex="-1"></a>We are essentially looping through the *lookup table* with the base64 scale,</span>
+<span id="cb16-694"><a href="#cb16-694" aria-hidden="true" tabindex="-1"></a>and comparing the character we got with each character in the base64 scale.</span>
+<span id="cb16-695"><a href="#cb16-695" aria-hidden="true" tabindex="-1"></a>If these characters match, then, we return the index of this character in the</span>
+<span id="cb16-696"><a href="#cb16-696" aria-hidden="true" tabindex="-1"></a>base64 scale as the result.</span>
+<span id="cb16-697"><a href="#cb16-697" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-698"><a href="#cb16-698" aria-hidden="true" tabindex="-1"></a>Notice that, if the input character is <span class="in">`'='`</span>, the function returns the index 64, which is</span>
+<span id="cb16-699"><a href="#cb16-699" aria-hidden="true" tabindex="-1"></a>"out of range" in the scale. But, as I described in @sec-base64-scale,</span>
+<span id="cb16-700"><a href="#cb16-700" aria-hidden="true" tabindex="-1"></a>the character <span class="in">`'='`</span> does not belong to the base64 scale itself.</span>
+<span id="cb16-701"><a href="#cb16-701" aria-hidden="true" tabindex="-1"></a>It's a special and meaningless character in base64.</span>
+<span id="cb16-702"><a href="#cb16-702" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-703"><a href="#cb16-703" aria-hidden="true" tabindex="-1"></a>Also notice that this <span class="in">`_char_index()`</span> function is a method from our <span class="in">`Base64`</span> struct,</span>
+<span id="cb16-704"><a href="#cb16-704" aria-hidden="true" tabindex="-1"></a>because of the <span class="in">`self`</span> argument. Again, I have omitted the <span class="in">`Base64`</span> struct definition in this example</span>
+<span id="cb16-705"><a href="#cb16-705" aria-hidden="true" tabindex="-1"></a>for brevity reasons.</span>
+<span id="cb16-706"><a href="#cb16-706" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-709"><a href="#cb16-709" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-710"><a href="#cb16-710" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb16-711"><a href="#cb16-711" aria-hidden="true" tabindex="-1"></a><span class="in">fn _char_index(self: Base64, char: u8) u8 {</span></span>
+<span id="cb16-712"><a href="#cb16-712" aria-hidden="true" tabindex="-1"></a><span class="in">    if (char == '=')</span></span>
+<span id="cb16-713"><a href="#cb16-713" aria-hidden="true" tabindex="-1"></a><span class="in">        return 64;</span></span>
+<span id="cb16-714"><a href="#cb16-714" aria-hidden="true" tabindex="-1"></a><span class="in">    var index: u8 = 0;</span></span>
+<span id="cb16-715"><a href="#cb16-715" aria-hidden="true" tabindex="-1"></a><span class="in">    for (0..63) |i| {</span></span>
+<span id="cb16-716"><a href="#cb16-716" aria-hidden="true" tabindex="-1"></a><span class="in">        if (self._char_at(i) == char)</span></span>
+<span id="cb16-717"><a href="#cb16-717" aria-hidden="true" tabindex="-1"></a><span class="in">            break;</span></span>
+<span id="cb16-718"><a href="#cb16-718" aria-hidden="true" tabindex="-1"></a><span class="in">        index += 1;</span></span>
+<span id="cb16-719"><a href="#cb16-719" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-720"><a href="#cb16-720" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-721"><a href="#cb16-721" aria-hidden="true" tabindex="-1"></a><span class="in">    return index;</span></span>
+<span id="cb16-722"><a href="#cb16-722" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-723"><a href="#cb16-723" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-724"><a href="#cb16-724" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-725"><a href="#cb16-725" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-726"><a href="#cb16-726" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-727"><a href="#cb16-727" aria-hidden="true" tabindex="-1"></a><span class="fu">### The 6-bit transformation</span></span>
+<span id="cb16-728"><a href="#cb16-728" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-729"><a href="#cb16-729" aria-hidden="true" tabindex="-1"></a>Once again, the core part of the algorithm is the 6-bit transformation.</span>
+<span id="cb16-730"><a href="#cb16-730" aria-hidden="true" tabindex="-1"></a>If we understand the necessary steps to perform this transformation, the rest</span>
+<span id="cb16-731"><a href="#cb16-731" aria-hidden="true" tabindex="-1"></a>of the algorithm becomes much easier.</span>
+<span id="cb16-732"><a href="#cb16-732" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-733"><a href="#cb16-733" aria-hidden="true" tabindex="-1"></a>First of all, before we actually go to the 6-bit transformation,</span>
+<span id="cb16-734"><a href="#cb16-734" aria-hidden="true" tabindex="-1"></a>we need to make sure that we use <span class="in">`_char_index()`</span> to convert the sequence of base64 characters</span>
+<span id="cb16-735"><a href="#cb16-735" aria-hidden="true" tabindex="-1"></a>into a sequence of indexes. So the snippet below is important for the job that will be done.</span>
+<span id="cb16-736"><a href="#cb16-736" aria-hidden="true" tabindex="-1"></a>The result of <span class="in">`_char_index()`</span> is stored in a temporary buffer, and this temporary buffer</span>
+<span id="cb16-737"><a href="#cb16-737" aria-hidden="true" tabindex="-1"></a>is what we are going to use in the 6-bit transformation, instead of the actual <span class="in">`input`</span> object.</span>
+<span id="cb16-738"><a href="#cb16-738" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-741"><a href="#cb16-741" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-742"><a href="#cb16-742" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb16-743"><a href="#cb16-743" aria-hidden="true" tabindex="-1"></a><span class="in">for (0..input.len) |i| {</span></span>
+<span id="cb16-744"><a href="#cb16-744" aria-hidden="true" tabindex="-1"></a><span class="in">    buf[i] = self._char_index(input[i]);</span></span>
+<span id="cb16-745"><a href="#cb16-745" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-746"><a href="#cb16-746" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-747"><a href="#cb16-747" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-748"><a href="#cb16-748" aria-hidden="true" tabindex="-1"></a>Now, instead of producing 4 bytes (or 4 characters) as output per each window of 3 characters in the input,</span>
+<span id="cb16-749"><a href="#cb16-749" aria-hidden="true" tabindex="-1"></a>a base64 decoder produces 3 bytes (or 3 characters) as output per each window of 4 characters in the input.</span>
+<span id="cb16-750"><a href="#cb16-750" aria-hidden="true" tabindex="-1"></a>Once again, is the inverse process.</span>
+<span id="cb16-751"><a href="#cb16-751" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-752"><a href="#cb16-752" aria-hidden="true" tabindex="-1"></a>So, the steps to produce the 3 bytes in the output are:</span>
+<span id="cb16-753"><a href="#cb16-753" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-754"><a href="#cb16-754" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[0]`</span> is produced by summing two components. First, move the bits from <span class="in">`buf[0]`</span> two positions to the left. Second, move the bits from <span class="in">`buf[1]`</span> 4 positions to the right. Then, sum these two components.</span>
+<span id="cb16-755"><a href="#cb16-755" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[1]`</span> is produced by summing two components. First, move the bits from <span class="in">`buf[1]`</span> four positions to the left. Second, move the bits from <span class="in">`buf[2]`</span> 2 positions to the right. Then, sum these two components.</span>
+<span id="cb16-756"><a href="#cb16-756" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`output[2]`</span> is produced by summing two components. First, move the bits from <span class="in">`buf[2]`</span> six positions to the left. Then, you sum the result with <span class="in">`buf[3]`</span>.</span>
+<span id="cb16-757"><a href="#cb16-757" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-758"><a href="#cb16-758" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-759"><a href="#cb16-759" aria-hidden="true" tabindex="-1"></a>Before we continue, let's try to visualize how these transformations make the original bytes that we had</span>
+<span id="cb16-760"><a href="#cb16-760" aria-hidden="true" tabindex="-1"></a>before the encoding process. First, think back to the 6-bit transformation performed by the encoder exposed in @sec-encoder-logic.</span>
+<span id="cb16-761"><a href="#cb16-761" aria-hidden="true" tabindex="-1"></a>The first byte in the output of the encoder is produced by moving the bits in the first byte of the input two positions to the right.</span>
+<span id="cb16-762"><a href="#cb16-762" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-763"><a href="#cb16-763" aria-hidden="true" tabindex="-1"></a>If for example the first byte in the input of the encoder was the sequence <span class="in">`ABCDEFGH`</span>, then, the first byte in the output of the encoder would be</span>
+<span id="cb16-764"><a href="#cb16-764" aria-hidden="true" tabindex="-1"></a><span class="in">`00ABCDEF`</span> (this sequence would be the first byte in the input of the decoder). Now, if the second byte in the input of the encoder was the sequence</span>
+<span id="cb16-765"><a href="#cb16-765" aria-hidden="true" tabindex="-1"></a><span class="in">`IJKLMNOP`</span>, then, the second byte in the encoder output would be <span class="in">`00GHIJKL`</span> (as we demonstrated in @fig-encoder-bitshift).</span>
+<span id="cb16-766"><a href="#cb16-766" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-767"><a href="#cb16-767" aria-hidden="true" tabindex="-1"></a>Hence, if the sequences <span class="in">`00ABCDEF`</span> and <span class="in">`00GHIJKL`</span> are the first and second bytes, respectively, in the input of the decoder, the</span>
+<span id="cb16-768"><a href="#cb16-768" aria-hidden="true" tabindex="-1"></a>@fig-decoder-bitshift demonstrates visually how these two bytes are transformed into the first byte of the output of the decoder.</span>
+<span id="cb16-769"><a href="#cb16-769" aria-hidden="true" tabindex="-1"></a>Notice that the output byte is the sequence <span class="in">`ABCDEFGH`</span>, which is the original byte from the input of the encoder.</span>
+<span id="cb16-770"><a href="#cb16-770" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-771"><a href="#cb16-771" aria-hidden="true" tabindex="-1"></a><span class="al">![How the 1st byte in the decoder output is produced from the 1st byte (dark purple) and the 2nd byte (orange) of the input](../Figures/base64-decoder-bit-shift.png)</span>{#fig-decoder-bitshift}</span>
+<span id="cb16-772"><a href="#cb16-772" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-773"><a href="#cb16-773" aria-hidden="true" tabindex="-1"></a>The @tbl-6bit-decode presents how the three steps described earlier translate into Zig code:</span>
+<span id="cb16-774"><a href="#cb16-774" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-775"><a href="#cb16-775" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-776"><a href="#cb16-776" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-777"><a href="#cb16-777" aria-hidden="true" tabindex="-1"></a>::: {#tbl-6bit-decode}</span>
+<span id="cb16-778"><a href="#cb16-778" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-779"><a href="#cb16-779" aria-hidden="true" tabindex="-1"></a>| Byte index in the output | In code                       |</span>
+<span id="cb16-780"><a href="#cb16-780" aria-hidden="true" tabindex="-1"></a>|--------------------------|-------------------------------|</span>
+<span id="cb16-781"><a href="#cb16-781" aria-hidden="true" tabindex="-1"></a>| 0                        | (buf<span class="co">[</span><span class="ot">0</span><span class="co">]</span> &lt;&lt; 2) + (buf<span class="co">[</span><span class="ot">1</span><span class="co">]</span> &gt;&gt; 4) |</span>
+<span id="cb16-782"><a href="#cb16-782" aria-hidden="true" tabindex="-1"></a>| 1                        | (buf<span class="co">[</span><span class="ot">1</span><span class="co">]</span> &lt;&lt; 4) + (buf<span class="co">[</span><span class="ot">2</span><span class="co">]</span> &gt;&gt; 2) |</span>
+<span id="cb16-783"><a href="#cb16-783" aria-hidden="true" tabindex="-1"></a>| 2                        | (buf<span class="co">[</span><span class="ot">2</span><span class="co">]</span> &lt;&lt; 6) + buf<span class="co">[</span><span class="ot">3</span><span class="co">]</span>        |</span>
+<span id="cb16-784"><a href="#cb16-784" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-785"><a href="#cb16-785" aria-hidden="true" tabindex="-1"></a>: The necessary steps for the 6-transformation in the decode process.</span>
+<span id="cb16-786"><a href="#cb16-786" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-787"><a href="#cb16-787" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-788"><a href="#cb16-788" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb16-789"><a href="#cb16-789" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-790"><a href="#cb16-790" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-791"><a href="#cb16-791" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-792"><a href="#cb16-792" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-793"><a href="#cb16-793" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-794"><a href="#cb16-794" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-795"><a href="#cb16-795" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-796"><a href="#cb16-796" aria-hidden="true" tabindex="-1"></a><span class="fu">### Writing the `decode()` function</span></span>
+<span id="cb16-797"><a href="#cb16-797" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-798"><a href="#cb16-798" aria-hidden="true" tabindex="-1"></a>The <span class="in">`decode()`</span> function below contains the entire decoding process.</span>
+<span id="cb16-799"><a href="#cb16-799" aria-hidden="true" tabindex="-1"></a>We first calculate the size of the output, with</span>
+<span id="cb16-800"><a href="#cb16-800" aria-hidden="true" tabindex="-1"></a><span class="in">`_calc_decode_length()`</span>, then, we allocate enough memory for this output with</span>
+<span id="cb16-801"><a href="#cb16-801" aria-hidden="true" tabindex="-1"></a>the allocator object.</span>
+<span id="cb16-802"><a href="#cb16-802" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-803"><a href="#cb16-803" aria-hidden="true" tabindex="-1"></a>Three temporary variables are created: 1) <span class="in">`count`</span>, to hold the window count</span>
+<span id="cb16-804"><a href="#cb16-804" aria-hidden="true" tabindex="-1"></a>in each iteration of the for loop; 2) <span class="in">`iout`</span>, to hold the current index in the output;</span>
+<span id="cb16-805"><a href="#cb16-805" aria-hidden="true" tabindex="-1"></a>3) <span class="in">`buf`</span>, which is the temporary buffer that holds the base64 indexes to be</span>
+<span id="cb16-806"><a href="#cb16-806" aria-hidden="true" tabindex="-1"></a>converted through the 6-bit transformation.</span>
+<span id="cb16-807"><a href="#cb16-807" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-808"><a href="#cb16-808" aria-hidden="true" tabindex="-1"></a>Then, in each iteration of the for loop we fill the temporary buffer with the current</span>
+<span id="cb16-809"><a href="#cb16-809" aria-hidden="true" tabindex="-1"></a>window of bytes. When <span class="in">`count`</span> hits the number 4, then, we have a full window of</span>
+<span id="cb16-810"><a href="#cb16-810" aria-hidden="true" tabindex="-1"></a>indexes in <span class="in">`buf`</span> to be converted, and then, we apply the 6-bit transformation</span>
+<span id="cb16-811"><a href="#cb16-811" aria-hidden="true" tabindex="-1"></a>over the temporary buffer.</span>
+<span id="cb16-812"><a href="#cb16-812" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-813"><a href="#cb16-813" aria-hidden="true" tabindex="-1"></a>Notice that we check if the indexes 2 and 3 in the temporary buffer are the number 64, which, if you recall</span>
+<span id="cb16-814"><a href="#cb16-814" aria-hidden="true" tabindex="-1"></a>from @sec-map-base64-index, is when the <span class="in">`_calc_index()`</span> function receives a <span class="in">`'='`</span> character</span>
+<span id="cb16-815"><a href="#cb16-815" aria-hidden="true" tabindex="-1"></a>as input. So, if these indexes are equal to the number 64, the <span class="in">`decode()`</span> function knows</span>
+<span id="cb16-816"><a href="#cb16-816" aria-hidden="true" tabindex="-1"></a>that it can simply ignore these indexes. They are not converted because, as I described before,</span>
+<span id="cb16-817"><a href="#cb16-817" aria-hidden="true" tabindex="-1"></a>the character <span class="in">`'='`</span> has no meaning, despite being the end of meaningful characters in the sequence.</span>
+<span id="cb16-818"><a href="#cb16-818" aria-hidden="true" tabindex="-1"></a>So we can safely ignore them when they appear in the sequence.</span>
+<span id="cb16-819"><a href="#cb16-819" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-822"><a href="#cb16-822" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-823"><a href="#cb16-823" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb16-824"><a href="#cb16-824" aria-hidden="true" tabindex="-1"></a><span class="in">fn decode(self: Base64,</span></span>
+<span id="cb16-825"><a href="#cb16-825" aria-hidden="true" tabindex="-1"></a><span class="in">          allocator: std.mem.Allocator,</span></span>
+<span id="cb16-826"><a href="#cb16-826" aria-hidden="true" tabindex="-1"></a><span class="in">          input: []const u8) ![]u8 {</span></span>
+<span id="cb16-827"><a href="#cb16-827" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-828"><a href="#cb16-828" aria-hidden="true" tabindex="-1"></a><span class="in">    if (input.len == 0) {</span></span>
+<span id="cb16-829"><a href="#cb16-829" aria-hidden="true" tabindex="-1"></a><span class="in">        return "";</span></span>
+<span id="cb16-830"><a href="#cb16-830" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-831"><a href="#cb16-831" aria-hidden="true" tabindex="-1"></a><span class="in">    const n_output = try _calc_decode_length(input);</span></span>
+<span id="cb16-832"><a href="#cb16-832" aria-hidden="true" tabindex="-1"></a><span class="in">    var output = try allocator.alloc(u8, n_output);</span></span>
+<span id="cb16-833"><a href="#cb16-833" aria-hidden="true" tabindex="-1"></a><span class="in">    var count: u8 = 0;</span></span>
+<span id="cb16-834"><a href="#cb16-834" aria-hidden="true" tabindex="-1"></a><span class="in">    var iout: u64 = 0;</span></span>
+<span id="cb16-835"><a href="#cb16-835" aria-hidden="true" tabindex="-1"></a><span class="in">    var buf = [4]u8{ 0, 0, 0, 0 };</span></span>
+<span id="cb16-836"><a href="#cb16-836" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-837"><a href="#cb16-837" aria-hidden="true" tabindex="-1"></a><span class="in">    for (0..input.len) |i| {</span></span>
+<span id="cb16-838"><a href="#cb16-838" aria-hidden="true" tabindex="-1"></a><span class="in">        buf[count] = self._char_index(input[i]);</span></span>
+<span id="cb16-839"><a href="#cb16-839" aria-hidden="true" tabindex="-1"></a><span class="in">        count += 1;</span></span>
+<span id="cb16-840"><a href="#cb16-840" aria-hidden="true" tabindex="-1"></a><span class="in">        if (count == 4) {</span></span>
+<span id="cb16-841"><a href="#cb16-841" aria-hidden="true" tabindex="-1"></a><span class="in">            output[iout] = (buf[0] &lt;&lt; 2) + (buf[1] &gt;&gt; 4);</span></span>
+<span id="cb16-842"><a href="#cb16-842" aria-hidden="true" tabindex="-1"></a><span class="in">            if (buf[2] != 64) {</span></span>
+<span id="cb16-843"><a href="#cb16-843" aria-hidden="true" tabindex="-1"></a><span class="in">                output[iout + 1] = (buf[1] &lt;&lt; 4) + (buf[2] &gt;&gt; 2);</span></span>
+<span id="cb16-844"><a href="#cb16-844" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
+<span id="cb16-845"><a href="#cb16-845" aria-hidden="true" tabindex="-1"></a><span class="in">            if (buf[3] != 64) {</span></span>
+<span id="cb16-846"><a href="#cb16-846" aria-hidden="true" tabindex="-1"></a><span class="in">                output[iout + 2] = (buf[2] &lt;&lt; 6) + buf[3];</span></span>
+<span id="cb16-847"><a href="#cb16-847" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
+<span id="cb16-848"><a href="#cb16-848" aria-hidden="true" tabindex="-1"></a><span class="in">            iout += 3;</span></span>
+<span id="cb16-849"><a href="#cb16-849" aria-hidden="true" tabindex="-1"></a><span class="in">            count = 0;</span></span>
+<span id="cb16-850"><a href="#cb16-850" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb16-851"><a href="#cb16-851" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-852"><a href="#cb16-852" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-853"><a href="#cb16-853" aria-hidden="true" tabindex="-1"></a><span class="in">    return output;</span></span>
+<span id="cb16-854"><a href="#cb16-854" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb16-855"><a href="#cb16-855" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-856"><a href="#cb16-856" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-857"><a href="#cb16-857" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-858"><a href="#cb16-858" aria-hidden="true" tabindex="-1"></a><span class="fu">## The end result</span></span>
+<span id="cb16-859"><a href="#cb16-859" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-860"><a href="#cb16-860" aria-hidden="true" tabindex="-1"></a>Now that we have both <span class="in">`decode()`</span> and <span class="in">`encode()`</span> implemented. We have a fully functioning</span>
+<span id="cb16-861"><a href="#cb16-861" aria-hidden="true" tabindex="-1"></a>base64 encoder/decoder implemented in Zig. Here is an usage example of our</span>
+<span id="cb16-862"><a href="#cb16-862" aria-hidden="true" tabindex="-1"></a><span class="in">`Base64`</span> struct with the <span class="in">`encode()`</span> and <span class="in">`decode()`</span> methods that we have implemented.</span>
+<span id="cb16-863"><a href="#cb16-863" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-866"><a href="#cb16-866" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb16-867"><a href="#cb16-867" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb16-868"><a href="#cb16-868" aria-hidden="true" tabindex="-1"></a><span class="in">var memory_buffer: [1000]u8 = undefined;</span></span>
+<span id="cb16-869"><a href="#cb16-869" aria-hidden="true" tabindex="-1"></a><span class="in">var fba = std.heap.FixedBufferAllocator.init(</span></span>
+<span id="cb16-870"><a href="#cb16-870" aria-hidden="true" tabindex="-1"></a><span class="in">    &amp;memory_buffer</span></span>
+<span id="cb16-871"><a href="#cb16-871" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb16-872"><a href="#cb16-872" aria-hidden="true" tabindex="-1"></a><span class="in">const allocator = fba.allocator();</span></span>
+<span id="cb16-873"><a href="#cb16-873" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-874"><a href="#cb16-874" aria-hidden="true" tabindex="-1"></a><span class="in">const text = "Testing some more stuff";</span></span>
+<span id="cb16-875"><a href="#cb16-875" aria-hidden="true" tabindex="-1"></a><span class="in">const etext = "VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=";</span></span>
+<span id="cb16-876"><a href="#cb16-876" aria-hidden="true" tabindex="-1"></a><span class="in">const base64 = Base64.init();</span></span>
+<span id="cb16-877"><a href="#cb16-877" aria-hidden="true" tabindex="-1"></a><span class="in">const encoded_text = try base64.encode(</span></span>
+<span id="cb16-878"><a href="#cb16-878" aria-hidden="true" tabindex="-1"></a><span class="in">    allocator, text</span></span>
+<span id="cb16-879"><a href="#cb16-879" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb16-880"><a href="#cb16-880" aria-hidden="true" tabindex="-1"></a><span class="in">const decoded_text = try base64.decode(</span></span>
+<span id="cb16-881"><a href="#cb16-881" aria-hidden="true" tabindex="-1"></a><span class="in">    allocator, etext</span></span>
+<span id="cb16-882"><a href="#cb16-882" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb16-883"><a href="#cb16-883" aria-hidden="true" tabindex="-1"></a><span class="in">try stdout.print(</span></span>
+<span id="cb16-884"><a href="#cb16-884" aria-hidden="true" tabindex="-1"></a><span class="in">    "Encoded text: {s}\n", .{encoded_text}</span></span>
+<span id="cb16-885"><a href="#cb16-885" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb16-886"><a href="#cb16-886" aria-hidden="true" tabindex="-1"></a><span class="in">try stdout.print(</span></span>
+<span id="cb16-887"><a href="#cb16-887" aria-hidden="true" tabindex="-1"></a><span class="in">    "Decoded text: {s}\n", .{decoded_text}</span></span>
+<span id="cb16-888"><a href="#cb16-888" aria-hidden="true" tabindex="-1"></a><span class="in">);</span></span>
+<span id="cb16-889"><a href="#cb16-889" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-890"><a href="#cb16-890" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-891"><a href="#cb16-891" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-892"><a href="#cb16-892" aria-hidden="true" tabindex="-1"></a><span class="in">Encoded text: VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=</span></span>
+<span id="cb16-893"><a href="#cb16-893" aria-hidden="true" tabindex="-1"></a><span class="in">Decoded text: Testing some more stuff</span></span>
+<span id="cb16-894"><a href="#cb16-894" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-895"><a href="#cb16-895" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-896"><a href="#cb16-896" aria-hidden="true" tabindex="-1"></a>You can also see the full source code at once, by visiting the official repository of this book<span class="ot">[^repo]</span>.</span>
+<span id="cb16-897"><a href="#cb16-897" aria-hidden="true" tabindex="-1"></a>More precisely inside the <span class="in">`ZigExamples`</span> folder<span class="ot">[^zig-base64-algo]</span>.</span>
+<span id="cb16-898"><a href="#cb16-898" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-899"><a href="#cb16-899" aria-hidden="true" tabindex="-1"></a><span class="ot">[^repo]: &lt;https://github.com/pedropark99/zig-book&gt;</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 

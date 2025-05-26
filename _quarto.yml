@@ -4,12 +4,12 @@ project:
 
 book:
   title: "Introduction to Zig"
-  subtitle: "a project-based book"
+  subtitle: "A Project-Based Book"
   author: "Pedro Duarte Faria"
   edition: 1
-  date: "today"
-  google-analytics: "G-6CHJXK4CEV"
+  date: today
   cover-image: "Cover/cover-artv3.png"
+  google-analytics: "G-6CHJXK4CEV"
   chapters:
     - index.qmd
     - Chapters/01-zig-weird.qmd
@@ -32,14 +32,16 @@ book:
     - references.qmd
 
 bibliography: references.bib
+
 execute:
   freeze: auto
 
-
-highlight-style: github
 format:
   html:
-    theme:
-      light: cosmo
-      dark: darkly
+    theme: darkly
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+highlight-style: github
 

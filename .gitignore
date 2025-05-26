@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /.quarto/
 
 /zig-out/
@@ -22,3 +23,28 @@ Chapters/15-vectors_files/
 
 .aider*
 .env
+=======
+/.quarto/
+
+/zig-out/
+/zig-cache/
+/**/zig-out/
+/**/zig-cache/
+
+/**/.zig-cache/
+
+./lldb/
+lldb
+
+foo.txt
+
+*.o
+*.a
+*.aux
+*.log
+*.toc
+
+Chapters/15-vectors_files/
+.RData
+.Rhistory
+>>>>>>> origin

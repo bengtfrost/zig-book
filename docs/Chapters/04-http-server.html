@@ -91,12 +91,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -162,9 +160,6 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Introduction to Zig</a> 
-        <div class="sidebar-tools-main">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -328,7 +323,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Project 2 - Building a HTTP Server from scratch</span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Project 2 - Building a HTTP Server from scratch</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -393,14 +388,19 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>To make things simpler, I will use an IP address that identifies our current machine in this example. This means that, our socket object will reside on the same computer that we are currently using (this is also known as the “localhost”) to write this Zig source code.</p>
 <p>By convention, the IP address that identifies the “localhost”, which is the current machine we are using, is the IP <code>127.0.0.1</code>. So, that is the IP address we are going to use in our server. I can declare it in Zig by using an array of 4 integers, like this:</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> localhost = [<span class="dv">4</span>]<span class="dt">u8</span><span class="op">{</span> <span class="dv">127</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span> <span class="op">}</span>;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>_ = localhost;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now, we need to decide which port number to use. By convention, there are some port numbers that are reserved, meaning that, we cannot use them for our own purposes, like the port 22 (which is normally used for SSH connections). For TCP connections, which is our case here, a port number is a 16-bit unsigned integer (type <code>u16</code> in Zig), thus ranging from 0 to 65535 <span class="citation" data-cites="wikipedia_port">(<a href="../references.html#ref-wikipedia_port" role="doc-biblioref">Wikipedia 2024</a>)</span>. So, we can choose a number from 0 to 65535 for our port number. In the example of this book, I will use the port number 3490 (just a random number).</p>
 <p>Now that we have these two informations at hand, I can finally create our socket object, using the <code>std.posix.socket()</code> function. First, we use the host and the port number to create an <code>Address</code> object, with the <code>std.net.Address.initIp4()</code> function, like in the example below. After that, I use this address object inside the <code>socket()</code> function to create our socket object.</p>
 <p>The <code>Socket</code> struct defined below summarizes all the logic behind this process. In this struct, we have two data members, which are: 1) the address object; 2) and a stream object, which is the object we will use to read and write the messages into any connection we establish.</p>
 <p>Notice that, inside the constructor method of this struct, when we create the socket object, we are using the <code>IPROTO.TCP</code> property as an input to tell the function to create a socket for TCP connections.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> builtin = <span class="bu">@import</span>(<span class="st">"builtin"</span>);</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> net = <span class="bu">@import</span>(<span class="st">"std"</span>).net;</span>
@@ -422,6 +422,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Socket<span class="op">{</span> ._address = addr, ._stream = stream <span class="op">}</span>;</span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="listening-and-receiving-connections" class="level3" data-number="7.4.2">
@@ -432,6 +433,8 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>This happens, because the program is waiting for something to happen. It’s waiting for someone to try to connect to the address (<code>http://127.0.0.1:3490</code>) where the server is running and listening for incoming connections. This is what the <code>listen()</code> method do, it makes the socket to be active waiting for someone to connect.</p>
 <p>On the other side, the <code>accept()</code> method is the function that establishes the connection when someone tries to connect to the socket. This means that, the <code>accept()</code> method returns a new connection object as a result. And you can use this connection object to read or write messages from or to the client. For now, we are not doing anything with this connection object. But we are going to use it in the next section.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> SocketConf = <span class="bu">@import</span>(<span class="st">"config.zig"</span>);</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> stdout = std.io.getStdOut().writer();</span>
@@ -443,6 +446,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> connection = <span class="kw">try</span> server.accept();</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    _ = connection;</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>This code example allows one single connection. In other words, the server will wait for one incoming connection, and as soon as the server is done with this first connection that it establishes, the program ends, and the server stops.</p>
 <p>This is not the norm in the real world. Most people that write a HTTP server like this, usually put the <code>accept()</code> method inside a <code>while</code> (infinite) loop, where if a connection is created with <code>accept()</code>, a new thread of execution is created to deal with this new connection and the client. That is, real-world examples of HTTP Servers normally rely on parallel computing to work.</p>
@@ -456,6 +460,8 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Remember from <a href="#sec-how-http-works" class="quarto-xref"><span>Section 7.2</span></a> that, the first thing that we need to do is to read the HTTP Request sent by the client to our server. Because it is the first message that happens inside the established connection, and, as a consequence, it is the first thing that we need to deal with.</p>
 <p>That is why, I’m going to create a new Zig module in this small project, named <code>request.zig</code> to keep all functions related to the HTTP Request together. Then, I will create a new function named <code>read_request()</code> that will use our connection object to read the message sent by the client, which is the HTTP Request.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Connection = std.net.Server.Connection;</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> read_request(conn: Connection,</span>
@@ -463,6 +469,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> reader = conn.stream.reader();</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> reader.read(buffer);</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>This function accepts a slice object which behaves as a buffer. The <code>read_request()</code> function reads the message sent into the connection object, and saves this message into this buffer object that we have provided as input.</p>
 <p>Notice that I’m using the connection object that we created to read the message from the client. I first access the <code>reader</code> object that lives inside the connection object. Then, I call the <code>read()</code> method of this <code>reader</code> object to effectively read and save the data sent by the client into the buffer object that we created earlier. I’m discarding the return value of the <code>read()</code> method, by assigning it to the underscore character (<code>_</code>), because this return value is not useful for us right now.</p>
@@ -474,6 +481,8 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>Also, I’m creating the buffer object in the <code>main()</code> function, which will be responsible for storing the message sent by the client, and, I’m also using a <code>for</code> loop to initialize all fields of this buffer object to the number zero. This is important to make sure that we don’t have uninitialized memory in this object. Because uninitialized memory may cause undefined behaviour in our program.</p>
 <p>Since the <code>read_request()</code> function should receive as input the buffer object as a slice object (<code>[]u8</code>), I am using the syntax <code>array[0..array.len]</code> to get access to a slice of this <code>buffer</code> object.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> SocketConf = <span class="bu">@import</span>(<span class="st">"config.zig"</span>);</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
@@ -493,6 +502,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>buffer<span class="op">}</span>);</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now, I’m going to execute this program, with the <code>run</code> command from the <code>zig</code> compiler. But remember, as we sad earlier, as soon as I execute this program, it will hang indefinitely, because the program is waiting for a client trying to connect to the server.</p>
 <p>More specifically, the program will pause at the line with the <code>accept()</code> call. As soon as a client try to connect to the server, then, the execution will “unpause”, and the <code>accept()</code> function will finally be executed to create the connection object that we need, and the remaining of the program will run.</p>
@@ -530,15 +540,21 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>Enums structures are available in Zig through the <code>enum</code> keyword. An enum (short for “enumeration”) is a special structure that represents a group of constant values. So, if you have a variable which can assume a short and known set of values, you might want to associate this variable to an enum structure, to make sure that this variable only assumes a value from this set.</p>
 <p>A classic example for enums are primary colors. If for some reason, your program needs to represent one of the primary colors, you can create an enum that represents one of these colors. In the example below, we are creating the enum <code>PrimaryColorRGB</code>, which represents a primary color from the RGB color system. By using this enum, I am guaranteed that the <code>acolor</code> object for example, will contain one of these three values: <code>RED</code>, <code>GREEN</code> or <code>BLUE</code>.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> PrimaryColorRGB = <span class="kw">enum</span> <span class="op">{</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    RED, GREEN, BLUE</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> acolor = PrimaryColorRGB.RED;</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>_ = acolor;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>If for some reason, my code tries to save in <code>acolor</code>, a value that is not in this set, I will get an error message warning me that a value such as “MAGENTA” do not exist inside the <code>PrimaryColorRGB</code> enum. Then I can easily fix my mistake.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> acolor = PrimaryColorRGB.MAGENTA;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>e1.zig:5:36: error: enum 'PrimaryColorRGB' has
         no member named 'MAGENTA':
@@ -592,9 +608,12 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>Since the HTTP method of the HTTP Request is identified by this very small and specific set of words, it would be interesting to create an enum structure to represent a HTTP method. This way, we can easily check if the HTTP Request we receive from the client is a HTTP method that we currently support in our small HTTP server project.</p>
 <p>The <code>Method</code> structure below represents this enumeration. Notice that, for now, only the GET HTTP method is included in this enumeration. Because, for the purpose of this chapter, I want to implement only the GET HTTP method. That is why I am not including the other HTTP methods in this enumeration.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Method = <span class="kw">enum</span> <span class="op">{</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    GET</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now, I think we should add two methods to this enum structure. One method is <code>is_supported()</code>, which will be a function that returns a boolean value, indicating if the input HTTP method is supported or not by our HTTP Server. The other is <code>init()</code>, which is a constructor function that takes a string as input, and tries to convert it into a <code>Method</code> value.</p>
 <p>But in order to build these functions, I will use a functionality from the Zig Standard Library, called <code>StaticStringMap()</code>. This function allows us to create a simple map from strings to enum values. In other words, we can use this map structure to map a string to the respective enum value. To some extent, this specific structure from the standard library works almost like a “hashtable” structure, and it’s optimized for small sets of words, or, small sets of keys, which is our case here. We are going to talk more about hashtables in Zig in <a href="09-data-structures.html#sec-maps-hashtables" class="quarto-xref"><span>Section 11.2</span></a>.</p>
@@ -602,10 +621,13 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>With <code>Map()</code> imported, we can just apply this function over the enum structure that we are going to use in the resulting map. In our case here, it’s the <code>Method</code> enum structure that we declared at the last code example. Then, I call the <code>initComptime()</code> method with the map, i.e., the list of key-value pairs that we are going to use.</p>
 <p>You can see in the example below that I wrote this map using multiple anonymous struct literals. Inside the first (or “top-level”) struct literal, we have a list (or a sequence) of struct literals. Each struct literal in this list represents a separate key-value pair. The first element (or the key) in each key-value pair should always be a string value. While the second element should be a value from the enum structure that you have used inside the <code>Map()</code> function.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Map = std.static_string_map.StaticStringMap;</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> MethodMap = Map(Method).initComptime(.<span class="op">{</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span> <span class="st">"GET"</span>, Method.GET <span class="op">}</span>,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Therefore, the <code>MethodMap</code> object is basically a <code>std::map</code> object from C++, or, a <code>dict</code> object from Python. You can retrieve (or get) the enum value that corresponds to a particular key, by using the <code>get()</code> method from the map object. This method returns an optional value, so, the <code>get()</code> method might result in a null value.</p>
 <p>We can use this in our advantage to detect if a particular HTTP method is supported or not in our HTTP server. Because, if the <code>get()</code> method returns null, it means that it did not found the method that we provided inside the <code>MethodMap</code> object, and, as a consequence, this method is not supported by our HTTP server.</p>
@@ -613,6 +635,8 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>Notice in the example below that, the <code>init()</code> method returns either an error (which might happen if the <code>?</code> method returns <code>unreacheable</code>, checkout <a href="05-pointers.html#sec-null-handling" class="quarto-xref"><span>Section 6.4.3</span></a> for more details) or a <code>Method</code> object as result. Since <code>GET</code> is currently the only value in our <code>Method</code> enum structure, it means that, the <code>init()</code> method will most likely return the value <code>Method.GET</code> as result.</p>
 <p>Also notice that, in the <code>is_supported()</code> method, we are using the optional value returned by the <code>get()</code> method from our <code>MethodMap</code> object. The if statement unwraps the optional value returned by this method, and returns <code>true</code> in case this optional value is a not-null value. Otherwise, it simply returns <code>false</code>.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Method = <span class="kw">enum</span> <span class="op">{</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    GET,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(text: []<span class="kw">const</span> <span class="dt">u8</span>) !Method <span class="op">{</span></span>
@@ -626,6 +650,7 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="cn">false</span>;</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="writing-the-parse-request-function" class="level3" data-number="7.7.5">
@@ -633,6 +658,8 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>Now that we created the enum that represents our HTTP method, we should start to write the function responsible for actually parsing the HTTP Request.</p>
 <p>The first thing we can do, is to write a struct to represent the HTTP Request. Take the <code>Request</code> struct below as an example. It contains the three essential information from the “top-level” header (i.e., the first line) in the HTTP Request.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="kw">struct</span> <span class="op">{</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    method: Method,</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    version: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
@@ -647,6 +674,7 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>;</span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The <code>parse_request()</code> function should receive a string as input. This input string contains the entire HTTP Request message, and the parsing function should read and understand the individual parts of this message.</p>
 <p>Now, remember that for the purpose of this chapter, we care only about the first line in this message, which contains the “top-level header”, or, the three essential attributes about the HTTP Request, which are the HTTP method used, the URI and the HTTP version.</p>
@@ -656,6 +684,8 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>When you use this <code>splitScalar()</code> function, you get an iterator as the result. This iterator have a <code>next()</code> method that you can use to advance the iterator to the next position, or, to the next section of the splitted string. Note that, when you use <code>next()</code>, the method not only advances the iterator, but it also returns a slice to the current section of the splitted string as result.</p>
 <p>Now, if you want to get a slice to the current section of the splitted string, but not advance the iterator to the next position, you can use the <code>peek()</code> method. Both <code>next()</code> and <code>peek()</code> methods return an optional value, that is why I use the <code>?</code> method to unwrap these optional values.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> parse_request(text: []<span class="dt">u8</span>) Request <span class="op">{</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> line_index = std.mem.indexOfScalar(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">u8</span>, text, <span class="ch">'\n'</span></span>
@@ -669,6 +699,7 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> request = Request.init(method, uri, version);</span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> request;</span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>As I described in <a href="01-zig-weird.html#sec-zig-strings" class="quarto-xref"><span>Section 1.8</span></a>, strings in Zig are simply arrays of bytes in the language. So, you will find lots of excellent utility functions to work directly with strings inside this <code>mem</code> module from the Zig Standard Library. We have described some of these useful utility functions already in <a href="01-zig-weird.html#sec-strings-useful-funs" class="quarto-xref"><span>Section 1.8.5</span></a>.</p>
 </section>
@@ -679,6 +710,8 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>A quick observation, since I have used the <code>any</code> format specifier in the print statement, the data members <code>version</code> and <code>uri</code> of the <code>Request</code> struct were printed as raw integer values. String data being printed as integer values is common in Zig, and remember, these integer values are just the decimal representation of the bytes that form the string in question.</p>
 <p>In the result below, the sequence of decimal values 72, 84, 84, 80, 47, 49, 46, 49, and 13, are the bytes that form the text “HTTP/1.1”. And the integer 47, is the decimal value of the character <code>/</code>, which represents our URI in this request.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> SocketConf = <span class="bu">@import</span>(<span class="st">"config.zig"</span>);</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
@@ -701,6 +734,7 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>request<span class="op">}</span>);</span>
 <span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <pre><code>request.Request{
     .method = request.Method.GET,
@@ -714,6 +748,8 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>First, I create a new Zig module in the project, named <code>response.zig</code>. In this module, I will declare just two functions. Each function corresponds to a specific status code in the HTTP Response. The <code>send_200()</code> function will send a HTTP Response with status code 200 (which means “Success”) to the client. While the <code>send_404()</code> function sends a response with status code 404 (which means “Not found”).</p>
 <p>This is definitely not the most ergonomic and adequate way of handling the HTTP Response, but it works for our case here. We are just building toy projects in this book after all, therefore, the source code that we write do not need to be perfect. It just needs to work!</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Connection = std.net.Server.Connection;</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> send_200(conn: Connection) !<span class="dt">void</span> <span class="op">{</span></span>
@@ -735,6 +771,7 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> conn.stream.write(message);</span>
 <span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Notice that both functions receives the connection object as input, and use the <code>write()</code> method to write the HTTP Response message directly into this communication channel. As result, the party in the other side of the connection (i.e., the client), will receive such message.</p>
 <p>Most real-world HTTP Servers will have a single function (or a single struct) to effectively handle the response. It gets the HTTP Request already parsed as input, and then, it tries to build the HTTP Response bit by bit, before the function sends it over the connection.</p>
@@ -747,6 +784,8 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <p>Notice that I’m using if statements to decide which “response function” to call, based especially on the URI present in the HTTP Request. If the user asked for a content (or a document) that is not present in our server, we should respond with a 404 status code. But since we have just a simple HTTP server, with no real documents to send, we can just check if the URI is the root path (<code>/</code>) or not to decide which function to call.</p>
 <p>Also, notice that I’m using the function <code>std.mem.eql()</code> from the Zig Standard Library to check if the string from <code>uri</code> is equal or not the string <code>"/"</code>. We have described this function already in <a href="01-zig-weird.html#sec-strings-useful-funs" class="quarto-xref"><span>Section 1.8.5</span></a>, so, comeback to that section if you are not familiar yet with this function.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> SocketConf = <span class="bu">@import</span>(<span class="st">"config.zig"</span>);</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
@@ -776,6 +815,7 @@ Figure&nbsp;7.2: A screenshot of the HTTP Request sent by the web browser
 <span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
 <span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now that we adjusted our <code>main()</code> function, I can now execute our program, and see the effects of these last changes. First, I execute the program once again, with the <code>run</code> command of the <code>zig</code> compiler. The program will hang, waiting for a client to connect.</p>
 <p>Then, I open my web browser, and try to connect to the server again, using the URL <code>localhost:3490</code>. This time, instead of getting some sort of an error message from the browser, you will get the message “Hello World” printed into your web browser. Because this time, the server sended the HTTP Response successfully to the web browser, as demonstrated by <a href="#fig-print-zigrun3" class="quarto-xref">Figure&nbsp;<span>7.3</span></a>.</p>
@@ -790,6 +830,8 @@ Figure&nbsp;7.3: The Hello World message sent in the HTTP Response
 </figure>
 </div>
 
+
+<!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-eric_http" class="csl-entry" role="listitem">
@@ -837,150 +879,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1040,6 +938,60 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+<<<<<<< HEAD
+=======
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+>>>>>>> origin
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1381,7 +1333,1047 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Unit tests</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb20" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="an">engine:</span><span class="co"> knitr</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="an">knitr:</span><span class="co"> true</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="an">syntax-definition:</span><span class="co"> "../Assets/zig.xml"</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../zig_engine.R"</span>)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">auto_main =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">build_type =</span> <span class="st">"lib"</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="fu"># Project 2 - Building a HTTP Server from scratch</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>In this chapter, I want to implement a new</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>small project with you. This time, we are going</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>to implement a basic HTTP Server from scratch.</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>The Zig Standard Library already have a HTTP Server</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>implemented, which is available at <span class="in">`std.http.Server`</span>.</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>But again, our objective here in this chapter, is to implement</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>it **from scratch**. So we can't use this server object available</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>from the Zig Standard Library.</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## What is a HTTP Server?</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>First of all, what is a HTTP Server?</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>A HTTP server, as any other type of server, is essentially</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>a program that runs indefinitely, on an infinite loop, waiting for incoming connections</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>from clients. Once the server receives an incoming connection, it will</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>accept this connection, and it will send messages back-and-forth to the client</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>through this connection.</span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>But the messages that are transmitted inside this connection are in a</span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>specific format. They are HTTP messages</span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>(i.e., messages that use the HTTP Protocol specification).</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>The HTTP Protocol is the backbone of the modern web.</span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>The world wide web as we know it today, would not exist without the</span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>HTTP Protocol.</span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>So, Web servers (which is just a fancy name to</span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>HTTP Servers) are servers that exchange HTTP messages with clients.</span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>And these HTTP servers and the HTTP Protocol specification</span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>are essential to the operation of the world wide web today.</span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a>That is the whole picture of the process.</span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>Again, we have two subjects involved here, a server (which is</span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>a program that is running indefinitely, waiting to receive incoming connections),</span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>and a client (which is someone that wants to connect to the server,</span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a>and exchange HTTP messages with it).</span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>You may find the material about the <span class="co">[</span><span class="ot">HTTP Protocol available at the Mozilla MDN Docs</span><span class="co">](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview)</span><span class="ot">[^mdn-http]</span></span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a>, a great resource for you to also look at. It gives you a great overview on how</span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a>HTTP works, and what role the server plays in this matter.</span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a><span class="ot">[^mdn-http]: &lt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview&gt;</span>.</span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a><span class="fu">## How a HTTP Server works? {#sec-how-http-works}</span></span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>Imagine a HTTP Server as if it were the receptionist of a large hotel. In a hotel,</span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>you have a reception, and inside that reception there is a receptionist</span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>waiting for customers to arrive. A HTTP Server is essentially a receptionist</span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>that is indefinitely waiting for new customers (or, in the context of HTTP, new clients)</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>to arrive in the hotel.</span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>When a customer arrives at the hotel, that customer starts a conversation with the</span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a>receptionist. He tells the receptionist how many days he wants to stay at the hotel.</span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a>Then, the receptionist search for an available apartment. If there is an available apartment</span>
+<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a>at the moment, the customer pays the hotel fees, then, he gets the keys to the apartment,</span>
+<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a>and then, he goes to the apartment to rest.</span>
+<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a>After this entire process of dealing with the customer (searching for available apartments,</span>
+<span id="cb20-81"><a href="#cb20-81" aria-hidden="true" tabindex="-1"></a>receiving payment, handing over the keys), the receptionist goes back to what he was</span>
+<span id="cb20-82"><a href="#cb20-82" aria-hidden="true" tabindex="-1"></a>doing earlier, which is to wait. Wait for new customers to arrive.</span>
+<span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a>That is, in a nutshell, what a HTTP Server do. It waits for clients to connect to the</span>
+<span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a>server. When a client attempts to connect to the server, the server accepts this connection,</span>
+<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a>and it starts to exchange messages with the client through this connection.</span>
+<span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a>The first message that happens inside this connection is always a message from the client</span>
+<span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a>to the server. This message is called the *HTTP Request*.</span>
+<span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a>This HTTP Request is a HTTP message that contains what</span>
+<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a>the client wants from the server. It is literally a request. The client</span>
+<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a>that connected to the server is asking this server to do something for him.</span>
+<span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-94"><a href="#cb20-94" aria-hidden="true" tabindex="-1"></a>There are different "types of request" that a client can send to a HTTP Server.</span>
+<span id="cb20-95"><a href="#cb20-95" aria-hidden="true" tabindex="-1"></a>But the most basic type of request, is when a client ask to the</span>
+<span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a>HTTP Server to serve (i.e., to send) some specific web page (which is a HTML file) to him.</span>
+<span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a>When you type <span class="in">`google.com`</span> in your web browser, you are essentially sending a HTTP Request to Google's</span>
+<span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a>HTTP servers. This request is asking these servers to send the Google webpage to you.</span>
+<span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a>Nonetheless, when the server receives this first message, the *HTTP Request*, it</span>
+<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a>analyzes this request, to understand: who the client is? What he wants the server to do?</span>
+<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a>This client has provided all the necessary information to perform the action that he</span>
+<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a>asked? Etc.</span>
+<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a>Once the server understands what the client wants, he simply perform the action</span>
+<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a>that was requested, and, to finish the whole process, the server sends back</span>
+<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a>a HTTP message to the client, informing if the action performed was successful or not,</span>
+<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a>and, at last, the server ends (or closes) the connection with the client.</span>
+<span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-110"><a href="#cb20-110" aria-hidden="true" tabindex="-1"></a>This last HTTP message sent from the server to the client, is called the *HTTP Response*.</span>
+<span id="cb20-111"><a href="#cb20-111" aria-hidden="true" tabindex="-1"></a>Because the server is responding to the action that was requested by the client.</span>
+<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a>The main objective of this response message is let the client know if the</span>
+<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a>action requested was successful or not, before the server closes the connection.</span>
+<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## How a HTTP server is normally implemented? {#sec-http-how-impl}</span></span>
+<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a>Let's use the C language as an example. There are many materials</span>
+<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a>teaching how to write a simple HTTP server in C code, like @jeffrey_http,</span>
+<span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a>or @nipun_http, or @eric_http.</span>
+<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a>Having this in mind, I will not show C code examples here, because you</span>
+<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a>can find them on the internet.</span>
+<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a>But I will describe the theory behind the necessary steps to create</span>
+<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a>such HTTP server in C.</span>
+<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a>In essence, we normally implement a HTTP server in C by using a TCP socket,</span>
+<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a>which involves the following steps:</span>
+<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Create a TCP socket object.</span>
+<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Bind a name (or more specifically, an address) to this socket object.</span>
+<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Make this socket object to start listening and waiting for incoming connections.</span>
+<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>When a connection arrive, we accept this connection, and we exchange the HTTP messages (HTTP Request and HTTP Response).</span>
+<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Then, we simply close this connection.</span>
+<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a>A socket object is essentially a channel of communication.</span>
+<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a>You are creating a channel where people can send messages through.</span>
+<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a>When you create a socket object, this object is not binded to any particular</span>
+<span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a>address. This means that with this object you have a representation of a channel of communication</span>
+<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a>in your hands. But this channel is not currently available, or, it is not currently accessible,</span>
+<span id="cb20-142"><a href="#cb20-142" aria-hidden="true" tabindex="-1"></a>because it does not have a known address where you can find it.</span>
+<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a>That is what the "bind" operation do. It binds a name (or more specifically, an address) to</span>
+<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a>this socket object, or, this channel of communication, so that it becomes available,</span>
+<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a>or, accessible through this address. While the "listen" operation makes the socket object to</span>
+<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a>listen for incoming connections in this address. In other words, the "listen" operation</span>
+<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a>makes the socket wait for incoming connections.</span>
+<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-150"><a href="#cb20-150" aria-hidden="true" tabindex="-1"></a>Now, when a client actually attempts to connect to the server through the socket address</span>
+<span id="cb20-151"><a href="#cb20-151" aria-hidden="true" tabindex="-1"></a>that we have specified, in order to establish this connection with the client,</span>
+<span id="cb20-152"><a href="#cb20-152" aria-hidden="true" tabindex="-1"></a>the socket object needs to accept this incoming connection. Thus, when we</span>
+<span id="cb20-153"><a href="#cb20-153" aria-hidden="true" tabindex="-1"></a>accept an incoming connection, the client and the server become</span>
+<span id="cb20-154"><a href="#cb20-154" aria-hidden="true" tabindex="-1"></a>connected to each other, and they can start reading or writing messages into this</span>
+<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a>established connection.</span>
+<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a>After we receive the HTTP Request from the client, analyze it, and send the HTTP Response</span>
+<span id="cb20-158"><a href="#cb20-158" aria-hidden="true" tabindex="-1"></a>to the client, we can then close the connection, and end this communication.</span>
+<span id="cb20-159"><a href="#cb20-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-160"><a href="#cb20-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-161"><a href="#cb20-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Implementing the server - Part 1</span></span>
+<span id="cb20-162"><a href="#cb20-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-163"><a href="#cb20-163" aria-hidden="true" tabindex="-1"></a><span class="fu">### Creating the socket object {#sec-create-socket}</span></span>
+<span id="cb20-164"><a href="#cb20-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-165"><a href="#cb20-165" aria-hidden="true" tabindex="-1"></a>Let's begin with creating the socket object for our server.</span>
+<span id="cb20-166"><a href="#cb20-166" aria-hidden="true" tabindex="-1"></a>Just to make things shorter, I will create this socket object in</span>
+<span id="cb20-167"><a href="#cb20-167" aria-hidden="true" tabindex="-1"></a>a separate Zig module. I will name it <span class="in">`config.zig`</span>.</span>
+<span id="cb20-168"><a href="#cb20-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-169"><a href="#cb20-169" aria-hidden="true" tabindex="-1"></a>In Zig, we can create a TCP socket using</span>
+<span id="cb20-170"><a href="#cb20-170" aria-hidden="true" tabindex="-1"></a>the <span class="in">`std.posix.socket()`</span> function, from the Zig Standard Library.</span>
+<span id="cb20-171"><a href="#cb20-171" aria-hidden="true" tabindex="-1"></a>As I mentioned earlier in @sec-http-how-impl, every socket object that we create</span>
+<span id="cb20-172"><a href="#cb20-172" aria-hidden="true" tabindex="-1"></a>represents a communication channel, and we need to bind this channel to a specific address.</span>
+<span id="cb20-173"><a href="#cb20-173" aria-hidden="true" tabindex="-1"></a>An "address" is defined as an IP address, or, more specifically, an IPv4 address^<span class="co">[</span><span class="ot">It can be also an IPv6 address. But normally, we use a IPv4 address for that.</span><span class="co">]</span>.</span>
+<span id="cb20-174"><a href="#cb20-174" aria-hidden="true" tabindex="-1"></a>Every IPv4 address is composed by two components. The first component is the host,</span>
+<span id="cb20-175"><a href="#cb20-175" aria-hidden="true" tabindex="-1"></a>which is a sequence of 4 numbers separated by dot characters (<span class="in">`.`</span>) that identifies the machine used.</span>
+<span id="cb20-176"><a href="#cb20-176" aria-hidden="true" tabindex="-1"></a>While the second component is a port number, which identifies the specific</span>
+<span id="cb20-177"><a href="#cb20-177" aria-hidden="true" tabindex="-1"></a>door, or, the specific port to use in the host machine.</span>
+<span id="cb20-178"><a href="#cb20-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-179"><a href="#cb20-179" aria-hidden="true" tabindex="-1"></a>The sequence of 4 numbers (i.e., the host) identifies the machine (i.e., the computer itself) where</span>
+<span id="cb20-180"><a href="#cb20-180" aria-hidden="true" tabindex="-1"></a>this socket will live in. Every computer normally have multiple "doors" available inside of him, because</span>
+<span id="cb20-181"><a href="#cb20-181" aria-hidden="true" tabindex="-1"></a>this allows the computer to receive and work with multiple connections at the same time.</span>
+<span id="cb20-182"><a href="#cb20-182" aria-hidden="true" tabindex="-1"></a>He simply use a single door for each connection. So the port number, is</span>
+<span id="cb20-183"><a href="#cb20-183" aria-hidden="true" tabindex="-1"></a>essentially a number that identifies the specific door in the computer that will be responsible</span>
+<span id="cb20-184"><a href="#cb20-184" aria-hidden="true" tabindex="-1"></a>for receiving the connection. That is, it identifies the "door" in the computer that the socket will use</span>
+<span id="cb20-185"><a href="#cb20-185" aria-hidden="true" tabindex="-1"></a>to receive incoming connections.</span>
+<span id="cb20-186"><a href="#cb20-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-187"><a href="#cb20-187" aria-hidden="true" tabindex="-1"></a>To make things simpler, I will use an IP address that identifies our current machine in this example.</span>
+<span id="cb20-188"><a href="#cb20-188" aria-hidden="true" tabindex="-1"></a>This means that, our socket object will reside on the same computer that we are currently using</span>
+<span id="cb20-189"><a href="#cb20-189" aria-hidden="true" tabindex="-1"></a>(this is also known as the "localhost") to write this Zig source code.</span>
+<span id="cb20-190"><a href="#cb20-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-191"><a href="#cb20-191" aria-hidden="true" tabindex="-1"></a>By convention, the IP address that identifies the "localhost", which is the current machine we</span>
+<span id="cb20-192"><a href="#cb20-192" aria-hidden="true" tabindex="-1"></a>are using, is the IP <span class="in">`127.0.0.1`</span>. So, that is the IP</span>
+<span id="cb20-193"><a href="#cb20-193" aria-hidden="true" tabindex="-1"></a>address we are going to use in our server. I can declare it in Zig</span>
+<span id="cb20-194"><a href="#cb20-194" aria-hidden="true" tabindex="-1"></a>by using an array of 4 integers, like this:</span>
+<span id="cb20-195"><a href="#cb20-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-198"><a href="#cb20-198" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-199"><a href="#cb20-199" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: true</span></span>
+<span id="cb20-200"><a href="#cb20-200" aria-hidden="true" tabindex="-1"></a><span class="in">const localhost = [4]u8{ 127, 0, 0, 1 };</span></span>
+<span id="cb20-201"><a href="#cb20-201" aria-hidden="true" tabindex="-1"></a><span class="in">_ = localhost;</span></span>
+<span id="cb20-202"><a href="#cb20-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-203"><a href="#cb20-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-204"><a href="#cb20-204" aria-hidden="true" tabindex="-1"></a>Now, we need to decide which port number to use. By convention, there are some</span>
+<span id="cb20-205"><a href="#cb20-205" aria-hidden="true" tabindex="-1"></a>port numbers that are reserved, meaning that, we cannot use them for our own</span>
+<span id="cb20-206"><a href="#cb20-206" aria-hidden="true" tabindex="-1"></a>purposes, like the port 22 (which is normally used for SSH connections).</span>
+<span id="cb20-207"><a href="#cb20-207" aria-hidden="true" tabindex="-1"></a>For TCP connections, which is our case here,</span>
+<span id="cb20-208"><a href="#cb20-208" aria-hidden="true" tabindex="-1"></a>a port number is a 16-bit unsigned integer (type <span class="in">`u16`</span> in Zig),</span>
+<span id="cb20-209"><a href="#cb20-209" aria-hidden="true" tabindex="-1"></a>thus ranging from 0 to 65535 <span class="co">[</span><span class="ot">@wikipedia_port</span><span class="co">]</span>.</span>
+<span id="cb20-210"><a href="#cb20-210" aria-hidden="true" tabindex="-1"></a>So, we can choose</span>
+<span id="cb20-211"><a href="#cb20-211" aria-hidden="true" tabindex="-1"></a>a number from 0 to 65535 for our port number. In the</span>
+<span id="cb20-212"><a href="#cb20-212" aria-hidden="true" tabindex="-1"></a>example of this book, I will use the port number 3490</span>
+<span id="cb20-213"><a href="#cb20-213" aria-hidden="true" tabindex="-1"></a>(just a random number).</span>
+<span id="cb20-214"><a href="#cb20-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-215"><a href="#cb20-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-216"><a href="#cb20-216" aria-hidden="true" tabindex="-1"></a>Now that we have these two informations at hand, I can</span>
+<span id="cb20-217"><a href="#cb20-217" aria-hidden="true" tabindex="-1"></a>finally create our socket object, using the <span class="in">`std.posix.socket()`</span> function.</span>
+<span id="cb20-218"><a href="#cb20-218" aria-hidden="true" tabindex="-1"></a>First, we use the host and the port number to create an <span class="in">`Address`</span> object,</span>
+<span id="cb20-219"><a href="#cb20-219" aria-hidden="true" tabindex="-1"></a>with the <span class="in">`std.net.Address.initIp4()`</span> function, like in the example below.</span>
+<span id="cb20-220"><a href="#cb20-220" aria-hidden="true" tabindex="-1"></a>After that, I use this address object inside the <span class="in">`socket()`</span> function</span>
+<span id="cb20-221"><a href="#cb20-221" aria-hidden="true" tabindex="-1"></a>to create our socket object.</span>
+<span id="cb20-222"><a href="#cb20-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-223"><a href="#cb20-223" aria-hidden="true" tabindex="-1"></a>The <span class="in">`Socket`</span> struct defined below summarizes all the logic behind</span>
+<span id="cb20-224"><a href="#cb20-224" aria-hidden="true" tabindex="-1"></a>this process. In this struct, we have two data members, which are:</span>
+<span id="cb20-225"><a href="#cb20-225" aria-hidden="true" tabindex="-1"></a>1)  the address object; 2) and a stream object, which is</span>
+<span id="cb20-226"><a href="#cb20-226" aria-hidden="true" tabindex="-1"></a>the object we will use to read and write the messages into any connection we establish.</span>
+<span id="cb20-227"><a href="#cb20-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-228"><a href="#cb20-228" aria-hidden="true" tabindex="-1"></a>Notice that, inside the constructor method of this struct,</span>
+<span id="cb20-229"><a href="#cb20-229" aria-hidden="true" tabindex="-1"></a>when we create the socket object, we are using the <span class="in">`IPROTO.TCP`</span> property as an input to</span>
+<span id="cb20-230"><a href="#cb20-230" aria-hidden="true" tabindex="-1"></a>tell the function to create a socket for TCP connections.</span>
+<span id="cb20-231"><a href="#cb20-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-232"><a href="#cb20-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-235"><a href="#cb20-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-236"><a href="#cb20-236" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: false</span></span>
+<span id="cb20-237"><a href="#cb20-237" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb20-238"><a href="#cb20-238" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-239"><a href="#cb20-239" aria-hidden="true" tabindex="-1"></a><span class="in">const builtin = @import("builtin");</span></span>
+<span id="cb20-240"><a href="#cb20-240" aria-hidden="true" tabindex="-1"></a><span class="in">const net = @import("std").net;</span></span>
+<span id="cb20-241"><a href="#cb20-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-242"><a href="#cb20-242" aria-hidden="true" tabindex="-1"></a><span class="in">pub const Socket = struct {</span></span>
+<span id="cb20-243"><a href="#cb20-243" aria-hidden="true" tabindex="-1"></a><span class="in">    _address: std.net.Address,</span></span>
+<span id="cb20-244"><a href="#cb20-244" aria-hidden="true" tabindex="-1"></a><span class="in">    _stream: std.net.Stream,</span></span>
+<span id="cb20-245"><a href="#cb20-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-246"><a href="#cb20-246" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn init() !Socket {</span></span>
+<span id="cb20-247"><a href="#cb20-247" aria-hidden="true" tabindex="-1"></a><span class="in">        const host = [4]u8{ 127, 0, 0, 1 };</span></span>
+<span id="cb20-248"><a href="#cb20-248" aria-hidden="true" tabindex="-1"></a><span class="in">        const port = 3490;</span></span>
+<span id="cb20-249"><a href="#cb20-249" aria-hidden="true" tabindex="-1"></a><span class="in">        const addr = net.Address.initIp4(host, port);</span></span>
+<span id="cb20-250"><a href="#cb20-250" aria-hidden="true" tabindex="-1"></a><span class="in">        const socket = try std.posix.socket(</span></span>
+<span id="cb20-251"><a href="#cb20-251" aria-hidden="true" tabindex="-1"></a><span class="in">            addr.any.family,</span></span>
+<span id="cb20-252"><a href="#cb20-252" aria-hidden="true" tabindex="-1"></a><span class="in">            std.posix.SOCK.STREAM,</span></span>
+<span id="cb20-253"><a href="#cb20-253" aria-hidden="true" tabindex="-1"></a><span class="in">            std.posix.IPPROTO.TCP</span></span>
+<span id="cb20-254"><a href="#cb20-254" aria-hidden="true" tabindex="-1"></a><span class="in">        );</span></span>
+<span id="cb20-255"><a href="#cb20-255" aria-hidden="true" tabindex="-1"></a><span class="in">        const stream = net.Stream{ .handle = socket };</span></span>
+<span id="cb20-256"><a href="#cb20-256" aria-hidden="true" tabindex="-1"></a><span class="in">        return Socket{ ._address = addr, ._stream = stream };</span></span>
+<span id="cb20-257"><a href="#cb20-257" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-258"><a href="#cb20-258" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb20-259"><a href="#cb20-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-260"><a href="#cb20-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-261"><a href="#cb20-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-262"><a href="#cb20-262" aria-hidden="true" tabindex="-1"></a><span class="fu">### Listening and receiving connections</span></span>
+<span id="cb20-263"><a href="#cb20-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-264"><a href="#cb20-264" aria-hidden="true" tabindex="-1"></a>Remember that we stored the <span class="in">`Socket`</span> struct</span>
+<span id="cb20-265"><a href="#cb20-265" aria-hidden="true" tabindex="-1"></a>declaration that we built in @sec-create-socket inside a Zig module named <span class="in">`config.zig`</span>.</span>
+<span id="cb20-266"><a href="#cb20-266" aria-hidden="true" tabindex="-1"></a>This is why I imported this module into our main module (<span class="in">`main.zig`</span>) in the example below, as the <span class="in">`SocketConf`</span> object,</span>
+<span id="cb20-267"><a href="#cb20-267" aria-hidden="true" tabindex="-1"></a>to access the <span class="in">`Socket`</span> struct.</span>
+<span id="cb20-268"><a href="#cb20-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-269"><a href="#cb20-269" aria-hidden="true" tabindex="-1"></a>Once we created our socket object, we can focus now on making this socket object</span>
+<span id="cb20-270"><a href="#cb20-270" aria-hidden="true" tabindex="-1"></a>listen and receive new incoming connections. We do that, by calling the <span class="in">`listen()`</span></span>
+<span id="cb20-271"><a href="#cb20-271" aria-hidden="true" tabindex="-1"></a>method from the <span class="in">`Address`</span> object that is contained inside the socket object, and then,</span>
+<span id="cb20-272"><a href="#cb20-272" aria-hidden="true" tabindex="-1"></a>we call the <span class="in">`accept()`</span> method over the result.</span>
+<span id="cb20-273"><a href="#cb20-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-274"><a href="#cb20-274" aria-hidden="true" tabindex="-1"></a>The <span class="in">`listen()`</span> method from the <span class="in">`Address`</span> object produces a server object,</span>
+<span id="cb20-275"><a href="#cb20-275" aria-hidden="true" tabindex="-1"></a>which is an object that will stay open and running indefinitely, waiting</span>
+<span id="cb20-276"><a href="#cb20-276" aria-hidden="true" tabindex="-1"></a>to receive an incoming connection. Therefore, if you try to run the code</span>
+<span id="cb20-277"><a href="#cb20-277" aria-hidden="true" tabindex="-1"></a>example below, by calling the <span class="in">`run`</span> command from the <span class="in">`zig`</span> compiler,</span>
+<span id="cb20-278"><a href="#cb20-278" aria-hidden="true" tabindex="-1"></a>you will notice that the programs keeps running indefinitely,</span>
+<span id="cb20-279"><a href="#cb20-279" aria-hidden="true" tabindex="-1"></a>without a clear end.</span>
+<span id="cb20-280"><a href="#cb20-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-281"><a href="#cb20-281" aria-hidden="true" tabindex="-1"></a>This happens, because the program is waiting for something to happen.</span>
+<span id="cb20-282"><a href="#cb20-282" aria-hidden="true" tabindex="-1"></a>It's waiting for someone to try to connect to the address (<span class="in">`http://127.0.0.1:3490`</span>) where</span>
+<span id="cb20-283"><a href="#cb20-283" aria-hidden="true" tabindex="-1"></a>the server is running and listening for incoming connections. This is what</span>
+<span id="cb20-284"><a href="#cb20-284" aria-hidden="true" tabindex="-1"></a>the <span class="in">`listen()`</span> method do, it makes the socket to be active waiting for someone</span>
+<span id="cb20-285"><a href="#cb20-285" aria-hidden="true" tabindex="-1"></a>to connect.</span>
+<span id="cb20-286"><a href="#cb20-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-287"><a href="#cb20-287" aria-hidden="true" tabindex="-1"></a>On the other side, the <span class="in">`accept()`</span> method is the function that establishes the connection</span>
+<span id="cb20-288"><a href="#cb20-288" aria-hidden="true" tabindex="-1"></a>when someone tries to connect to the socket. This means that, the <span class="in">`accept()`</span> method</span>
+<span id="cb20-289"><a href="#cb20-289" aria-hidden="true" tabindex="-1"></a>returns a new connection object as a result. And you can use this connection object</span>
+<span id="cb20-290"><a href="#cb20-290" aria-hidden="true" tabindex="-1"></a>to read or write messages from or to the client.</span>
+<span id="cb20-291"><a href="#cb20-291" aria-hidden="true" tabindex="-1"></a>For now, we are not doing anything with this connection object.</span>
+<span id="cb20-292"><a href="#cb20-292" aria-hidden="true" tabindex="-1"></a>But we are going to use it in the next section.</span>
+<span id="cb20-293"><a href="#cb20-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-294"><a href="#cb20-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-297"><a href="#cb20-297" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-298"><a href="#cb20-298" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-299"><a href="#cb20-299" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-300"><a href="#cb20-300" aria-hidden="true" tabindex="-1"></a><span class="in">const SocketConf = @import("config.zig");</span></span>
+<span id="cb20-301"><a href="#cb20-301" aria-hidden="true" tabindex="-1"></a><span class="in">const stdout = std.io.getStdOut().writer();</span></span>
+<span id="cb20-302"><a href="#cb20-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-303"><a href="#cb20-303" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb20-304"><a href="#cb20-304" aria-hidden="true" tabindex="-1"></a><span class="in">    const socket = try SocketConf.Socket.init();</span></span>
+<span id="cb20-305"><a href="#cb20-305" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("Server Addr: {any}\n", .{socket._address});</span></span>
+<span id="cb20-306"><a href="#cb20-306" aria-hidden="true" tabindex="-1"></a><span class="in">    var server = try socket._address.listen(.{});</span></span>
+<span id="cb20-307"><a href="#cb20-307" aria-hidden="true" tabindex="-1"></a><span class="in">    const connection = try server.accept();</span></span>
+<span id="cb20-308"><a href="#cb20-308" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = connection;</span></span>
+<span id="cb20-309"><a href="#cb20-309" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-310"><a href="#cb20-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-311"><a href="#cb20-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-312"><a href="#cb20-312" aria-hidden="true" tabindex="-1"></a>This code example allows one single connection. In other words, the</span>
+<span id="cb20-313"><a href="#cb20-313" aria-hidden="true" tabindex="-1"></a>server will wait for one incoming connection, and as soon as the</span>
+<span id="cb20-314"><a href="#cb20-314" aria-hidden="true" tabindex="-1"></a>server is done with this first connection that it establishes, the</span>
+<span id="cb20-315"><a href="#cb20-315" aria-hidden="true" tabindex="-1"></a>program ends, and the server stops.</span>
+<span id="cb20-316"><a href="#cb20-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-317"><a href="#cb20-317" aria-hidden="true" tabindex="-1"></a>This is not the norm in the real world. Most people that write</span>
+<span id="cb20-318"><a href="#cb20-318" aria-hidden="true" tabindex="-1"></a>a HTTP server like this, usually put the <span class="in">`accept()`</span> method</span>
+<span id="cb20-319"><a href="#cb20-319" aria-hidden="true" tabindex="-1"></a>inside a <span class="in">`while`</span> (infinite) loop, where if a connection</span>
+<span id="cb20-320"><a href="#cb20-320" aria-hidden="true" tabindex="-1"></a>is created with <span class="in">`accept()`</span>, a new thread of execution is created to deal with</span>
+<span id="cb20-321"><a href="#cb20-321" aria-hidden="true" tabindex="-1"></a>this new connection and the client. That is, real-world examples of HTTP Servers</span>
+<span id="cb20-322"><a href="#cb20-322" aria-hidden="true" tabindex="-1"></a>normally rely on parallel computing to work.</span>
+<span id="cb20-323"><a href="#cb20-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-324"><a href="#cb20-324" aria-hidden="true" tabindex="-1"></a>With this design, the server simply accepts the connection,</span>
+<span id="cb20-325"><a href="#cb20-325" aria-hidden="true" tabindex="-1"></a>and the whole process of dealing with the client, and receiving</span>
+<span id="cb20-326"><a href="#cb20-326" aria-hidden="true" tabindex="-1"></a>the HTTP Request, and sending the HTTP Response, all of this</span>
+<span id="cb20-327"><a href="#cb20-327" aria-hidden="true" tabindex="-1"></a>is done in the background, on a separate execution thread.</span>
+<span id="cb20-328"><a href="#cb20-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-329"><a href="#cb20-329" aria-hidden="true" tabindex="-1"></a>So, as soon as the server accepts the connection, and creates</span>
+<span id="cb20-330"><a href="#cb20-330" aria-hidden="true" tabindex="-1"></a>the separate thread, the server goes back to what he was doing earlier,</span>
+<span id="cb20-331"><a href="#cb20-331" aria-hidden="true" tabindex="-1"></a>which is to wait indefinitely for a new connection to accept.</span>
+<span id="cb20-332"><a href="#cb20-332" aria-hidden="true" tabindex="-1"></a>Having this in mind, the code example exposed above, is a</span>
+<span id="cb20-333"><a href="#cb20-333" aria-hidden="true" tabindex="-1"></a>server that serves only a single client. Because the program</span>
+<span id="cb20-334"><a href="#cb20-334" aria-hidden="true" tabindex="-1"></a>terminates as soon as the connection is accepted.</span>
+<span id="cb20-335"><a href="#cb20-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-336"><a href="#cb20-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-337"><a href="#cb20-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-338"><a href="#cb20-338" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reading the message from the client {#sec-read-http-message}</span></span>
+<span id="cb20-339"><a href="#cb20-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-340"><a href="#cb20-340" aria-hidden="true" tabindex="-1"></a>Now that we have a connection established, i.e., the connection</span>
+<span id="cb20-341"><a href="#cb20-341" aria-hidden="true" tabindex="-1"></a>object that we created through the <span class="in">`accept()`</span> function, we can now</span>
+<span id="cb20-342"><a href="#cb20-342" aria-hidden="true" tabindex="-1"></a>use this connection object to read any messages that the client</span>
+<span id="cb20-343"><a href="#cb20-343" aria-hidden="true" tabindex="-1"></a>send to our server. But we can also use it to send messages back</span>
+<span id="cb20-344"><a href="#cb20-344" aria-hidden="true" tabindex="-1"></a>to the client.</span>
+<span id="cb20-345"><a href="#cb20-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-346"><a href="#cb20-346" aria-hidden="true" tabindex="-1"></a>The basic idea is, if we **write** any data into this connection object,</span>
+<span id="cb20-347"><a href="#cb20-347" aria-hidden="true" tabindex="-1"></a>then, we are sending data to the client, and if we **read** the data present in</span>
+<span id="cb20-348"><a href="#cb20-348" aria-hidden="true" tabindex="-1"></a>this connection object, then, we are reading any data that the</span>
+<span id="cb20-349"><a href="#cb20-349" aria-hidden="true" tabindex="-1"></a>client sent to us, through this connection object. So, just</span>
+<span id="cb20-350"><a href="#cb20-350" aria-hidden="true" tabindex="-1"></a>have this logic in mind. "Read" is for reading messages from the client,</span>
+<span id="cb20-351"><a href="#cb20-351" aria-hidden="true" tabindex="-1"></a>and "write" is to send a message to the client.</span>
+<span id="cb20-352"><a href="#cb20-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-353"><a href="#cb20-353" aria-hidden="true" tabindex="-1"></a>Remember from @sec-how-http-works that, the first thing that we need to do is to read the HTTP Request</span>
+<span id="cb20-354"><a href="#cb20-354" aria-hidden="true" tabindex="-1"></a>sent by the client to our server. Because it is the first message that happens</span>
+<span id="cb20-355"><a href="#cb20-355" aria-hidden="true" tabindex="-1"></a>inside the established connection, and, as a consequence, it is the first</span>
+<span id="cb20-356"><a href="#cb20-356" aria-hidden="true" tabindex="-1"></a>thing that we need to deal with.</span>
+<span id="cb20-357"><a href="#cb20-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-358"><a href="#cb20-358" aria-hidden="true" tabindex="-1"></a>That is why, I'm going to create a new Zig module in this small project, named <span class="in">`request.zig`</span></span>
+<span id="cb20-359"><a href="#cb20-359" aria-hidden="true" tabindex="-1"></a>to keep all functions related to the HTTP Request</span>
+<span id="cb20-360"><a href="#cb20-360" aria-hidden="true" tabindex="-1"></a>together. Then, I will create a new function named <span class="in">`read_request()`</span> that will</span>
+<span id="cb20-361"><a href="#cb20-361" aria-hidden="true" tabindex="-1"></a>use our connection object to read the message sent by the client,</span>
+<span id="cb20-362"><a href="#cb20-362" aria-hidden="true" tabindex="-1"></a>which is the HTTP Request.</span>
+<span id="cb20-363"><a href="#cb20-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-364"><a href="#cb20-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-367"><a href="#cb20-367" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-368"><a href="#cb20-368" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-369"><a href="#cb20-369" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-370"><a href="#cb20-370" aria-hidden="true" tabindex="-1"></a><span class="in">const Connection = std.net.Server.Connection;</span></span>
+<span id="cb20-371"><a href="#cb20-371" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn read_request(conn: Connection,</span></span>
+<span id="cb20-372"><a href="#cb20-372" aria-hidden="true" tabindex="-1"></a><span class="in">                    buffer: []u8) !void {</span></span>
+<span id="cb20-373"><a href="#cb20-373" aria-hidden="true" tabindex="-1"></a><span class="in">    const reader = conn.stream.reader();</span></span>
+<span id="cb20-374"><a href="#cb20-374" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = try reader.read(buffer);</span></span>
+<span id="cb20-375"><a href="#cb20-375" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-376"><a href="#cb20-376" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-377"><a href="#cb20-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-378"><a href="#cb20-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-379"><a href="#cb20-379" aria-hidden="true" tabindex="-1"></a>This function accepts a slice object which behaves as a buffer.</span>
+<span id="cb20-380"><a href="#cb20-380" aria-hidden="true" tabindex="-1"></a>The <span class="in">`read_request()`</span> function reads the message sent into</span>
+<span id="cb20-381"><a href="#cb20-381" aria-hidden="true" tabindex="-1"></a>the connection object, and saves this message into this buffer object that</span>
+<span id="cb20-382"><a href="#cb20-382" aria-hidden="true" tabindex="-1"></a>we have provided as input.</span>
+<span id="cb20-383"><a href="#cb20-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-384"><a href="#cb20-384" aria-hidden="true" tabindex="-1"></a>Notice that I'm using the connection object that we created to read</span>
+<span id="cb20-385"><a href="#cb20-385" aria-hidden="true" tabindex="-1"></a>the message from the client. I first access the <span class="in">`reader`</span> object that lives inside the</span>
+<span id="cb20-386"><a href="#cb20-386" aria-hidden="true" tabindex="-1"></a>connection object. Then, I call the <span class="in">`read()`</span> method of this <span class="in">`reader`</span> object</span>
+<span id="cb20-387"><a href="#cb20-387" aria-hidden="true" tabindex="-1"></a>to effectively read and save the data sent by the client into the buffer object</span>
+<span id="cb20-388"><a href="#cb20-388" aria-hidden="true" tabindex="-1"></a>that we created earlier. I'm discarding the return value</span>
+<span id="cb20-389"><a href="#cb20-389" aria-hidden="true" tabindex="-1"></a>of the <span class="in">`read()`</span> method, by assigning it to the underscore character (<span class="in">`_`</span>),</span>
+<span id="cb20-390"><a href="#cb20-390" aria-hidden="true" tabindex="-1"></a>because this return value is not useful for us right now.</span>
+<span id="cb20-391"><a href="#cb20-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-392"><a href="#cb20-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-393"><a href="#cb20-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-394"><a href="#cb20-394" aria-hidden="true" tabindex="-1"></a><span class="fu">## Looking at the current state of the program</span></span>
+<span id="cb20-395"><a href="#cb20-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-396"><a href="#cb20-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-397"><a href="#cb20-397" aria-hidden="true" tabindex="-1"></a>I think now is a good time to see how our program is currently working. Shall we?</span>
+<span id="cb20-398"><a href="#cb20-398" aria-hidden="true" tabindex="-1"></a>So, the first thing I will do is to update the <span class="in">`main.zig`</span> module in our small Zig project,</span>
+<span id="cb20-399"><a href="#cb20-399" aria-hidden="true" tabindex="-1"></a>so that the <span class="in">`main()`</span> function call this new <span class="in">`read_request()`</span> function that we have just created.</span>
+<span id="cb20-400"><a href="#cb20-400" aria-hidden="true" tabindex="-1"></a>I will also add a print statement at the end of the <span class="in">`main()`</span> function,</span>
+<span id="cb20-401"><a href="#cb20-401" aria-hidden="true" tabindex="-1"></a>just so that you can see what the HTTP Request that we have just loaded into the buffer object</span>
+<span id="cb20-402"><a href="#cb20-402" aria-hidden="true" tabindex="-1"></a>looks like.</span>
+<span id="cb20-403"><a href="#cb20-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-404"><a href="#cb20-404" aria-hidden="true" tabindex="-1"></a>Also, I'm creating the buffer object in the <span class="in">`main()`</span> function, which will be</span>
+<span id="cb20-405"><a href="#cb20-405" aria-hidden="true" tabindex="-1"></a>responsible for storing the message sent by the client, and, I'm also</span>
+<span id="cb20-406"><a href="#cb20-406" aria-hidden="true" tabindex="-1"></a>using a <span class="in">`for`</span> loop to initialize all fields of this buffer object to the number zero.</span>
+<span id="cb20-407"><a href="#cb20-407" aria-hidden="true" tabindex="-1"></a>This is important to make sure that we don't have uninitialized memory in</span>
+<span id="cb20-408"><a href="#cb20-408" aria-hidden="true" tabindex="-1"></a>this object. Because uninitialized memory may cause undefined behaviour in our program.</span>
+<span id="cb20-409"><a href="#cb20-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-410"><a href="#cb20-410" aria-hidden="true" tabindex="-1"></a>Since the <span class="in">`read_request()`</span> function should receive as input the buffer object as a slice object (<span class="in">`[]u8`</span>),</span>
+<span id="cb20-411"><a href="#cb20-411" aria-hidden="true" tabindex="-1"></a>I am using the syntax <span class="in">`array[0..array.len]`</span> to get access to a slice of this <span class="in">`buffer`</span> object.</span>
+<span id="cb20-412"><a href="#cb20-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-415"><a href="#cb20-415" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-416"><a href="#cb20-416" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-417"><a href="#cb20-417" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-418"><a href="#cb20-418" aria-hidden="true" tabindex="-1"></a><span class="in">const SocketConf = @import("config.zig");</span></span>
+<span id="cb20-419"><a href="#cb20-419" aria-hidden="true" tabindex="-1"></a><span class="in">const Request = @import("request.zig");</span></span>
+<span id="cb20-420"><a href="#cb20-420" aria-hidden="true" tabindex="-1"></a><span class="in">const stdout = std.io.getStdOut().writer();</span></span>
+<span id="cb20-421"><a href="#cb20-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-422"><a href="#cb20-422" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb20-423"><a href="#cb20-423" aria-hidden="true" tabindex="-1"></a><span class="in">    const socket = try SocketConf.Socket.init();</span></span>
+<span id="cb20-424"><a href="#cb20-424" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("Server Addr: {any}\n", .{socket._address});</span></span>
+<span id="cb20-425"><a href="#cb20-425" aria-hidden="true" tabindex="-1"></a><span class="in">    var server = try socket._address.listen(.{});</span></span>
+<span id="cb20-426"><a href="#cb20-426" aria-hidden="true" tabindex="-1"></a><span class="in">    const connection = try server.accept();</span></span>
+<span id="cb20-427"><a href="#cb20-427" aria-hidden="true" tabindex="-1"></a><span class="in">    var buffer: [1000]u8 = undefined;</span></span>
+<span id="cb20-428"><a href="#cb20-428" aria-hidden="true" tabindex="-1"></a><span class="in">    for (0..buffer.len) |i| {</span></span>
+<span id="cb20-429"><a href="#cb20-429" aria-hidden="true" tabindex="-1"></a><span class="in">        buffer[i] = 0;</span></span>
+<span id="cb20-430"><a href="#cb20-430" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-431"><a href="#cb20-431" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = try Request.read_request(</span></span>
+<span id="cb20-432"><a href="#cb20-432" aria-hidden="true" tabindex="-1"></a><span class="in">        connection, buffer[0..buffer.len]</span></span>
+<span id="cb20-433"><a href="#cb20-433" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-434"><a href="#cb20-434" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("{s}\n", .{buffer});</span></span>
+<span id="cb20-435"><a href="#cb20-435" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-436"><a href="#cb20-436" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-437"><a href="#cb20-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-438"><a href="#cb20-438" aria-hidden="true" tabindex="-1"></a>Now, I'm going to execute this program, with the <span class="in">`run`</span> command from the</span>
+<span id="cb20-439"><a href="#cb20-439" aria-hidden="true" tabindex="-1"></a><span class="in">`zig`</span> compiler. But remember, as we sad earlier, as soon as I execute this program, it will</span>
+<span id="cb20-440"><a href="#cb20-440" aria-hidden="true" tabindex="-1"></a>hang indefinitely, because the program is waiting for a client trying to</span>
+<span id="cb20-441"><a href="#cb20-441" aria-hidden="true" tabindex="-1"></a>connect to the server.</span>
+<span id="cb20-442"><a href="#cb20-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-443"><a href="#cb20-443" aria-hidden="true" tabindex="-1"></a>More specifically, the program will pause at the line</span>
+<span id="cb20-444"><a href="#cb20-444" aria-hidden="true" tabindex="-1"></a>with the <span class="in">`accept()`</span> call. As soon as a client try to connect to the</span>
+<span id="cb20-445"><a href="#cb20-445" aria-hidden="true" tabindex="-1"></a>server, then, the execution will "unpause", and the <span class="in">`accept()`</span> function</span>
+<span id="cb20-446"><a href="#cb20-446" aria-hidden="true" tabindex="-1"></a>will finally be executed to create the</span>
+<span id="cb20-447"><a href="#cb20-447" aria-hidden="true" tabindex="-1"></a>connection object that we need, and the remaining of the program</span>
+<span id="cb20-448"><a href="#cb20-448" aria-hidden="true" tabindex="-1"></a>will run.</span>
+<span id="cb20-449"><a href="#cb20-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-450"><a href="#cb20-450" aria-hidden="true" tabindex="-1"></a>You can see that in @fig-print-zigrun1. The message <span class="in">`Server Addr: 127.0.0.1:3490`</span></span>
+<span id="cb20-451"><a href="#cb20-451" aria-hidden="true" tabindex="-1"></a>is printed to the console, and the program is now waiting for an incoming connection.</span>
+<span id="cb20-452"><a href="#cb20-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-453"><a href="#cb20-453" aria-hidden="true" tabindex="-1"></a><span class="al">![A screenshot of running the program](./../Figures/print-zigrun1.png)</span>{#fig-print-zigrun1}</span>
+<span id="cb20-454"><a href="#cb20-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-455"><a href="#cb20-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-456"><a href="#cb20-456" aria-hidden="true" tabindex="-1"></a>We can finally try to connect to this server, and there are several ways we can do this.</span>
+<span id="cb20-457"><a href="#cb20-457" aria-hidden="true" tabindex="-1"></a>For example, we could use the following Python script:</span>
+<span id="cb20-458"><a href="#cb20-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-459"><a href="#cb20-459" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb20-460"><a href="#cb20-460" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb20-461"><a href="#cb20-461" aria-hidden="true" tabindex="-1"></a>requests.get(<span class="st">"http://127.0.0.1:3490"</span>)</span>
+<span id="cb20-462"><a href="#cb20-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-463"><a href="#cb20-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-464"><a href="#cb20-464" aria-hidden="true" tabindex="-1"></a>Or, we could also open any web browser of our preference, and type</span>
+<span id="cb20-465"><a href="#cb20-465" aria-hidden="true" tabindex="-1"></a>the URL <span class="in">`localhost:3490`</span>. OBS: <span class="in">`localhost`</span> is the same thing as the</span>
+<span id="cb20-466"><a href="#cb20-466" aria-hidden="true" tabindex="-1"></a>IP <span class="in">`127.0.0.1`</span>. When you press enter, and your web browser go</span>
+<span id="cb20-467"><a href="#cb20-467" aria-hidden="true" tabindex="-1"></a>to this address, first, the browser will probably print a message</span>
+<span id="cb20-468"><a href="#cb20-468" aria-hidden="true" tabindex="-1"></a>saying that "this page isn't working", and, then, it will</span>
+<span id="cb20-469"><a href="#cb20-469" aria-hidden="true" tabindex="-1"></a>probably change to a new message saying that "the site can't be</span>
+<span id="cb20-470"><a href="#cb20-470" aria-hidden="true" tabindex="-1"></a>reached".</span>
+<span id="cb20-471"><a href="#cb20-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-472"><a href="#cb20-472" aria-hidden="true" tabindex="-1"></a>You get these "error messages" in the web browser, because</span>
+<span id="cb20-473"><a href="#cb20-473" aria-hidden="true" tabindex="-1"></a>it got no response back from the server. In other words, when the web</span>
+<span id="cb20-474"><a href="#cb20-474" aria-hidden="true" tabindex="-1"></a>browser connected to our server, it did send the HTTP Request through the established connection.</span>
+<span id="cb20-475"><a href="#cb20-475" aria-hidden="true" tabindex="-1"></a>Then, the web browser was expecting to receive a HTTP Response back, but</span>
+<span id="cb20-476"><a href="#cb20-476" aria-hidden="true" tabindex="-1"></a>it got no response from the server (we didn't implemented the HTTP Response logic yet).</span>
+<span id="cb20-477"><a href="#cb20-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-478"><a href="#cb20-478" aria-hidden="true" tabindex="-1"></a>But that is okay. We have achieved the result that we wanted for now,</span>
+<span id="cb20-479"><a href="#cb20-479" aria-hidden="true" tabindex="-1"></a>which is to connect to the server, and see the HTTP Request</span>
+<span id="cb20-480"><a href="#cb20-480" aria-hidden="true" tabindex="-1"></a>that was sent by the web browser (or by the Python script)</span>
+<span id="cb20-481"><a href="#cb20-481" aria-hidden="true" tabindex="-1"></a>to the server.</span>
+<span id="cb20-482"><a href="#cb20-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-483"><a href="#cb20-483" aria-hidden="true" tabindex="-1"></a>If you comeback to the console that you left open</span>
+<span id="cb20-484"><a href="#cb20-484" aria-hidden="true" tabindex="-1"></a>when you have executed the program, you will see that the</span>
+<span id="cb20-485"><a href="#cb20-485" aria-hidden="true" tabindex="-1"></a>program finished its execution, and, a new message is</span>
+<span id="cb20-486"><a href="#cb20-486" aria-hidden="true" tabindex="-1"></a>printed in the console, which is the actual HTTP Request</span>
+<span id="cb20-487"><a href="#cb20-487" aria-hidden="true" tabindex="-1"></a>message that was sent by the web browser to the server.</span>
+<span id="cb20-488"><a href="#cb20-488" aria-hidden="true" tabindex="-1"></a>You can see this message in @fig-print-zigrun2.</span>
+<span id="cb20-489"><a href="#cb20-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-490"><a href="#cb20-490" aria-hidden="true" tabindex="-1"></a><span class="al">![A screenshot of the HTTP Request sent by the web browser](./../Figures/print-zigrun2.png)</span>{#fig-print-zigrun2}</span>
+<span id="cb20-491"><a href="#cb20-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-492"><a href="#cb20-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-493"><a href="#cb20-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-494"><a href="#cb20-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-495"><a href="#cb20-495" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning about Enums in Zig {#sec-enum}</span></span>
+<span id="cb20-496"><a href="#cb20-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-497"><a href="#cb20-497" aria-hidden="true" tabindex="-1"></a>Enums structures are available in Zig through the <span class="in">`enum`</span> keyword.</span>
+<span id="cb20-498"><a href="#cb20-498" aria-hidden="true" tabindex="-1"></a>An enum (short for "enumeration") is a special structure that represents a group of constant values.</span>
+<span id="cb20-499"><a href="#cb20-499" aria-hidden="true" tabindex="-1"></a>So, if you have a variable which can assume a short and known</span>
+<span id="cb20-500"><a href="#cb20-500" aria-hidden="true" tabindex="-1"></a>set of values, you might want to associate this variable to an enum structure,</span>
+<span id="cb20-501"><a href="#cb20-501" aria-hidden="true" tabindex="-1"></a>to make sure that this variable only assumes a value from this set.</span>
+<span id="cb20-502"><a href="#cb20-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-503"><a href="#cb20-503" aria-hidden="true" tabindex="-1"></a>A classic example for enums are primary colors. If for some reason, your program</span>
+<span id="cb20-504"><a href="#cb20-504" aria-hidden="true" tabindex="-1"></a>needs to represent one of the primary colors, you can create an enum</span>
+<span id="cb20-505"><a href="#cb20-505" aria-hidden="true" tabindex="-1"></a>that represents one of these colors.</span>
+<span id="cb20-506"><a href="#cb20-506" aria-hidden="true" tabindex="-1"></a>In the example below, we are creating the enum <span class="in">`PrimaryColorRGB`</span>, which</span>
+<span id="cb20-507"><a href="#cb20-507" aria-hidden="true" tabindex="-1"></a>represents a primary color from the RGB color system. By using this enum,</span>
+<span id="cb20-508"><a href="#cb20-508" aria-hidden="true" tabindex="-1"></a>I am guaranteed that the <span class="in">`acolor`</span> object for example, will contain</span>
+<span id="cb20-509"><a href="#cb20-509" aria-hidden="true" tabindex="-1"></a>one of these three values: <span class="in">`RED`</span>, <span class="in">`GREEN`</span> or <span class="in">`BLUE`</span>.</span>
+<span id="cb20-510"><a href="#cb20-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-513"><a href="#cb20-513" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-514"><a href="#cb20-514" aria-hidden="true" tabindex="-1"></a><span class="in">#| auto_main: true</span></span>
+<span id="cb20-515"><a href="#cb20-515" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "run"</span></span>
+<span id="cb20-516"><a href="#cb20-516" aria-hidden="true" tabindex="-1"></a><span class="in">const PrimaryColorRGB = enum {</span></span>
+<span id="cb20-517"><a href="#cb20-517" aria-hidden="true" tabindex="-1"></a><span class="in">    RED, GREEN, BLUE</span></span>
+<span id="cb20-518"><a href="#cb20-518" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb20-519"><a href="#cb20-519" aria-hidden="true" tabindex="-1"></a><span class="in">const acolor = PrimaryColorRGB.RED;</span></span>
+<span id="cb20-520"><a href="#cb20-520" aria-hidden="true" tabindex="-1"></a><span class="in">_ = acolor;</span></span>
+<span id="cb20-521"><a href="#cb20-521" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-522"><a href="#cb20-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-523"><a href="#cb20-523" aria-hidden="true" tabindex="-1"></a>If for some reason, my code tries to save in <span class="in">`acolor`</span>,</span>
+<span id="cb20-524"><a href="#cb20-524" aria-hidden="true" tabindex="-1"></a>a value that is not in this set, I will get an error message</span>
+<span id="cb20-525"><a href="#cb20-525" aria-hidden="true" tabindex="-1"></a>warning me that a value such as "MAGENTA" do not exist</span>
+<span id="cb20-526"><a href="#cb20-526" aria-hidden="true" tabindex="-1"></a>inside the <span class="in">`PrimaryColorRGB`</span> enum.</span>
+<span id="cb20-527"><a href="#cb20-527" aria-hidden="true" tabindex="-1"></a>Then I can easily fix my mistake.</span>
+<span id="cb20-528"><a href="#cb20-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-529"><a href="#cb20-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-532"><a href="#cb20-532" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-533"><a href="#cb20-533" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-534"><a href="#cb20-534" aria-hidden="true" tabindex="-1"></a><span class="in">const acolor = PrimaryColorRGB.MAGENTA;</span></span>
+<span id="cb20-535"><a href="#cb20-535" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-536"><a href="#cb20-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-537"><a href="#cb20-537" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-538"><a href="#cb20-538" aria-hidden="true" tabindex="-1"></a><span class="in">e1.zig:5:36: error: enum 'PrimaryColorRGB' has</span></span>
+<span id="cb20-539"><a href="#cb20-539" aria-hidden="true" tabindex="-1"></a><span class="in">        no member named 'MAGENTA':</span></span>
+<span id="cb20-540"><a href="#cb20-540" aria-hidden="true" tabindex="-1"></a><span class="in">    const acolor = PrimaryColorRGB.MAGENTA;</span></span>
+<span id="cb20-541"><a href="#cb20-541" aria-hidden="true" tabindex="-1"></a><span class="in">                                   ^~~~~~~</span></span>
+<span id="cb20-542"><a href="#cb20-542" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-543"><a href="#cb20-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-544"><a href="#cb20-544" aria-hidden="true" tabindex="-1"></a>Behind the hood, enums in Zig work the same way that enums</span>
+<span id="cb20-545"><a href="#cb20-545" aria-hidden="true" tabindex="-1"></a>work in C. Each enum value is essentially represented as an integer.</span>
+<span id="cb20-546"><a href="#cb20-546" aria-hidden="true" tabindex="-1"></a>The first value in the set is represented as zero,</span>
+<span id="cb20-547"><a href="#cb20-547" aria-hidden="true" tabindex="-1"></a>then, the second value is one, ... etc.</span>
+<span id="cb20-548"><a href="#cb20-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-549"><a href="#cb20-549" aria-hidden="true" tabindex="-1"></a>One thing that we are going to learn in the next section is that</span>
+<span id="cb20-550"><a href="#cb20-550" aria-hidden="true" tabindex="-1"></a>enums can have methods in them. Wait... What? This is amazing!</span>
+<span id="cb20-551"><a href="#cb20-551" aria-hidden="true" tabindex="-1"></a>Yes, enums in Zig are similar to structs, and they can have</span>
+<span id="cb20-552"><a href="#cb20-552" aria-hidden="true" tabindex="-1"></a>private and public methods inside them.</span>
+<span id="cb20-553"><a href="#cb20-553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-554"><a href="#cb20-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-555"><a href="#cb20-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-556"><a href="#cb20-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-557"><a href="#cb20-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-558"><a href="#cb20-558" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-559"><a href="#cb20-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-560"><a href="#cb20-560" aria-hidden="true" tabindex="-1"></a><span class="fu">## Implementing the server - Part 2</span></span>
+<span id="cb20-561"><a href="#cb20-561" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-562"><a href="#cb20-562" aria-hidden="true" tabindex="-1"></a>Now, on this section, I want to focus on parsing</span>
+<span id="cb20-563"><a href="#cb20-563" aria-hidden="true" tabindex="-1"></a>the HTTP Request that we received from the client.</span>
+<span id="cb20-564"><a href="#cb20-564" aria-hidden="true" tabindex="-1"></a>However, to effectively parse a HTTP Request message, we first need to understand its</span>
+<span id="cb20-565"><a href="#cb20-565" aria-hidden="true" tabindex="-1"></a>structure.</span>
+<span id="cb20-566"><a href="#cb20-566" aria-hidden="true" tabindex="-1"></a>In summary, a HTTP Request is a text message that is divided into 3 different</span>
+<span id="cb20-567"><a href="#cb20-567" aria-hidden="true" tabindex="-1"></a>sections (or parts):</span>
+<span id="cb20-568"><a href="#cb20-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-569"><a href="#cb20-569" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The top-level header indicating the method of the HTTP Request, the URI, and the HTTP version used in the message.</span>
+<span id="cb20-570"><a href="#cb20-570" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A list of HTTP Headers.</span>
+<span id="cb20-571"><a href="#cb20-571" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The body of the HTTP Request.</span>
+<span id="cb20-572"><a href="#cb20-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-573"><a href="#cb20-573" aria-hidden="true" tabindex="-1"></a><span class="fu">### The top-level header</span></span>
+<span id="cb20-574"><a href="#cb20-574" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-575"><a href="#cb20-575" aria-hidden="true" tabindex="-1"></a>The first line of text in a HTTP Request always come with the three most essential</span>
+<span id="cb20-576"><a href="#cb20-576" aria-hidden="true" tabindex="-1"></a>information about the request. These three key attributes of the HTTP Request</span>
+<span id="cb20-577"><a href="#cb20-577" aria-hidden="true" tabindex="-1"></a>are separated by a simple space in this first line of the request.</span>
+<span id="cb20-578"><a href="#cb20-578" aria-hidden="true" tabindex="-1"></a>The first information is the HTTP method that is being</span>
+<span id="cb20-579"><a href="#cb20-579" aria-hidden="true" tabindex="-1"></a>used in the request, second, we have the URI to which this HTTP Request is being sent to,</span>
+<span id="cb20-580"><a href="#cb20-580" aria-hidden="true" tabindex="-1"></a>and third, we have the version of the HTTP protocol that is being used in this HTTP Request.</span>
+<span id="cb20-581"><a href="#cb20-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-582"><a href="#cb20-582" aria-hidden="true" tabindex="-1"></a>In the snippet below, you can find an example of this first line in a HTTP Request.</span>
+<span id="cb20-583"><a href="#cb20-583" aria-hidden="true" tabindex="-1"></a>First, we have the HTTP method of this request (<span class="in">`GET`</span>). Many programmers</span>
+<span id="cb20-584"><a href="#cb20-584" aria-hidden="true" tabindex="-1"></a>refer to the URI component (<span class="in">`/users/list`</span>) as the "API endpoint" to which the HTTP Request</span>
+<span id="cb20-585"><a href="#cb20-585" aria-hidden="true" tabindex="-1"></a>is being sent to. In the context of this specific request, since it's a GET request,</span>
+<span id="cb20-586"><a href="#cb20-586" aria-hidden="true" tabindex="-1"></a>you could also say that the URI component is the path to the resource we want to access,</span>
+<span id="cb20-587"><a href="#cb20-587" aria-hidden="true" tabindex="-1"></a>or, the path to the document (or the file) that we want to retrieve from the server.</span>
+<span id="cb20-588"><a href="#cb20-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-589"><a href="#cb20-589" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-590"><a href="#cb20-590" aria-hidden="true" tabindex="-1"></a><span class="in">GET /users/list HTTP/1.1</span></span>
+<span id="cb20-591"><a href="#cb20-591" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-592"><a href="#cb20-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-593"><a href="#cb20-593" aria-hidden="true" tabindex="-1"></a>Also, notice that this HTTP Request is using the version 1.1 of the HTTP protocol,</span>
+<span id="cb20-594"><a href="#cb20-594" aria-hidden="true" tabindex="-1"></a>which is the most popular version of the protocol used in the web.</span>
+<span id="cb20-595"><a href="#cb20-595" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-596"><a href="#cb20-596" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-597"><a href="#cb20-597" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-598"><a href="#cb20-598" aria-hidden="true" tabindex="-1"></a><span class="fu">### The list of HTTP headers</span></span>
+<span id="cb20-599"><a href="#cb20-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-600"><a href="#cb20-600" aria-hidden="true" tabindex="-1"></a>Most HTTP Requests also include a section of HTTP Headers,</span>
+<span id="cb20-601"><a href="#cb20-601" aria-hidden="true" tabindex="-1"></a>which is just a list of attributes or key-value pairs associated with this</span>
+<span id="cb20-602"><a href="#cb20-602" aria-hidden="true" tabindex="-1"></a>particular request. This section always comes right after the "top-level header" of the request.</span>
+<span id="cb20-603"><a href="#cb20-603" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-604"><a href="#cb20-604" aria-hidden="true" tabindex="-1"></a>For our purpose in this chapter, which is to build a simple HTTP Server,</span>
+<span id="cb20-605"><a href="#cb20-605" aria-hidden="true" tabindex="-1"></a>we are going to ignore this section of the HTTP Request, for simplicity.</span>
+<span id="cb20-606"><a href="#cb20-606" aria-hidden="true" tabindex="-1"></a>But most HTTP servers that exist in the wild parses and use these</span>
+<span id="cb20-607"><a href="#cb20-607" aria-hidden="true" tabindex="-1"></a>HTTP headers to change the way that the server responds to the request</span>
+<span id="cb20-608"><a href="#cb20-608" aria-hidden="true" tabindex="-1"></a>sent by the client.</span>
+<span id="cb20-609"><a href="#cb20-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-610"><a href="#cb20-610" aria-hidden="true" tabindex="-1"></a>For example, many requests we encounter in the real-world comes with</span>
+<span id="cb20-611"><a href="#cb20-611" aria-hidden="true" tabindex="-1"></a>a HTTP header called <span class="in">`Accept`</span>. In this header, we find a list of <span class="co">[</span><span class="ot">MIME types</span><span class="co">](https://en.wikipedia.org/wiki/Media_type)</span><span class="ot">[^mime]</span>.</span>
+<span id="cb20-612"><a href="#cb20-612" aria-hidden="true" tabindex="-1"></a>This list indicates the file formats that the client can read, or parse, or interpret.</span>
+<span id="cb20-613"><a href="#cb20-613" aria-hidden="true" tabindex="-1"></a>In other words, you also interpret this header as the client saying the following phrase</span>
+<span id="cb20-614"><a href="#cb20-614" aria-hidden="true" tabindex="-1"></a>to the server: "Hey! Look, I can read only HTML documents, so please, send me back</span>
+<span id="cb20-615"><a href="#cb20-615" aria-hidden="true" tabindex="-1"></a>a document that is in a HTML format.".</span>
+<span id="cb20-616"><a href="#cb20-616" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-617"><a href="#cb20-617" aria-hidden="true" tabindex="-1"></a><span class="ot">[^mime]: &lt;https://en.wikipedia.org/wiki/Media_type&gt;</span>.</span>
+<span id="cb20-618"><a href="#cb20-618" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-619"><a href="#cb20-619" aria-hidden="true" tabindex="-1"></a>If the HTTP server can read and use this <span class="in">`Accept`</span> header, then, the server can identify</span>
+<span id="cb20-620"><a href="#cb20-620" aria-hidden="true" tabindex="-1"></a>which is the best file format for the document to be sent to the client. Maybe the HTTP server have</span>
+<span id="cb20-621"><a href="#cb20-621" aria-hidden="true" tabindex="-1"></a>the same document in multiple formats, for example, in JSON, in XML, in HTML and in PDF,</span>
+<span id="cb20-622"><a href="#cb20-622" aria-hidden="true" tabindex="-1"></a>but the client can only understand documents in the HTML format. That is the purpose</span>
+<span id="cb20-623"><a href="#cb20-623" aria-hidden="true" tabindex="-1"></a>of this <span class="in">`Accept`</span> header.</span>
+<span id="cb20-624"><a href="#cb20-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-625"><a href="#cb20-625" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-626"><a href="#cb20-626" aria-hidden="true" tabindex="-1"></a><span class="fu">### The body</span></span>
+<span id="cb20-627"><a href="#cb20-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-628"><a href="#cb20-628" aria-hidden="true" tabindex="-1"></a>The body comes after the list of HTTP headers, and it's an optional section of the HTTP Request, meaning that, not</span>
+<span id="cb20-629"><a href="#cb20-629" aria-hidden="true" tabindex="-1"></a>all HTTP Requests will come with a body in them. For example, every HTTP Request that uses the</span>
+<span id="cb20-630"><a href="#cb20-630" aria-hidden="true" tabindex="-1"></a>GET method usually does not come with a body.</span>
+<span id="cb20-631"><a href="#cb20-631" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-632"><a href="#cb20-632" aria-hidden="true" tabindex="-1"></a>Because a GET request is used to request data, instead of sending it to the server.</span>
+<span id="cb20-633"><a href="#cb20-633" aria-hidden="true" tabindex="-1"></a>So, the body section is more related to the POST method, which is a method that involves</span>
+<span id="cb20-634"><a href="#cb20-634" aria-hidden="true" tabindex="-1"></a>sending data to the server, to be processed and stored.</span>
+<span id="cb20-635"><a href="#cb20-635" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-636"><a href="#cb20-636" aria-hidden="true" tabindex="-1"></a>Since we are going to support only the GET method in this project, it means that</span>
+<span id="cb20-637"><a href="#cb20-637" aria-hidden="true" tabindex="-1"></a>we also do not need to care about the body of the request.</span>
+<span id="cb20-638"><a href="#cb20-638" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-639"><a href="#cb20-639" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-640"><a href="#cb20-640" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-641"><a href="#cb20-641" aria-hidden="true" tabindex="-1"></a><span class="fu">### Creating the HTTP Method enum</span></span>
+<span id="cb20-642"><a href="#cb20-642" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-643"><a href="#cb20-643" aria-hidden="true" tabindex="-1"></a>Every HTTP Request comes with a explicit method. The method used in a HTTP Request</span>
+<span id="cb20-644"><a href="#cb20-644" aria-hidden="true" tabindex="-1"></a>is identified by one these words:</span>
+<span id="cb20-645"><a href="#cb20-645" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-646"><a href="#cb20-646" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>GET;</span>
+<span id="cb20-647"><a href="#cb20-647" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>POST;</span>
+<span id="cb20-648"><a href="#cb20-648" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>OPTIONS;</span>
+<span id="cb20-649"><a href="#cb20-649" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>PATCH;</span>
+<span id="cb20-650"><a href="#cb20-650" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>DELETE;</span>
+<span id="cb20-651"><a href="#cb20-651" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>and some other methods.</span>
+<span id="cb20-652"><a href="#cb20-652" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-653"><a href="#cb20-653" aria-hidden="true" tabindex="-1"></a>Each HTTP method is used for a specific type of task. The POST method for example is normally</span>
+<span id="cb20-654"><a href="#cb20-654" aria-hidden="true" tabindex="-1"></a>used to post some data into the destination. In other words, it's used</span>
+<span id="cb20-655"><a href="#cb20-655" aria-hidden="true" tabindex="-1"></a>to send some data to the HTTP server, so that it can be processed and stored by the server.</span>
+<span id="cb20-656"><a href="#cb20-656" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-657"><a href="#cb20-657" aria-hidden="true" tabindex="-1"></a>As another example, the GET method is normally used to get content from the server.</span>
+<span id="cb20-658"><a href="#cb20-658" aria-hidden="true" tabindex="-1"></a>In other words, we use this method whenever we want the server to send some</span>
+<span id="cb20-659"><a href="#cb20-659" aria-hidden="true" tabindex="-1"></a>content back to us. It can be any type of content. It can be a web page,</span>
+<span id="cb20-660"><a href="#cb20-660" aria-hidden="true" tabindex="-1"></a>a document file, or some data in a JSON format.</span>
+<span id="cb20-661"><a href="#cb20-661" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-662"><a href="#cb20-662" aria-hidden="true" tabindex="-1"></a>When a client sends a POST HTTP Request, the HTTP Response sent by the server normally have the sole purpose of</span>
+<span id="cb20-663"><a href="#cb20-663" aria-hidden="true" tabindex="-1"></a>letting the client know if the server processed and stored the data successfully.</span>
+<span id="cb20-664"><a href="#cb20-664" aria-hidden="true" tabindex="-1"></a>In contrast, when the server receives a GET HTTP Request, then, the server sends the content</span>
+<span id="cb20-665"><a href="#cb20-665" aria-hidden="true" tabindex="-1"></a>that the client asked for in the HTTP Response itself. This demonstrates that the method associated</span>
+<span id="cb20-666"><a href="#cb20-666" aria-hidden="true" tabindex="-1"></a>with the HTTP Request changes a lot on the dynamics and the roles that each party</span>
+<span id="cb20-667"><a href="#cb20-667" aria-hidden="true" tabindex="-1"></a>plays in the whole process.</span>
+<span id="cb20-668"><a href="#cb20-668" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-669"><a href="#cb20-669" aria-hidden="true" tabindex="-1"></a>Since the HTTP method of the HTTP Request is identified by this very small and specific</span>
+<span id="cb20-670"><a href="#cb20-670" aria-hidden="true" tabindex="-1"></a>set of words, it would be interesting to create an enum structure to represent a HTTP method.</span>
+<span id="cb20-671"><a href="#cb20-671" aria-hidden="true" tabindex="-1"></a>This way, we can easily check if the HTTP Request we receive from the client is a</span>
+<span id="cb20-672"><a href="#cb20-672" aria-hidden="true" tabindex="-1"></a>HTTP method that we currently support in our small HTTP server project.</span>
+<span id="cb20-673"><a href="#cb20-673" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-674"><a href="#cb20-674" aria-hidden="true" tabindex="-1"></a>The <span class="in">`Method`</span> structure below represents this enumeration.</span>
+<span id="cb20-675"><a href="#cb20-675" aria-hidden="true" tabindex="-1"></a>Notice that, for now, only the GET HTTP method is included in this</span>
+<span id="cb20-676"><a href="#cb20-676" aria-hidden="true" tabindex="-1"></a>enumeration. Because, for the purpose of this chapter, I want to</span>
+<span id="cb20-677"><a href="#cb20-677" aria-hidden="true" tabindex="-1"></a>implement only the GET HTTP method. That is why I am not</span>
+<span id="cb20-678"><a href="#cb20-678" aria-hidden="true" tabindex="-1"></a>including the other HTTP methods in this enumeration.</span>
+<span id="cb20-679"><a href="#cb20-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-682"><a href="#cb20-682" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-683"><a href="#cb20-683" aria-hidden="true" tabindex="-1"></a><span class="in">#| build_type: "lib"</span></span>
+<span id="cb20-684"><a href="#cb20-684" aria-hidden="true" tabindex="-1"></a><span class="in">pub const Method = enum {</span></span>
+<span id="cb20-685"><a href="#cb20-685" aria-hidden="true" tabindex="-1"></a><span class="in">    GET</span></span>
+<span id="cb20-686"><a href="#cb20-686" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb20-687"><a href="#cb20-687" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-688"><a href="#cb20-688" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-689"><a href="#cb20-689" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-690"><a href="#cb20-690" aria-hidden="true" tabindex="-1"></a>Now, I think we should add two methods to this enum structure. One method is <span class="in">`is_supported()`</span>,</span>
+<span id="cb20-691"><a href="#cb20-691" aria-hidden="true" tabindex="-1"></a>which will be a function that returns a boolean value, indicating if the input HTTP method is supported</span>
+<span id="cb20-692"><a href="#cb20-692" aria-hidden="true" tabindex="-1"></a>or not by our HTTP Server. The other is <span class="in">`init()`</span>, which is a constructor function that takes a string as input,</span>
+<span id="cb20-693"><a href="#cb20-693" aria-hidden="true" tabindex="-1"></a>and tries to convert it into a <span class="in">`Method`</span> value.</span>
+<span id="cb20-694"><a href="#cb20-694" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-695"><a href="#cb20-695" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-696"><a href="#cb20-696" aria-hidden="true" tabindex="-1"></a>But in order to build these functions, I will use a functionality from the Zig Standard Library, called</span>
+<span id="cb20-697"><a href="#cb20-697" aria-hidden="true" tabindex="-1"></a><span class="in">`StaticStringMap()`</span>. This function allows us to create a simple map from strings to enum values.</span>
+<span id="cb20-698"><a href="#cb20-698" aria-hidden="true" tabindex="-1"></a>In other words, we can use this map structure to map a string to the respective enum value.</span>
+<span id="cb20-699"><a href="#cb20-699" aria-hidden="true" tabindex="-1"></a>To some extent, this specific structure from the standard library works almost like a "hashtable" structure,</span>
+<span id="cb20-700"><a href="#cb20-700" aria-hidden="true" tabindex="-1"></a>and it's optimized for small sets of words, or, small sets of keys, which is our case here.</span>
+<span id="cb20-701"><a href="#cb20-701" aria-hidden="true" tabindex="-1"></a>We are going to talk more about hashtables in Zig in @sec-maps-hashtables.</span>
+<span id="cb20-702"><a href="#cb20-702" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-703"><a href="#cb20-703" aria-hidden="true" tabindex="-1"></a>To use this "static string map" structure, you have to import it from the <span class="in">`std.static_string_map`</span> module</span>
+<span id="cb20-704"><a href="#cb20-704" aria-hidden="true" tabindex="-1"></a>of the Zig Standard Library. Just to make things shorter and easier to type, I am going to import this</span>
+<span id="cb20-705"><a href="#cb20-705" aria-hidden="true" tabindex="-1"></a>function through a different and shorter name (<span class="in">`Map`</span>).</span>
+<span id="cb20-706"><a href="#cb20-706" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-707"><a href="#cb20-707" aria-hidden="true" tabindex="-1"></a>With <span class="in">`Map()`</span> imported, we can just apply this function over the enum structure</span>
+<span id="cb20-708"><a href="#cb20-708" aria-hidden="true" tabindex="-1"></a>that we are going to use in the resulting map. In our case here, it's the <span class="in">`Method`</span> enum structure</span>
+<span id="cb20-709"><a href="#cb20-709" aria-hidden="true" tabindex="-1"></a>that we declared at the last code example. Then, I call the <span class="in">`initComptime()`</span> method with the</span>
+<span id="cb20-710"><a href="#cb20-710" aria-hidden="true" tabindex="-1"></a>map, i.e., the list of key-value pairs that we are going to use.</span>
+<span id="cb20-711"><a href="#cb20-711" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-712"><a href="#cb20-712" aria-hidden="true" tabindex="-1"></a>You can see in the example below that I wrote this map using multiple anonymous struct literals.</span>
+<span id="cb20-713"><a href="#cb20-713" aria-hidden="true" tabindex="-1"></a>Inside the first (or "top-level") struct literal, we have a list (or a sequence) of struct literals.</span>
+<span id="cb20-714"><a href="#cb20-714" aria-hidden="true" tabindex="-1"></a>Each struct literal in this list represents a separate key-value pair. The first element (or the key)</span>
+<span id="cb20-715"><a href="#cb20-715" aria-hidden="true" tabindex="-1"></a>in each key-value pair should always be a string value. While the second element should</span>
+<span id="cb20-716"><a href="#cb20-716" aria-hidden="true" tabindex="-1"></a>be a value from the enum structure that you have used inside the <span class="in">`Map()`</span> function.</span>
+<span id="cb20-717"><a href="#cb20-717" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-718"><a href="#cb20-718" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-721"><a href="#cb20-721" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-722"><a href="#cb20-722" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-723"><a href="#cb20-723" aria-hidden="true" tabindex="-1"></a><span class="in">const Map = std.static_string_map.StaticStringMap;</span></span>
+<span id="cb20-724"><a href="#cb20-724" aria-hidden="true" tabindex="-1"></a><span class="in">const MethodMap = Map(Method).initComptime(.{</span></span>
+<span id="cb20-725"><a href="#cb20-725" aria-hidden="true" tabindex="-1"></a><span class="in">    .{ "GET", Method.GET },</span></span>
+<span id="cb20-726"><a href="#cb20-726" aria-hidden="true" tabindex="-1"></a><span class="in">});</span></span>
+<span id="cb20-727"><a href="#cb20-727" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-728"><a href="#cb20-728" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-729"><a href="#cb20-729" aria-hidden="true" tabindex="-1"></a>Therefore, the <span class="in">`MethodMap`</span> object is basically a <span class="in">`std::map`</span> object from C++, or,</span>
+<span id="cb20-730"><a href="#cb20-730" aria-hidden="true" tabindex="-1"></a>a <span class="in">`dict`</span> object from Python. You can retrieve (or get) the enum value that</span>
+<span id="cb20-731"><a href="#cb20-731" aria-hidden="true" tabindex="-1"></a>corresponds to a particular key, by using the <span class="in">`get()`</span> method from the map</span>
+<span id="cb20-732"><a href="#cb20-732" aria-hidden="true" tabindex="-1"></a>object. This method returns an optional value, so, the <span class="in">`get()`</span> method might</span>
+<span id="cb20-733"><a href="#cb20-733" aria-hidden="true" tabindex="-1"></a>result in a null value.</span>
+<span id="cb20-734"><a href="#cb20-734" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-735"><a href="#cb20-735" aria-hidden="true" tabindex="-1"></a>We can use this in our advantage to detect if a particular HTTP method is</span>
+<span id="cb20-736"><a href="#cb20-736" aria-hidden="true" tabindex="-1"></a>supported or not in our HTTP server. Because, if the <span class="in">`get()`</span> method returns null,</span>
+<span id="cb20-737"><a href="#cb20-737" aria-hidden="true" tabindex="-1"></a>it means that it did not found the method that we provided inside the <span class="in">`MethodMap`</span> object, and,</span>
+<span id="cb20-738"><a href="#cb20-738" aria-hidden="true" tabindex="-1"></a>as a consequence, this method is not supported by our HTTP server.</span>
+<span id="cb20-739"><a href="#cb20-739" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-740"><a href="#cb20-740" aria-hidden="true" tabindex="-1"></a>The <span class="in">`init()`</span> method below, takes a string value as input, and then, it simply passes this string value</span>
+<span id="cb20-741"><a href="#cb20-741" aria-hidden="true" tabindex="-1"></a>to the <span class="in">`get()`</span> method of our <span class="in">`MethodMap`</span> object. As consequence, we should get the enum value that corresponds</span>
+<span id="cb20-742"><a href="#cb20-742" aria-hidden="true" tabindex="-1"></a>to this input string.</span>
+<span id="cb20-743"><a href="#cb20-743" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-744"><a href="#cb20-744" aria-hidden="true" tabindex="-1"></a>Notice in the example below that, the <span class="in">`init()`</span> method returns either an error</span>
+<span id="cb20-745"><a href="#cb20-745" aria-hidden="true" tabindex="-1"></a>(which might happen if the <span class="in">`?`</span> method returns <span class="in">`unreacheable`</span>, checkout @sec-null-handling for more details)</span>
+<span id="cb20-746"><a href="#cb20-746" aria-hidden="true" tabindex="-1"></a>or a <span class="in">`Method`</span> object as result. Since <span class="in">`GET`</span> is currently the only value in our <span class="in">`Method`</span> enum</span>
+<span id="cb20-747"><a href="#cb20-747" aria-hidden="true" tabindex="-1"></a>structure, it means that, the <span class="in">`init()`</span> method will most likely return the value <span class="in">`Method.GET`</span> as result.</span>
+<span id="cb20-748"><a href="#cb20-748" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-749"><a href="#cb20-749" aria-hidden="true" tabindex="-1"></a>Also notice that, in the <span class="in">`is_supported()`</span> method, we are using the optional value returned</span>
+<span id="cb20-750"><a href="#cb20-750" aria-hidden="true" tabindex="-1"></a>by the <span class="in">`get()`</span> method from our <span class="in">`MethodMap`</span> object. The if statement unwraps the optional value</span>
+<span id="cb20-751"><a href="#cb20-751" aria-hidden="true" tabindex="-1"></a>returned by this method, and returns <span class="in">`true`</span> in case this optional value is a not-null value.</span>
+<span id="cb20-752"><a href="#cb20-752" aria-hidden="true" tabindex="-1"></a>Otherwise, it simply returns <span class="in">`false`</span>.</span>
+<span id="cb20-753"><a href="#cb20-753" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-756"><a href="#cb20-756" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-757"><a href="#cb20-757" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-758"><a href="#cb20-758" aria-hidden="true" tabindex="-1"></a><span class="in">pub const Method = enum {</span></span>
+<span id="cb20-759"><a href="#cb20-759" aria-hidden="true" tabindex="-1"></a><span class="in">    GET,</span></span>
+<span id="cb20-760"><a href="#cb20-760" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn init(text: []const u8) !Method {</span></span>
+<span id="cb20-761"><a href="#cb20-761" aria-hidden="true" tabindex="-1"></a><span class="in">        return MethodMap.get(text).?;</span></span>
+<span id="cb20-762"><a href="#cb20-762" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-763"><a href="#cb20-763" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn is_supported(m: []const u8) bool {</span></span>
+<span id="cb20-764"><a href="#cb20-764" aria-hidden="true" tabindex="-1"></a><span class="in">        const method = MethodMap.get(m);</span></span>
+<span id="cb20-765"><a href="#cb20-765" aria-hidden="true" tabindex="-1"></a><span class="in">        if (method) |_| {</span></span>
+<span id="cb20-766"><a href="#cb20-766" aria-hidden="true" tabindex="-1"></a><span class="in">            return true;</span></span>
+<span id="cb20-767"><a href="#cb20-767" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb20-768"><a href="#cb20-768" aria-hidden="true" tabindex="-1"></a><span class="in">        return false;</span></span>
+<span id="cb20-769"><a href="#cb20-769" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-770"><a href="#cb20-770" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb20-771"><a href="#cb20-771" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-772"><a href="#cb20-772" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-773"><a href="#cb20-773" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-774"><a href="#cb20-774" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-775"><a href="#cb20-775" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-776"><a href="#cb20-776" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-777"><a href="#cb20-777" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-778"><a href="#cb20-778" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-779"><a href="#cb20-779" aria-hidden="true" tabindex="-1"></a><span class="fu">### Writing the parse request function</span></span>
+<span id="cb20-780"><a href="#cb20-780" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-781"><a href="#cb20-781" aria-hidden="true" tabindex="-1"></a>Now that we created the enum that represents our HTTP method,</span>
+<span id="cb20-782"><a href="#cb20-782" aria-hidden="true" tabindex="-1"></a>we should start to write the function responsible for</span>
+<span id="cb20-783"><a href="#cb20-783" aria-hidden="true" tabindex="-1"></a>actually parsing the HTTP Request.</span>
+<span id="cb20-784"><a href="#cb20-784" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-785"><a href="#cb20-785" aria-hidden="true" tabindex="-1"></a>The first thing we can do, is to write a struct to represent the HTTP Request.</span>
+<span id="cb20-786"><a href="#cb20-786" aria-hidden="true" tabindex="-1"></a>Take the <span class="in">`Request`</span> struct below as an example. It contains the three</span>
+<span id="cb20-787"><a href="#cb20-787" aria-hidden="true" tabindex="-1"></a>essential information from the "top-level" header (i.e., the first line)</span>
+<span id="cb20-788"><a href="#cb20-788" aria-hidden="true" tabindex="-1"></a>in the HTTP Request.</span>
+<span id="cb20-789"><a href="#cb20-789" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-792"><a href="#cb20-792" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-793"><a href="#cb20-793" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-794"><a href="#cb20-794" aria-hidden="true" tabindex="-1"></a><span class="in">const Request = struct {</span></span>
+<span id="cb20-795"><a href="#cb20-795" aria-hidden="true" tabindex="-1"></a><span class="in">    method: Method,</span></span>
+<span id="cb20-796"><a href="#cb20-796" aria-hidden="true" tabindex="-1"></a><span class="in">    version: []const u8,</span></span>
+<span id="cb20-797"><a href="#cb20-797" aria-hidden="true" tabindex="-1"></a><span class="in">    uri: []const u8,</span></span>
+<span id="cb20-798"><a href="#cb20-798" aria-hidden="true" tabindex="-1"></a><span class="in">    pub fn init(method: Method,</span></span>
+<span id="cb20-799"><a href="#cb20-799" aria-hidden="true" tabindex="-1"></a><span class="in">                uri: []const u8,</span></span>
+<span id="cb20-800"><a href="#cb20-800" aria-hidden="true" tabindex="-1"></a><span class="in">                version: []const u8) Request {</span></span>
+<span id="cb20-801"><a href="#cb20-801" aria-hidden="true" tabindex="-1"></a><span class="in">        return Request{</span></span>
+<span id="cb20-802"><a href="#cb20-802" aria-hidden="true" tabindex="-1"></a><span class="in">            .method = method,</span></span>
+<span id="cb20-803"><a href="#cb20-803" aria-hidden="true" tabindex="-1"></a><span class="in">            .uri = uri,</span></span>
+<span id="cb20-804"><a href="#cb20-804" aria-hidden="true" tabindex="-1"></a><span class="in">            .version = version,</span></span>
+<span id="cb20-805"><a href="#cb20-805" aria-hidden="true" tabindex="-1"></a><span class="in">        };</span></span>
+<span id="cb20-806"><a href="#cb20-806" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-807"><a href="#cb20-807" aria-hidden="true" tabindex="-1"></a><span class="in">};</span></span>
+<span id="cb20-808"><a href="#cb20-808" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-809"><a href="#cb20-809" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-810"><a href="#cb20-810" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-811"><a href="#cb20-811" aria-hidden="true" tabindex="-1"></a>The <span class="in">`parse_request()`</span> function should receive a string as input. This input string</span>
+<span id="cb20-812"><a href="#cb20-812" aria-hidden="true" tabindex="-1"></a>contains the entire HTTP Request message, and the parsing function should</span>
+<span id="cb20-813"><a href="#cb20-813" aria-hidden="true" tabindex="-1"></a>read and understand the individual parts of this message.</span>
+<span id="cb20-814"><a href="#cb20-814" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-815"><a href="#cb20-815" aria-hidden="true" tabindex="-1"></a>Now, remember that for the purpose of this chapter, we care only about the first</span>
+<span id="cb20-816"><a href="#cb20-816" aria-hidden="true" tabindex="-1"></a>line in this message, which contains the "top-level header", or, the three essential attributes about the HTTP Request,</span>
+<span id="cb20-817"><a href="#cb20-817" aria-hidden="true" tabindex="-1"></a>which are the HTTP method used, the URI and the HTTP version.</span>
+<span id="cb20-818"><a href="#cb20-818" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-819"><a href="#cb20-819" aria-hidden="true" tabindex="-1"></a>Notice that I use the function <span class="in">`indexOfScalar()`</span> in <span class="in">`parse_request()`</span>. This function from the</span>
+<span id="cb20-820"><a href="#cb20-820" aria-hidden="true" tabindex="-1"></a>Zig Standard Library returns the first index where the scalar value that we provide</span>
+<span id="cb20-821"><a href="#cb20-821" aria-hidden="true" tabindex="-1"></a>happens in a string. In this case, I'm looking at the first occurrence of the new line character (<span class="in">`\n`</span>).</span>
+<span id="cb20-822"><a href="#cb20-822" aria-hidden="true" tabindex="-1"></a>Because once again, we care only about the first line in the HTTP Request message.</span>
+<span id="cb20-823"><a href="#cb20-823" aria-hidden="true" tabindex="-1"></a>This is the line where we have the three information that we want to parse</span>
+<span id="cb20-824"><a href="#cb20-824" aria-hidden="true" tabindex="-1"></a>(version of HTTP, the HTTP method and the URI).</span>
+<span id="cb20-825"><a href="#cb20-825" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-826"><a href="#cb20-826" aria-hidden="true" tabindex="-1"></a>Therefore, we are using this <span class="in">`indexOfScalar()`</span> function</span>
+<span id="cb20-827"><a href="#cb20-827" aria-hidden="true" tabindex="-1"></a>to limit our parsing process to the first line in the message.</span>
+<span id="cb20-828"><a href="#cb20-828" aria-hidden="true" tabindex="-1"></a>It's also worth mentioning that, the <span class="in">`indexOfScalar()`</span> function returns an optional value.</span>
+<span id="cb20-829"><a href="#cb20-829" aria-hidden="true" tabindex="-1"></a>That is why I use the <span class="in">`orelse`</span> keyword to provide an alternative value, in case</span>
+<span id="cb20-830"><a href="#cb20-830" aria-hidden="true" tabindex="-1"></a>the value returned by the function is a null value.</span>
+<span id="cb20-831"><a href="#cb20-831" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-832"><a href="#cb20-832" aria-hidden="true" tabindex="-1"></a>Since each of these three attributes are separated by a simple space, we</span>
+<span id="cb20-833"><a href="#cb20-833" aria-hidden="true" tabindex="-1"></a>could use the function <span class="in">`splitScalar()`</span> from the Zig Standard Library to split</span>
+<span id="cb20-834"><a href="#cb20-834" aria-hidden="true" tabindex="-1"></a>the input string into sections by looking for every position that appears</span>
+<span id="cb20-835"><a href="#cb20-835" aria-hidden="true" tabindex="-1"></a>a simple space. In other words, this <span class="in">`splitScalar()`</span> function is equivalent</span>
+<span id="cb20-836"><a href="#cb20-836" aria-hidden="true" tabindex="-1"></a>to the <span class="in">`split()`</span> method in Python, or, the <span class="in">`std::getline()`</span> function from C++,</span>
+<span id="cb20-837"><a href="#cb20-837" aria-hidden="true" tabindex="-1"></a>or the <span class="in">`strtok()`</span> function in C.</span>
+<span id="cb20-838"><a href="#cb20-838" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-839"><a href="#cb20-839" aria-hidden="true" tabindex="-1"></a>When you use this <span class="in">`splitScalar()`</span> function, you get an iterator as the result.</span>
+<span id="cb20-840"><a href="#cb20-840" aria-hidden="true" tabindex="-1"></a>This iterator have a <span class="in">`next()`</span> method that you can use to advance the iterator</span>
+<span id="cb20-841"><a href="#cb20-841" aria-hidden="true" tabindex="-1"></a>to the next position, or, to the next section of the splitted string.</span>
+<span id="cb20-842"><a href="#cb20-842" aria-hidden="true" tabindex="-1"></a>Note that, when you use <span class="in">`next()`</span>, the method not only advances the iterator,</span>
+<span id="cb20-843"><a href="#cb20-843" aria-hidden="true" tabindex="-1"></a>but it also returns a slice to the current section of the splitted</span>
+<span id="cb20-844"><a href="#cb20-844" aria-hidden="true" tabindex="-1"></a>string as result.</span>
+<span id="cb20-845"><a href="#cb20-845" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-846"><a href="#cb20-846" aria-hidden="true" tabindex="-1"></a>Now, if you want to get a slice to the current section of the splitted</span>
+<span id="cb20-847"><a href="#cb20-847" aria-hidden="true" tabindex="-1"></a>string, but not advance the iterator to the next position, you can use</span>
+<span id="cb20-848"><a href="#cb20-848" aria-hidden="true" tabindex="-1"></a>the <span class="in">`peek()`</span> method. Both <span class="in">`next()`</span> and <span class="in">`peek()`</span> methods return an optional value, that is</span>
+<span id="cb20-849"><a href="#cb20-849" aria-hidden="true" tabindex="-1"></a>why I use the <span class="in">`?`</span> method to unwrap these optional values.</span>
+<span id="cb20-850"><a href="#cb20-850" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-851"><a href="#cb20-851" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-854"><a href="#cb20-854" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-855"><a href="#cb20-855" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-856"><a href="#cb20-856" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn parse_request(text: []u8) Request {</span></span>
+<span id="cb20-857"><a href="#cb20-857" aria-hidden="true" tabindex="-1"></a><span class="in">    const line_index = std.mem.indexOfScalar(</span></span>
+<span id="cb20-858"><a href="#cb20-858" aria-hidden="true" tabindex="-1"></a><span class="in">        u8, text, '\n'</span></span>
+<span id="cb20-859"><a href="#cb20-859" aria-hidden="true" tabindex="-1"></a><span class="in">    ) orelse text.len;</span></span>
+<span id="cb20-860"><a href="#cb20-860" aria-hidden="true" tabindex="-1"></a><span class="in">    var iterator = std.mem.splitScalar(</span></span>
+<span id="cb20-861"><a href="#cb20-861" aria-hidden="true" tabindex="-1"></a><span class="in">        u8, text[0..line_index], ' '</span></span>
+<span id="cb20-862"><a href="#cb20-862" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-863"><a href="#cb20-863" aria-hidden="true" tabindex="-1"></a><span class="in">    const method = try Method.init(iterator.next().?);</span></span>
+<span id="cb20-864"><a href="#cb20-864" aria-hidden="true" tabindex="-1"></a><span class="in">    const uri = iterator.next().?;</span></span>
+<span id="cb20-865"><a href="#cb20-865" aria-hidden="true" tabindex="-1"></a><span class="in">    const version = iterator.next().?;</span></span>
+<span id="cb20-866"><a href="#cb20-866" aria-hidden="true" tabindex="-1"></a><span class="in">    const request = Request.init(method, uri, version);</span></span>
+<span id="cb20-867"><a href="#cb20-867" aria-hidden="true" tabindex="-1"></a><span class="in">    return request;</span></span>
+<span id="cb20-868"><a href="#cb20-868" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-869"><a href="#cb20-869" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-870"><a href="#cb20-870" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-871"><a href="#cb20-871" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-872"><a href="#cb20-872" aria-hidden="true" tabindex="-1"></a>As I described in @sec-zig-strings, strings in Zig are simply arrays of bytes in the language.</span>
+<span id="cb20-873"><a href="#cb20-873" aria-hidden="true" tabindex="-1"></a>So, you will find lots of excellent utility functions to work directly with strings</span>
+<span id="cb20-874"><a href="#cb20-874" aria-hidden="true" tabindex="-1"></a>inside this <span class="in">`mem`</span> module from the Zig Standard Library.</span>
+<span id="cb20-875"><a href="#cb20-875" aria-hidden="true" tabindex="-1"></a>We have described some of these useful utility functions already</span>
+<span id="cb20-876"><a href="#cb20-876" aria-hidden="true" tabindex="-1"></a>in @sec-strings-useful-funs.</span>
+<span id="cb20-877"><a href="#cb20-877" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-878"><a href="#cb20-878" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-879"><a href="#cb20-879" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-880"><a href="#cb20-880" aria-hidden="true" tabindex="-1"></a><span class="fu">### Using the parse request function</span></span>
+<span id="cb20-881"><a href="#cb20-881" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-882"><a href="#cb20-882" aria-hidden="true" tabindex="-1"></a>Now that we wrote the function responsible for parsing the HTTP Request,</span>
+<span id="cb20-883"><a href="#cb20-883" aria-hidden="true" tabindex="-1"></a>we can add the function call to <span class="in">`parse_request()`</span> in</span>
+<span id="cb20-884"><a href="#cb20-884" aria-hidden="true" tabindex="-1"></a>the <span class="in">`main()`</span> function of our program.</span>
+<span id="cb20-885"><a href="#cb20-885" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-886"><a href="#cb20-886" aria-hidden="true" tabindex="-1"></a>After that, is a good idea to test once again the state of our program.</span>
+<span id="cb20-887"><a href="#cb20-887" aria-hidden="true" tabindex="-1"></a>I execute this program again with the <span class="in">`run`</span> command from the <span class="in">`zig`</span> compiler,</span>
+<span id="cb20-888"><a href="#cb20-888" aria-hidden="true" tabindex="-1"></a>then, I use my web browser to connect once again to the server through the URL <span class="in">`localhost:3490`</span>, and finally,</span>
+<span id="cb20-889"><a href="#cb20-889" aria-hidden="true" tabindex="-1"></a>the end result of our <span class="in">`Request`</span> object is printed to the console.</span>
+<span id="cb20-890"><a href="#cb20-890" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-891"><a href="#cb20-891" aria-hidden="true" tabindex="-1"></a>A quick observation, since I have used the <span class="in">`any`</span> format specifier in the</span>
+<span id="cb20-892"><a href="#cb20-892" aria-hidden="true" tabindex="-1"></a>print statement, the data members <span class="in">`version`</span> and <span class="in">`uri`</span> of the <span class="in">`Request`</span></span>
+<span id="cb20-893"><a href="#cb20-893" aria-hidden="true" tabindex="-1"></a>struct were printed as raw integer values. String data being printed</span>
+<span id="cb20-894"><a href="#cb20-894" aria-hidden="true" tabindex="-1"></a>as integer values is common in Zig, and remember, these integer values are just the decimal representation of</span>
+<span id="cb20-895"><a href="#cb20-895" aria-hidden="true" tabindex="-1"></a>the bytes that form the string in question.</span>
+<span id="cb20-896"><a href="#cb20-896" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-897"><a href="#cb20-897" aria-hidden="true" tabindex="-1"></a>In the result below, the sequence of decimal values 72, 84, 84, 80, 47, 49, 46, 49, and 13,</span>
+<span id="cb20-898"><a href="#cb20-898" aria-hidden="true" tabindex="-1"></a>are the bytes that form the text "HTTP/1.1". And the integer 47, is the decimal value of</span>
+<span id="cb20-899"><a href="#cb20-899" aria-hidden="true" tabindex="-1"></a>the character <span class="in">`/`</span>, which represents our URI in this request.</span>
+<span id="cb20-900"><a href="#cb20-900" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-903"><a href="#cb20-903" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-904"><a href="#cb20-904" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-905"><a href="#cb20-905" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-906"><a href="#cb20-906" aria-hidden="true" tabindex="-1"></a><span class="in">const SocketConf = @import("config.zig");</span></span>
+<span id="cb20-907"><a href="#cb20-907" aria-hidden="true" tabindex="-1"></a><span class="in">const Request = @import("request.zig");</span></span>
+<span id="cb20-908"><a href="#cb20-908" aria-hidden="true" tabindex="-1"></a><span class="in">const stdout = std.io.getStdOut().writer();</span></span>
+<span id="cb20-909"><a href="#cb20-909" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-910"><a href="#cb20-910" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb20-911"><a href="#cb20-911" aria-hidden="true" tabindex="-1"></a><span class="in">    const socket = try SocketConf.Socket.init();</span></span>
+<span id="cb20-912"><a href="#cb20-912" aria-hidden="true" tabindex="-1"></a><span class="in">    var server = try socket._address.listen(.{});</span></span>
+<span id="cb20-913"><a href="#cb20-913" aria-hidden="true" tabindex="-1"></a><span class="in">    const connection = try server.accept();</span></span>
+<span id="cb20-914"><a href="#cb20-914" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-915"><a href="#cb20-915" aria-hidden="true" tabindex="-1"></a><span class="in">    var buffer: [1000]u8 = undefined;</span></span>
+<span id="cb20-916"><a href="#cb20-916" aria-hidden="true" tabindex="-1"></a><span class="in">    for (0..buffer.len) |i| {</span></span>
+<span id="cb20-917"><a href="#cb20-917" aria-hidden="true" tabindex="-1"></a><span class="in">        buffer[i] = 0;</span></span>
+<span id="cb20-918"><a href="#cb20-918" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-919"><a href="#cb20-919" aria-hidden="true" tabindex="-1"></a><span class="in">    try Request.read_request(</span></span>
+<span id="cb20-920"><a href="#cb20-920" aria-hidden="true" tabindex="-1"></a><span class="in">        connection, buffer[0..buffer.len]</span></span>
+<span id="cb20-921"><a href="#cb20-921" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-922"><a href="#cb20-922" aria-hidden="true" tabindex="-1"></a><span class="in">    const request = Request.parse_request(</span></span>
+<span id="cb20-923"><a href="#cb20-923" aria-hidden="true" tabindex="-1"></a><span class="in">        buffer[0..buffer.len]</span></span>
+<span id="cb20-924"><a href="#cb20-924" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-925"><a href="#cb20-925" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("{any}\n", .{request});</span></span>
+<span id="cb20-926"><a href="#cb20-926" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-927"><a href="#cb20-927" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-928"><a href="#cb20-928" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-929"><a href="#cb20-929" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-930"><a href="#cb20-930" aria-hidden="true" tabindex="-1"></a><span class="in">request.Request{</span></span>
+<span id="cb20-931"><a href="#cb20-931" aria-hidden="true" tabindex="-1"></a><span class="in">    .method = request.Method.GET,</span></span>
+<span id="cb20-932"><a href="#cb20-932" aria-hidden="true" tabindex="-1"></a><span class="in">    .version = {72, 84, 84, 80, 47, 49, 46, 49, 13},</span></span>
+<span id="cb20-933"><a href="#cb20-933" aria-hidden="true" tabindex="-1"></a><span class="in">    .uri = {47}</span></span>
+<span id="cb20-934"><a href="#cb20-934" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-935"><a href="#cb20-935" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-936"><a href="#cb20-936" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-937"><a href="#cb20-937" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-938"><a href="#cb20-938" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-939"><a href="#cb20-939" aria-hidden="true" tabindex="-1"></a><span class="fu">### Sending the HTTP Response to the client</span></span>
+<span id="cb20-940"><a href="#cb20-940" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-941"><a href="#cb20-941" aria-hidden="true" tabindex="-1"></a>In this last part, we are going to write the logic responsible for</span>
+<span id="cb20-942"><a href="#cb20-942" aria-hidden="true" tabindex="-1"></a>sending the HTTP Response from the server to the client. To make things</span>
+<span id="cb20-943"><a href="#cb20-943" aria-hidden="true" tabindex="-1"></a>simple, the server in this project will send just a simple web page</span>
+<span id="cb20-944"><a href="#cb20-944" aria-hidden="true" tabindex="-1"></a>containing the text "Hello world".</span>
+<span id="cb20-945"><a href="#cb20-945" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-946"><a href="#cb20-946" aria-hidden="true" tabindex="-1"></a>First, I create a new Zig module in the project, named <span class="in">`response.zig`</span>.</span>
+<span id="cb20-947"><a href="#cb20-947" aria-hidden="true" tabindex="-1"></a>In this module, I will declare just two functions. Each function</span>
+<span id="cb20-948"><a href="#cb20-948" aria-hidden="true" tabindex="-1"></a>corresponds to a specific status code in the HTTP Response.</span>
+<span id="cb20-949"><a href="#cb20-949" aria-hidden="true" tabindex="-1"></a>The <span class="in">`send_200()`</span> function will send a HTTP Response with status code 200</span>
+<span id="cb20-950"><a href="#cb20-950" aria-hidden="true" tabindex="-1"></a>(which means "Success") to the client. While the <span class="in">`send_404()`</span> function sends a response</span>
+<span id="cb20-951"><a href="#cb20-951" aria-hidden="true" tabindex="-1"></a>with status code 404 (which means "Not found").</span>
+<span id="cb20-952"><a href="#cb20-952" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-953"><a href="#cb20-953" aria-hidden="true" tabindex="-1"></a>This is definitely not the most ergonomic and adequate way of handling the</span>
+<span id="cb20-954"><a href="#cb20-954" aria-hidden="true" tabindex="-1"></a>HTTP Response, but it works for our case here. We are just building toy projects</span>
+<span id="cb20-955"><a href="#cb20-955" aria-hidden="true" tabindex="-1"></a>in this book after all, therefore, the source code that we write do not need to be perfect.</span>
+<span id="cb20-956"><a href="#cb20-956" aria-hidden="true" tabindex="-1"></a>It just needs to work!</span>
+<span id="cb20-957"><a href="#cb20-957" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-958"><a href="#cb20-958" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-961"><a href="#cb20-961" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-962"><a href="#cb20-962" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-963"><a href="#cb20-963" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-964"><a href="#cb20-964" aria-hidden="true" tabindex="-1"></a><span class="in">const Connection = std.net.Server.Connection;</span></span>
+<span id="cb20-965"><a href="#cb20-965" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn send_200(conn: Connection) !void {</span></span>
+<span id="cb20-966"><a href="#cb20-966" aria-hidden="true" tabindex="-1"></a><span class="in">    const message = (</span></span>
+<span id="cb20-967"><a href="#cb20-967" aria-hidden="true" tabindex="-1"></a><span class="in">        "HTTP/1.1 200 OK\nContent-Length: 48"</span></span>
+<span id="cb20-968"><a href="#cb20-968" aria-hidden="true" tabindex="-1"></a><span class="in">        ++ "\nContent-Type: text/html\n"</span></span>
+<span id="cb20-969"><a href="#cb20-969" aria-hidden="true" tabindex="-1"></a><span class="in">        ++ "Connection: Closed\n\n&lt;html&gt;&lt;body&gt;"</span></span>
+<span id="cb20-970"><a href="#cb20-970" aria-hidden="true" tabindex="-1"></a><span class="in">        ++ "&lt;h1&gt;Hello, World!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span></span>
+<span id="cb20-971"><a href="#cb20-971" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-972"><a href="#cb20-972" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = try conn.stream.write(message);</span></span>
+<span id="cb20-973"><a href="#cb20-973" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-974"><a href="#cb20-974" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-975"><a href="#cb20-975" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn send_404(conn: Connection) !void {</span></span>
+<span id="cb20-976"><a href="#cb20-976" aria-hidden="true" tabindex="-1"></a><span class="in">    const message = (</span></span>
+<span id="cb20-977"><a href="#cb20-977" aria-hidden="true" tabindex="-1"></a><span class="in">        "HTTP/1.1 404 Not Found\nContent-Length: 50"</span></span>
+<span id="cb20-978"><a href="#cb20-978" aria-hidden="true" tabindex="-1"></a><span class="in">        ++ "\nContent-Type: text/html\n"</span></span>
+<span id="cb20-979"><a href="#cb20-979" aria-hidden="true" tabindex="-1"></a><span class="in">        ++ "Connection: Closed\n\n&lt;html&gt;&lt;body&gt;"</span></span>
+<span id="cb20-980"><a href="#cb20-980" aria-hidden="true" tabindex="-1"></a><span class="in">        ++ "&lt;h1&gt;File not found!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span></span>
+<span id="cb20-981"><a href="#cb20-981" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-982"><a href="#cb20-982" aria-hidden="true" tabindex="-1"></a><span class="in">    _ = try conn.stream.write(message);</span></span>
+<span id="cb20-983"><a href="#cb20-983" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-984"><a href="#cb20-984" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-985"><a href="#cb20-985" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-986"><a href="#cb20-986" aria-hidden="true" tabindex="-1"></a>Notice that both functions receives the connection object as input, and</span>
+<span id="cb20-987"><a href="#cb20-987" aria-hidden="true" tabindex="-1"></a>use the <span class="in">`write()`</span> method to write the HTTP Response message directly</span>
+<span id="cb20-988"><a href="#cb20-988" aria-hidden="true" tabindex="-1"></a>into this communication channel. As result, the party in the other</span>
+<span id="cb20-989"><a href="#cb20-989" aria-hidden="true" tabindex="-1"></a>side of the connection (i.e., the client), will receive such message.</span>
+<span id="cb20-990"><a href="#cb20-990" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-991"><a href="#cb20-991" aria-hidden="true" tabindex="-1"></a>Most real-world HTTP Servers will have a single function (or a single struct) to effectively handle</span>
+<span id="cb20-992"><a href="#cb20-992" aria-hidden="true" tabindex="-1"></a>the response. It gets the HTTP Request already parsed as input, and then, it tries to build</span>
+<span id="cb20-993"><a href="#cb20-993" aria-hidden="true" tabindex="-1"></a>the HTTP Response bit by bit, before the function sends it over the connection.</span>
+<span id="cb20-994"><a href="#cb20-994" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-995"><a href="#cb20-995" aria-hidden="true" tabindex="-1"></a>We would also have a specialized struct to represent a HTTP Response, and</span>
+<span id="cb20-996"><a href="#cb20-996" aria-hidden="true" tabindex="-1"></a>a lot of methods that would be used to build each part or component of the response object.</span>
+<span id="cb20-997"><a href="#cb20-997" aria-hidden="true" tabindex="-1"></a>Take the <span class="in">`Response`</span> struct created by the Javascript runtime Bun as an example.</span>
+<span id="cb20-998"><a href="#cb20-998" aria-hidden="true" tabindex="-1"></a>You can find this struct in the <span class="co">[</span><span class="ot">`response.zig` module</span><span class="co">](https://github.com/oven-sh/bun/blob/main/src/bun.js/webcore/response.zig)</span><span class="ot">[^bun-resp]</span></span>
+<span id="cb20-999"><a href="#cb20-999" aria-hidden="true" tabindex="-1"></a>in their GitHub project.</span>
+<span id="cb20-1000"><a href="#cb20-1000" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1001"><a href="#cb20-1001" aria-hidden="true" tabindex="-1"></a><span class="ot">[^bun-resp]: &lt;https://github.com/oven-sh/bun/blob/main/src/bun.js/webcore/response.zig&gt;</span>.</span>
+<span id="cb20-1002"><a href="#cb20-1002" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1003"><a href="#cb20-1003" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1004"><a href="#cb20-1004" aria-hidden="true" tabindex="-1"></a><span class="fu">## The end result</span></span>
+<span id="cb20-1005"><a href="#cb20-1005" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1006"><a href="#cb20-1006" aria-hidden="true" tabindex="-1"></a>We can now, update once again our <span class="in">`main()`</span> function to incorporate our new</span>
+<span id="cb20-1007"><a href="#cb20-1007" aria-hidden="true" tabindex="-1"></a>functions from the <span class="in">`response.zig`</span> module. First, I need to import this module</span>
+<span id="cb20-1008"><a href="#cb20-1008" aria-hidden="true" tabindex="-1"></a>into our <span class="in">`main.zig`</span> module, then, I add the function calls to <span class="in">`send_200()`</span></span>
+<span id="cb20-1009"><a href="#cb20-1009" aria-hidden="true" tabindex="-1"></a>and <span class="in">`send_404()`</span>.</span>
+<span id="cb20-1010"><a href="#cb20-1010" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1011"><a href="#cb20-1011" aria-hidden="true" tabindex="-1"></a>Notice that I'm using if statements to decide which "response function" to call,</span>
+<span id="cb20-1012"><a href="#cb20-1012" aria-hidden="true" tabindex="-1"></a>based especially on the URI present in the HTTP Request. If the user asked for</span>
+<span id="cb20-1013"><a href="#cb20-1013" aria-hidden="true" tabindex="-1"></a>a content (or a document) that is not present in our server, we should respond</span>
+<span id="cb20-1014"><a href="#cb20-1014" aria-hidden="true" tabindex="-1"></a>with a 404 status code. But since we have just a simple HTTP server, with no</span>
+<span id="cb20-1015"><a href="#cb20-1015" aria-hidden="true" tabindex="-1"></a>real documents to send, we can just check if the URI is the root path (<span class="in">`/`</span>)</span>
+<span id="cb20-1016"><a href="#cb20-1016" aria-hidden="true" tabindex="-1"></a>or not to decide which function to call.</span>
+<span id="cb20-1017"><a href="#cb20-1017" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1018"><a href="#cb20-1018" aria-hidden="true" tabindex="-1"></a>Also, notice that I'm using the function <span class="in">`std.mem.eql()`</span> from the Zig Standard Library</span>
+<span id="cb20-1019"><a href="#cb20-1019" aria-hidden="true" tabindex="-1"></a>to check if the string from <span class="in">`uri`</span> is equal or not the string <span class="in">`"/"`</span>. We have</span>
+<span id="cb20-1020"><a href="#cb20-1020" aria-hidden="true" tabindex="-1"></a>described this function already in @sec-strings-useful-funs, so, comeback to</span>
+<span id="cb20-1021"><a href="#cb20-1021" aria-hidden="true" tabindex="-1"></a>that section if you are not familiar yet with this function.</span>
+<span id="cb20-1022"><a href="#cb20-1022" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1023"><a href="#cb20-1023" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1026"><a href="#cb20-1026" aria-hidden="true" tabindex="-1"></a><span class="in">```{zig}</span></span>
+<span id="cb20-1027"><a href="#cb20-1027" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: false</span></span>
+<span id="cb20-1028"><a href="#cb20-1028" aria-hidden="true" tabindex="-1"></a><span class="in">const std = @import("std");</span></span>
+<span id="cb20-1029"><a href="#cb20-1029" aria-hidden="true" tabindex="-1"></a><span class="in">const SocketConf = @import("config.zig");</span></span>
+<span id="cb20-1030"><a href="#cb20-1030" aria-hidden="true" tabindex="-1"></a><span class="in">const Request = @import("request.zig");</span></span>
+<span id="cb20-1031"><a href="#cb20-1031" aria-hidden="true" tabindex="-1"></a><span class="in">const Response = @import("response.zig");</span></span>
+<span id="cb20-1032"><a href="#cb20-1032" aria-hidden="true" tabindex="-1"></a><span class="in">const Method = Request.Method;</span></span>
+<span id="cb20-1033"><a href="#cb20-1033" aria-hidden="true" tabindex="-1"></a><span class="in">const stdout = std.io.getStdOut().writer();</span></span>
+<span id="cb20-1034"><a href="#cb20-1034" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1035"><a href="#cb20-1035" aria-hidden="true" tabindex="-1"></a><span class="in">pub fn main() !void {</span></span>
+<span id="cb20-1036"><a href="#cb20-1036" aria-hidden="true" tabindex="-1"></a><span class="in">    const socket = try SocketConf.Socket.init();</span></span>
+<span id="cb20-1037"><a href="#cb20-1037" aria-hidden="true" tabindex="-1"></a><span class="in">    try stdout.print("Server Addr: {any}\n", .{socket._address});</span></span>
+<span id="cb20-1038"><a href="#cb20-1038" aria-hidden="true" tabindex="-1"></a><span class="in">    var server = try socket._address.listen(.{});</span></span>
+<span id="cb20-1039"><a href="#cb20-1039" aria-hidden="true" tabindex="-1"></a><span class="in">    const connection = try server.accept();</span></span>
+<span id="cb20-1040"><a href="#cb20-1040" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1041"><a href="#cb20-1041" aria-hidden="true" tabindex="-1"></a><span class="in">    var buffer: [1000]u8 = undefined;</span></span>
+<span id="cb20-1042"><a href="#cb20-1042" aria-hidden="true" tabindex="-1"></a><span class="in">    for (0..buffer.len) |i| {</span></span>
+<span id="cb20-1043"><a href="#cb20-1043" aria-hidden="true" tabindex="-1"></a><span class="in">        buffer[i] = 0;</span></span>
+<span id="cb20-1044"><a href="#cb20-1044" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-1045"><a href="#cb20-1045" aria-hidden="true" tabindex="-1"></a><span class="in">    try Request.read_request(connection, buffer[0..buffer.len]);</span></span>
+<span id="cb20-1046"><a href="#cb20-1046" aria-hidden="true" tabindex="-1"></a><span class="in">    const request = Request.parse_request(</span></span>
+<span id="cb20-1047"><a href="#cb20-1047" aria-hidden="true" tabindex="-1"></a><span class="in">        buffer[0..buffer.len]</span></span>
+<span id="cb20-1048"><a href="#cb20-1048" aria-hidden="true" tabindex="-1"></a><span class="in">    );</span></span>
+<span id="cb20-1049"><a href="#cb20-1049" aria-hidden="true" tabindex="-1"></a><span class="in">    if (request.method == Method.GET) {</span></span>
+<span id="cb20-1050"><a href="#cb20-1050" aria-hidden="true" tabindex="-1"></a><span class="in">        if (std.mem.eql(u8, request.uri, "/")) {</span></span>
+<span id="cb20-1051"><a href="#cb20-1051" aria-hidden="true" tabindex="-1"></a><span class="in">            try Response.send_200(connection);</span></span>
+<span id="cb20-1052"><a href="#cb20-1052" aria-hidden="true" tabindex="-1"></a><span class="in">        } else {</span></span>
+<span id="cb20-1053"><a href="#cb20-1053" aria-hidden="true" tabindex="-1"></a><span class="in">            try Response.send_404(connection);</span></span>
+<span id="cb20-1054"><a href="#cb20-1054" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb20-1055"><a href="#cb20-1055" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb20-1056"><a href="#cb20-1056" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb20-1057"><a href="#cb20-1057" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-1058"><a href="#cb20-1058" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1059"><a href="#cb20-1059" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1060"><a href="#cb20-1060" aria-hidden="true" tabindex="-1"></a>Now that we adjusted our <span class="in">`main()`</span> function, I can now execute our program, and</span>
+<span id="cb20-1061"><a href="#cb20-1061" aria-hidden="true" tabindex="-1"></a>see the effects of these last changes. First, I execute the program once again, with the</span>
+<span id="cb20-1062"><a href="#cb20-1062" aria-hidden="true" tabindex="-1"></a><span class="in">`run`</span> command of the <span class="in">`zig`</span> compiler. The program will hang, waiting for a client to connect.</span>
+<span id="cb20-1063"><a href="#cb20-1063" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1064"><a href="#cb20-1064" aria-hidden="true" tabindex="-1"></a>Then, I open my web browser, and try to connect to the server again, using the URL <span class="in">`localhost:3490`</span>.</span>
+<span id="cb20-1065"><a href="#cb20-1065" aria-hidden="true" tabindex="-1"></a>This time, instead of getting some sort of an error message from the browser, you will get the message</span>
+<span id="cb20-1066"><a href="#cb20-1066" aria-hidden="true" tabindex="-1"></a>"Hello World" printed into your web browser. Because this time, the server sended the HTTP Response</span>
+<span id="cb20-1067"><a href="#cb20-1067" aria-hidden="true" tabindex="-1"></a>successfully to the web browser, as demonstrated by @fig-print-zigrun3.</span>
+<span id="cb20-1068"><a href="#cb20-1068" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1069"><a href="#cb20-1069" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-1070"><a href="#cb20-1070" aria-hidden="true" tabindex="-1"></a><span class="al">![The Hello World message sent in the HTTP Response](./../Figures/print-zigrun3.png)</span>{#fig-print-zigrun3}</span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 

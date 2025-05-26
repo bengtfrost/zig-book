@@ -1,5 +1,6 @@
 {
   "nodes": {
+<<<<<<< HEAD
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -16,6 +17,8 @@
         "type": "github"
       }
     },
+=======
+>>>>>>> origin
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -34,6 +37,7 @@
         "type": "github"
       }
     },
+<<<<<<< HEAD
     "flake-utils_2": {
       "inputs": {
         "systems": "systems_2"
@@ -52,6 +56,8 @@
         "type": "github"
       }
     },
+=======
+>>>>>>> origin
     "nixpkgs": {
       "locked": {
         "lastModified": 1735563628,
@@ -68,6 +74,7 @@
         "type": "github"
       }
     },
+<<<<<<< HEAD
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1708161998,
@@ -89,6 +96,12 @@
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "zig": "zig"
+=======
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs"
+>>>>>>> origin
       }
     },
     "systems": {
@@ -105,6 +118,7 @@
         "repo": "default",
         "type": "github"
       }
+<<<<<<< HEAD
     },
     "systems_2": {
       "locked": {
@@ -140,6 +154,8 @@
         "repo": "zig-overlay",
         "type": "github"
       }
+=======
+>>>>>>> origin
     }
   },
   "root": "root",

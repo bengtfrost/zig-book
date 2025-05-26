@@ -46,11 +46,17 @@ These are good ways to support directly the author of the project, which helps t
 more contents like this, and it makes possible for the author to keep writing helpful tools and
 materials for the community.
 
+<<<<<<< HEAD
 
 
 ### PayPal
 
 [![PayPal](https://img.shields.io/badge/PayPal-003087?logo=paypal&logoColor=fff)](https://www.paypal.com/donate/?business=D58J5LFEERC3N&no_recurring=0&item_name=These+donations+make+it+possible+for+me+to+continue+writing+new+and+useful+content+for+our+community%F0%9F%98%89+Thank+you%21%E2%9D%A4%EF%B8%8F%F0%9F%A5%B3&currency_code=USD)
+=======
+### PayPal
+
+[![PayPal](https://img.shields.io/badge/PayPal-003087?style=flat&logo=paypal&logoColor=fff)](https://www.paypal.com/donate/?business=D58J5LFEERC3N&no_recurring=0&item_name=These+donations+make+it+possible+for+me+to+continue+writing+new+and+useful+content+for+our+community%F0%9F%98%89+Thank+you%21%E2%9D%A4%EF%B8%8F%F0%9F%A5%B3&currency_code=USD)
+>>>>>>> origin
 
 
 ### Revolut
@@ -99,6 +105,7 @@ As you work through the book, you will learn:
 
 ## How to build the book
 
+<<<<<<< HEAD
 First of all, you need to care about the dependencies of the project. This book is built using the following pieces of software:
 
 1. The [Zig compiler](https://ziglang.org/download/), which is responsible for compiling most of the code examples exposed in the book.
@@ -118,6 +125,19 @@ If you decide to install the dependencies of the book manually, then, follow the
 and, after you installed the three pieces (Zig, R and Quarto), follow the next instructions specified here.
 
 #### Install R packages
+=======
+This book's creation relies on a powerful stack of open-source tools. Understanding these helps in appreciating the build process:
+
+1.  **The <a href="https://ziglang.org/download/" target="_blank"><img src="https://img.shields.io/badge/Zig-%23F7A41D.svg?style=social&logo=zig&logoColor=black" alt="Zig" valign="middle"> Zig compiler</a>**: The star of the show, responsible for compiling most of the code examples exposed in the book.
+2.  **The <a href="https://cran.r-project.org/" target="_blank"><img src="https://img.shields.io/badge/R-%23276DC3.svg?style=social&logo=r&logoColor=white" alt="R" valign="middle"> R programming language</a>**: Provides useful tools (via <a href="https://knitr.rstudio.com/" target="_blank"><img src="https://img.shields.io/badge/Knitr-%23007ACC.svg?style=social&logoColor=white&labelColor=555555&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTE4IDZjLTMuMzEgMC02IDIuNjktNiA2czIuNjkgNiA2IDZoMy4yOGwtNC4yNC01LjA5TDIxLjM0IDZIMTh6TTMgMTJoMy4yOEwzIDE3LjA5VjE0Yy4wMS0xLjA5LS4zMy0yLjE0LS45OS0zSDN2MW0zLTZjMy4zMSAwIDYgMi42OSA2IDZzLTIuNjkgNi02IDZIMi43Mkw2LjU3IDZjMCAwIDAtMyAwLTN6Ii8+PC9zdmc+" alt="Knitr" valign="middle"> Knitr</a>) to collect code examples, send them to the Zig compiler, and retrieve results.
+3.  **The <a href="https://quarto.org/docs/get-started/" target="_blank"><img src="https://img.shields.io/badge/Quarto-%234D5891.svg?style=social&logo=quarto&logoColor=white" alt="Quarto" valign="middle"> Quarto publishing system</a>**: Orchestrates the book compilation, leveraging <a href="https://pandoc.org/" target="_blank"><img src="https://img.shields.io/badge/Pandoc-%2323B5AF.svg?style=social&logoColor=white&labelColor=555555&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTEzLjEgNC42bDQuNSA5LjJoLTNsLTEuNS0zLjFoLTNsLTEuNSA0LjFoLTNMMTAuMSA0LjZoM1ptLTYuMyAwaDMuM2wzLjYgNy41aC0zLjNsLTMuNi03LjV6TTkgMTUuNGgxMy4ybC0yLjEgNC4yaC05bC0yLjEtNC4yWiIvPjwvc3ZnPg==" alt="Pandoc" valign="middle"> Pandoc</a> under the hood for creating internal links, references, chapter structure, and the final HTML content.
+4.  Optionally, the development environment can be managed using <a href="https://nixos.org/nix/" target="_blank"><img src="https://img.shields.io/badge/Nix-%235277C3.svg?style=social&logo=nixos&logoColor=white" alt="Nix" valign="middle"> Nix</a> for reproducible builds (if a `flake.nix` is provided).
+
+So, you first need to install these three primary pieces of software (Zig, R, Quarto) in your current machine.
+You can find instructions on how to install these pieces of software by clicking in the above hyperlinks.
+
+### Install R packages
+>>>>>>> origin
 
 After you installed the three pieces of software listed above, you should run the `dependencies.R` R script, to install
 some R packages that are used across the book. Just run the command below in your terminal, and you should be fine.
@@ -129,7 +149,11 @@ In Windows, this usually doesn't take that long because pre-built binaries are u
 Rscript dependencies.R
 ```
 
+<<<<<<< HEAD
 #### Render the book
+=======
+### Render the book
+>>>>>>> origin
 
 If you installed Quarto correctly in your computer
 , you should be able to build the book by simply executing
@@ -139,6 +163,7 @@ the following command in the terminal.
 quarto render
 ```
 
+<<<<<<< HEAD
 
 
 ### Building the book with Nix Flake
@@ -160,6 +185,8 @@ quarto render
 ```
 
 
+=======
+>>>>>>> origin
 ### How the Zig compiler is found
 
 Some R code (`zig_engine.R`) is used to collect the Zig code examples
