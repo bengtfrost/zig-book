@@ -4,7 +4,7 @@
 
 Hey! This is the official repository for the book "Introduction to Zig: a project-based book", written by Pedro Duarte Faria.
 To know more about the book, checkout the [About this book](#about-this-book) section below.
-You can read the current version of the book in your web browser: <https://pedropark99.github.io/zig-book/>.
+You can read the current version of the book in your web browser: <https://github.com/bengtfrost/zig-book/>.
 
 This book is crafted using a modern, reproducible publishing stack, leveraging the power of:
 
