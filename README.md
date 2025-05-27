@@ -4,7 +4,7 @@
 
 Hey! This is the official repository for the book "Introduction to Zig: a project-based book", written by Pedro Duarte Faria.
 To know more about the book, checkout the [About this book](#about-this-book) section below.
-You can read the current version of the book in your web browser: <https://github.com/bengtfrost/zig-book/>.
+You can read the current version of the book in your web browser: <https://github.com/bengtfrost/zig-book/blob/custom/docs/index.html>.
 
 This book is crafted using a modern, reproducible publishing stack, leveraging the power of:
 
@@ -26,7 +26,6 @@ The core book content is built using the [Quarto](https://quarto.org) publishing
 in conjunction with a little bit of R code (`zig_engine.R`), that is responsible for calling
 the Zig compiler to compile and run the Zig code examples.
 
-
 ## Support the project!
 
 If you like this project, and you want to support it, you can buy a PDF, eBook or a physical copy
@@ -46,11 +45,9 @@ These are good ways to support directly the author of the project, which helps t
 more contents like this, and it makes possible for the author to keep writing helpful tools and
 materials for the community.
 
-
 ### PayPal
 
 [![PayPal](https://img.shields.io/badge/PayPal-003087?logo=paypal&logoColor=fff)](https://www.paypal.com/donate/?business=D58J5LFEERC3N&no_recurring=0&item_name=These+donations+make+it+possible+for+me+to+continue+writing+new+and+useful+content+for+our+community%F0%9F%98%89+Thank+you%21%E2%9D%A4%EF%B8%8F%F0%9F%A5%B3&currency_code=USD)
-
 
 ### Revolut
 
@@ -67,9 +64,6 @@ Corresponding BIC: CHASGB2L
 If you do have a Revolut account, you can scan the following QR code:
 
 <http://revolut.me/pedroduartefaria>
-
-
-
 
 ## About this book
 
@@ -94,8 +88,6 @@ As you work through the book, you will learn:
 - Parallelism with threads and SIMD.
 - And more.
 
-
-
 ## How to build the book
 
 First of all, you need to care about the dependencies of the project. This book is built using the following pieces of software:
@@ -109,7 +101,6 @@ There are two strategies that you can take here:
 
 1. You can install these three pieces of software manually (you can find instructions on how to install each piece by clicking in the above hyperlinks).
 2. Or, you can use the Nix Flake declared in the `flake.nix` file to create a reproducible environment that already comes with these pieces installed.
-
 
 ### Building the book manually
 
@@ -138,7 +129,6 @@ the following command in the terminal.
 quarto render
 ```
 
-
 ### Building the book with Nix Flake
 
 If you choose to use the Nix Flake to create an environment that comes with the necessary dependencies, then, you need
@@ -156,7 +146,6 @@ for you:
 ```bash
 quarto render
 ```
-
 
 ### How the Zig compiler is found
 
@@ -176,8 +165,6 @@ why, a second strategy is applied, which is to search through the PATH environme
 It gets the value of your PATH environment variable, and iterates through the directories listed
 in this variable, trying to find the Zig compiler in one of them. This approach is much
 slower than the first one, but is more garanteed to work.
-
-
 
 ## License
 
