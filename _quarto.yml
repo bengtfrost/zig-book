@@ -42,3 +42,9 @@ format:
     theme:
       dark: darkly
       light: cosmo
+
+  # epub:
+  #   toc: true
+  #   lang: en-US
+  #   date: "today"
+
